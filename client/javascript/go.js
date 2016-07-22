@@ -40,7 +40,21 @@ var currPlayer;
 var playerNewToken; // which player is changing their token
 
 var isLoading = false;
+function toggle_visibility() {
+	var id1 = "p1-pass-button";
+	var id2 = "p2-pass-button";
+	var e1 = document.getElementById(id1);
+	var e2 = document.getElementById(id2);
+	if(currPlayer ==1){
+		e1.style.display = 'block';
+		e2.style.display = 'none';
+	}
+		if(currPlayer ==2){
+		e1.style.display = 'none';
+		e2.style.display = 'block';
+	}
 
+}
 // Load each players' names onto game page
 function updatePlayerNames() {
 	var names = getScreenNames();
@@ -84,9 +98,11 @@ function updatePlayerInfo() {
 	if (currPlayer == 1) {	// if player 1 is current player
 		$('#player-1').addClass("curr-player");
 		$('#player-2').removeClass("curr-player");
+		toggle_visibility();
 	} else {
 		$('#player-1').removeClass("curr-player");
 		$('#player-2').addClass("curr-player");
+		toggle_visibility();
 	}
 }
 
