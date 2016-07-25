@@ -16,10 +16,36 @@
 
     <link href="/css/home.css" rel="stylesheet"/>
 
+
+	<!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+	<link rel="shortcut icon" href="favicon.ico">
+
+	<!-- Google Webfont -->
+	<link href='http://fonts.googleapis.com/css?family=Lato:300,400,700' rel='stylesheet' type='text/css'>
+
+	<!-- Bootstrap & Style -->
+	<link rel="stylesheet" href="css/bootstrap.min.css">
+	<link rel="stylesheet" href="css/owl.carousel.min.css">
+	<link rel="stylesheet" href="css/owl.theme.default.min.css">
+	<link rel="stylesheet" href="css/magnific-popup.css">
+	<link rel="stylesheet" href="css/style.css">
+
+	<!-- Iconfonts -->
+	<link rel="stylesheet" href="css/themify-icons.css">
+
+			
+		
+
 	<script src="http://127.0.0.1:10086/socket.io/socket.io.js"></script>
 
 	<script src="javascript/webSocket.js"></script>
-    
+	
+	
+	
+	
+
+
+	
   	</head>
 
   	<body>
@@ -79,21 +105,50 @@
 	  	<!--=============================== HOME PAGE =================================-->
 
 	  	<div id="home-page" class="page-section">
-		  	<div class="container theme-showcase" role="main">
-			    <h1>The Game of Go</h1>
-			    <a href="#new-game" class="btn btn-lg btn-default new-game-button">Play</a>
-		    </div>
+		
+			<header id="fh5co-header" role="banner">
+
+				<object type ="image/svg+xml" data = "assets/token_raccoon.svg" align="right"></object>
+				<object type ="image/svg+xml" data = "assets/token_panda.svg" align="right"></object>
+				<object type ="image/svg+xml" data = "assets/token_fox.svg" align="right"></object>
+				<object type ="image/svg+xml" data = "assets/token_cat.svg" align="center"></object>
+				<object type ="image/svg+xml" data = "assets/token_wolf.svg" align="left"></object>
+				<object type ="image/svg+xml" data = "assets/token_bear.svg" align="left"></object>
+				
+				<div class="container">	
+					<h1 class="fh5co-header-intro">The Game of Go</h1>
+				</div>
+			</header>
+
+			<a href="#new-game" class="fh5co-block-links text-center new-game-button">
+				<h2>Play the Game</h2>
+			</a>
 	    </div>
 
 		<!--============================= GAME SETUP PAGE =============================-->
 
-	    <div id="game-setup-page" class="page-section initially-hidden container">
-			<h1>New Game</h1>
+	    <div id="game-setup-page" class="page-section initially-hidden ">
+		
+			
+			<header id="fh5co-header" role="banner" height=200px>
+							<object type ="image/svg+xml" data = "assets/token_raccoon.svg" align="right"></object>
+				<object type ="image/svg+xml" data = "assets/token_panda.svg" align="right"></object>
+				<object type ="image/svg+xml" data = "assets/token_fox.svg" align="right"></object>
+				<object type ="image/svg+xml" data = "assets/token_cat.svg" align="center"></object>
+				<object type ="image/svg+xml" data = "assets/token_wolf.svg" align="left"></object>
+				<object type ="image/svg+xml" data = "assets/token_bear.svg" align="left"></object>
+				<div class="container">	
+					<h1 class="fh5co-header-intro" align="center">New Game Settings</h1>
+				</div>
+			</header>
+			
+			
 			<br>
 			
-			<form id="game-setup-form">
+			<form id="game-setup-form" class="center-contents-horizontal">
 
 				<p><b>Board size</b></p>
+				
 				<div class="btn-group" data-toggle="buttons">
 					<label class="btn btn-default active">
 						<input type="radio" name="board-size-radio" value=9 autocomplete="off" checked> 9x9
@@ -105,6 +160,7 @@
 						<input type="radio" name="board-size-radio" value=19 autocomplete="off"> 19x19
 					</label>
 				</div>
+				
 				<br><br>
 
 				<p><b>Play mode</b></p>
@@ -154,6 +210,33 @@
 	            		<button id="undo-button" class="btn btn-default">Undo</button>
 	            		<button id="pass-button" class="btn btn-default">Pass</button>
 	            	</div>
+					<br>
+					
+					<div class="container">
+						<div class="row">
+							<div class="col-md-5">
+								<div class="panel panel-primary">
+
+									<div class="panel-body">
+										
+									</div>
+									<div class="panel-footer">
+										<div class="input-group">
+											<input id="btn-input" type="text" class="form-control input-md" placeholder="Type your message here..." />
+											<span class="input-group-btn">
+												<button class="btn btn-warning btn-lg" id="btn-chat">Send</button>
+											</span>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					
+					
+					
+					
+					
             		<div id="history-controls" class="center-contents-horizontal initially-hidden">
             			<strong>View History</strong><br>
 	            		<button id="prev-board-button" class="btn btn-default"><</button>
@@ -163,9 +246,15 @@
 	            		<br>
 	            		<button id="replay-score-button" class="btn btn-default">Scores</button>
 		            </div>
+					
             	</div>
             </div>
+
+			
+
+
 	    </div>
+
 
 	    <!--===================================SCORE MODAL=================================-->
 
@@ -361,6 +450,9 @@
 	    <script src="javascript/history.js"></script>
 	    <script src="javascript/home.js"></script>
 	    <script src="javascript/backgroundMusic.js"></script>
+		
+		
+		
   	</body>
 
 </html>
