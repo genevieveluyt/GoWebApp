@@ -74,7 +74,7 @@ function makeSquare(x, y, length){
 * 
 * @return {object} 
 */
-function makeToken(X, Y, w, src, className, onClick=null){
+function makeToken(X, Y, w, src, className, onClick){
 
   var token = document.createElementNS('http://www.w3.org/2000/svg','image');
 
