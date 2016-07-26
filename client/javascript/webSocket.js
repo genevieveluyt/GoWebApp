@@ -275,6 +275,7 @@ socket.on('actionRequired', function(action){
 
 socket.on('publish', function(data) {
 	console.log('>> ' + data);
+	document.getElementById('chat-box').innerHTML += (data + "<br>");
 });
 
 socket.on('connect', function(){

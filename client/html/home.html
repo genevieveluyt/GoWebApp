@@ -16,10 +16,26 @@
 
     <link href="/css/home.css" rel="stylesheet"/>
 
-	<script src="http://127.0.0.1:10086/socket.io/socket.io.js"></script>
 
+	<!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+	<link rel="shortcut icon" href="favicon.ico">
+
+	<!-- Google Webfont -->
+	<link href='http://fonts.googleapis.com/css?family=Lato:300,400,700' rel='stylesheet' type='text/css'>
+
+	<!-- Bootstrap & Style -->
+	<link rel="stylesheet" href="css/bootstrap.min.css">
+	<link rel="stylesheet" href="css/owl.carousel.min.css">
+	<link rel="stylesheet" href="css/owl.theme.default.min.css">
+	<link rel="stylesheet" href="css/magnific-popup.css">
+	<link rel="stylesheet" href="css/style.css">
+
+	<!-- Iconfonts -->
+	<link rel="stylesheet" href="css/themify-icons.css">
+
+	<script src="http://127.0.0.1:10086/socket.io/socket.io.js"></script>
 	<script src="javascript/webSocket.js"></script>
-    
+	
   	</head>
 
   	<body>
@@ -62,9 +78,9 @@
 						Login or create a new account. <br><br>
 
 						<form id="login-form">
-						<input name="username" type="text" class="form-control" placeholder="Username" />
+						<input id="login-username" type="text" class="form-control" placeholder="Username" />
 						<br>
-						<input name="password" type="password" class="form-control" placeholder="Password" />
+						<input id="login-password" type="password" class="form-control" placeholder="Password" />
 						</form>
 
 					</div>
@@ -79,21 +95,50 @@
 	  	<!--=============================== HOME PAGE =================================-->
 
 	  	<div id="home-page" class="page-section">
-		  	<div class="container theme-showcase" role="main">
-			    <h1>The Game of Go</h1>
-			    <a href="#new-game" class="btn btn-lg btn-default new-game-button">Play</a>
-		    </div>
+		
+			<header id="fh5co-header" role="banner">
+
+				<img src="assets/token_raccoon.svg" align="right"></img>
+				<img src="assets/token_panda.svg" align="right"></img>
+				<img src="assets/token_fox.svg" align="right"></img>
+				<img src="assets/token_cat.svg" align="center"></img>
+				<img src="assets/token_wolf.svg" align="left"></img>
+				<img src="assets/token_bear.svg" align="left"></img>
+				
+				<div class="container">	
+					<h1 class="fh5co-header-intro">The Game of Go</h1>
+				</div>
+			</header>
+
+			<a href="#new-game" class="fh5co-block-links text-center new-game-button">
+				<h2>Play the Game</h2>
+			</a>
 	    </div>
 
 		<!--============================= GAME SETUP PAGE =============================-->
 
-	    <div id="game-setup-page" class="page-section initially-hidden container">
-			<h1>New Game</h1>
+	    <div id="game-setup-page" class="page-section initially-hidden ">
+		
+			
+			<header id="fh5co-header" role="banner" height=200px>
+				<img src="assets/token_raccoon.svg" align="right"></img>
+				<img src="assets/token_panda.svg" align="right"></img>
+				<img src="assets/token_fox.svg" align="right"></img>
+				<img src="assets/token_cat.svg" align="center"></img>
+				<img src="assets/token_wolf.svg" align="left"></img>
+				<img src="assets/token_bear.svg" align="left"></img>
+				<div class="container">	
+					<h1 class="fh5co-header-intro" align="center">New Game Settings</h1>
+				</div>
+			</header>
+			
+			
 			<br>
 			
-			<form id="game-setup-form">
+			<form id="game-setup-form" class="center-contents-horizontal">
 
 				<p><b>Board size</b></p>
+				
 				<div class="btn-group" data-toggle="buttons">
 					<label class="btn btn-default active">
 						<input type="radio" name="board-size-radio" value=9 autocomplete="off" checked> 9x9
@@ -105,6 +150,7 @@
 						<input type="radio" name="board-size-radio" value=19 autocomplete="off"> 19x19
 					</label>
 				</div>
+				
 				<br><br>
 
 				<p><b>Play mode</b></p>
@@ -126,8 +172,7 @@
 
 	    <div id="game-page" class="page-section initially-hidden container">
             <div class="row">
-            	<div id="gameboard-container" class="col-md-8"></div>
-            	<div class="col-md-4">
+            	<div class="col-md-3">
             		<table class="table">
 	            		<tr id="player-1">
 	            			<td  class="center-cell-contents">
@@ -154,7 +199,8 @@
 	            		<button id="undo-button" class="btn btn-default">Undo</button>
 	            		<button id="pass-button" class="btn btn-default">Pass</button>
 	            	</div>
-            		<div id="history-controls" class="center-contents-horizontal initially-hidden">
+
+	            	<div id="history-controls" class="center-contents-horizontal initially-hidden">
             			<strong>View History</strong><br>
 	            		<button id="prev-board-button" class="btn btn-default"><</button>
 	            		<button id="play-history-button" class="btn btn-default">&#9658;</button>
@@ -163,9 +209,29 @@
 	            		<br>
 	            		<button id="replay-score-button" class="btn btn-default">Scores</button>
 		            </div>
-            	</div>
+				</div>
+					
+            	<div id="gameboard-container" class="col-md-6"></div>
+				
+				<div class="col-md-3">
+					<div class="panel panel-primary">
+
+						<div id="chat-box" class="panel-body">
+							
+						</div>
+						<div class="panel-footer">
+							<div class="input-group">
+								<input id="chat-input" type="text" class="form-control input-sm" placeholder="Type your message here..." />
+								<span class="input-group-btn">
+									<button class="btn btn-warning btn-sm" id="chat-send-button">Send</button>
+								</span>
+							</div>
+						</div>
+					</div>
+				</div>
             </div>
 	    </div>
+
 
 	    <!--===================================SCORE MODAL=================================-->
 
@@ -241,8 +307,6 @@
                 </div>
             </div>
         </div>
-
-
 
 	    <!--============================TOKEN SELECTION MODAL============================-->
 
@@ -359,8 +423,10 @@
 	    <script src="javascript/svgFactory.js"></script>
 	    <script src="javascript/go.js"></script>
 	    <script src="javascript/history.js"></script>
+	    <script src="javascript/chat.js"></script>
 	    <script src="javascript/home.js"></script>
 	    <script src="javascript/backgroundMusic.js"></script>
+		
   	</body>
 
 </html>

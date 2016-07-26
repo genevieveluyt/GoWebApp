@@ -10,6 +10,14 @@ window.onload = function() {
 		userSigningIn = 1;
 		submitLogin();
 	});
+	$('#login-password').keyup(function(e){
+	    if(e.keyCode == 13)	// enter button
+	    {
+	        userSigningIn = 1;
+			submitLogin();
+			$('login-modal').modal('hide');
+	    }
+	});
 	$('#game-history-button').click(showHistoryPage);
 	$('#logout-button').click(logout);
 	$('#choose-token-modal').on('show.bs.modal', onTokenModalOpened);
@@ -30,6 +38,14 @@ window.onload = function() {
 		$('#score-modal').modal('hide');
 		showHistoryPage();
 	})
+	$('#chat-send-button').click(sendMessage);
+	// send message if user hits enter in chat box
+	$('#chat-input').keyup(function(e){
+	    if(e.keyCode == 13)	// enter button
+	    {
+	        sendMessage();
+	    }
+	});
 
 	$('#username-button').parent().hide();	// not sure why giving it the class 'initially-hidden' does not work...
 
@@ -99,9 +115,8 @@ function startGame() {
 }
 
 function submitLogin() {
-	var form = document.getElementById("login-form").elements;
-	var username = form["username"].value;
-	var password = form["password"].value;
+	var username = document.getElementById('login-username').value;
+	var password = document.getElementById('login-password').value;
 
 	if (username.substring(0, 5) === "temp_") {
 		showAlert("Please choose a username which does not start with 'temp_'");
