@@ -94,15 +94,7 @@ function startGame() {
 		swapPlayerTokens();
 	}  
 
-	onNewGameButtonClick(board.size, (board.hotseat ? 0 : 1), 1, function(data) {
-        board.state = data.board;
-        currPlayer = data.currentTurn;
-        console.log("board.state = " + board.state);
-        console.log("currPlayer = " + currPlayer);
-        updatePlayerInfo();
-        renderUnfinishedGameBoard();
-        showGamePage();
-    });
+	onNewGameButtonClick(board.size, (board.hotseat ? 0 : 1), 1);
 
 }
 

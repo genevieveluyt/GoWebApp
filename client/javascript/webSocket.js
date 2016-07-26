@@ -166,8 +166,7 @@ function onNewGameButtonClick(boardSize, playMode, tokenType, callback){
 		console.log('callback - onNewGameButtonClick');
 		if(callback){
 			console.log('New game created.');
-			updateGameStatus(callback);
-		}
+		}	
 	});
 }
 
