@@ -24,6 +24,7 @@
     "express": "^4.13.4",
     "jquery": "^2.2.4",
     "mongodb": "^2.2.1",
+    "package": "^1.0.1",
     "socket.io": "latest"
   },
   "devDependencies": {

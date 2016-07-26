@@ -4,6 +4,7 @@ Background Music Reference: https://youtu.be/G_h17RhIzbc
 							https://youtu.be/DfTsofeTkwg
 Code Reference: Development Technology Training Center: https://www.developphp.com/video/JavaScript/Audio-Seek-and-Volume-Range-Slider-Tutorial
 */
+
 var audio, playbtn, mutebtn, volumeslider, seeking=false, seekto;
 var lastValue;
 var musicList = ["assets/Love Yourself.mp3", "assets/River Flow in You.mp3", "assets/Thinking Out Loud.mp3"];
@@ -40,3 +41,9 @@ var backgroundMusicInit = function(){
 	    lastValue = volumeslider.value;
 	};
 }
+
+var changeColor = function(color){
+	document.body.style.background = color;
+	document.getElementById("barColor").style.background = color;
+}
+

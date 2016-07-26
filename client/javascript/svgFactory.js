@@ -55,8 +55,8 @@ function makeSquare(x, y, length){
 	square.setAttribute("y", y);
 	square.setAttribute("width", length);
 	square.setAttribute("height", length);
-	square.style.fill = "#f5e3d6";
-	square.style.stroke = '#eac8ae';
+	square.style.fill = '#87D2DE';
+	square.style.stroke = '#786449';
 	square.style.strokeWidth = 2;
 
   return square; 
@@ -106,6 +106,5 @@ function makeSVG(w, h, id){
   s.setAttribute("id", id);
   s.setAttribute('xmlns', SVGNameSpace);
   s.setAttribute('xmlns:xlink',"http://www.w3.org/1999/xlink");
-
   return s;
 }
