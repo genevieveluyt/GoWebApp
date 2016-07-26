@@ -377,10 +377,21 @@ function getScreenNames() {
 	var p1;
 	var p2;
 
-	if (player1.username === "anonymous")
-        p1 = (!board.hotseat)? "CPU": "Player 1";
-    else
-        p1 = player1.username;
+	if (accountHolderTokenType == 1){
+		p1 = accountInfo.username;
+	 	if (player2.username === "anonymous")
+	        p2 = (!board.hotseat && !board.online)? "CPU": "Player 2";
+	    else
+	        p2 = player2.username;
+	}else{
+		p2 = accountInfo.username;
+		if (player1.username === "anonymous")
+	        p1 = (!board.hotseat && !board.online)? "CPU": "Player 1";
+	    else
+	        p1 = player1.username;
+	}
+
+
 
 	// if (player1.username.substring(0,5) === "temp_" || player1.username === "anonymous")
  //        p1 = "Player 1";
@@ -394,10 +405,7 @@ function getScreenNames() {
     // else
     //     p2 = player2.username;
 
- 	if (player2.username === "anonymous")
-        p2 = (!board.hotseat)? "CPU": "Player 2";
-    else
-        p2 = player2.username;
+
 
 
 	return { player1: p1, player2: p2 };

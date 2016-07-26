@@ -51,6 +51,11 @@ function auth(username, password, callback){
 			setCookie('username', username, 365);
 			setCookie('password', password, 365);
 			primaryAccountUserName = username;
+			if(username.substring(0,5) != "temp_"){
+				$('#online-multiplayer-radio').show();
+			}else{
+				$('#online-multiplayer-radio').hide();
+			}
 			callback(true, result);
 		}else{
 			callback(false, result);
@@ -158,6 +163,7 @@ function getCredentialCookie(){
 function delCredentialCookie(){
 	delCookie('username');
 	delCookie('password');
+	$('#online-multiplayer-radio').hide();
 }
 
 // boardSize: size of the board
@@ -172,6 +178,7 @@ function onNewGameButtonClick(boardSize, playMode, tokenType, allowedPlayer, cal
 	};
 	continueGame(null, gameParameters, function(result){
 		console.log('callback - onNewGameButtonClick');
+		accountHolderTokenType = tokenType;
 		if(callback){
 			console.log('New game created.');
 		}	
@@ -319,8 +326,7 @@ socket.on('actionRequired', function(action){
 			break;
 		case 5:
 			// Remote player connected, notify the server
-			console.log(action.data);
-			if(primary == 1){
+			if(accountHolderTokenType == 1){
 				player2.username = action.data.onlineOpponentUserName;
 			}else{
 				player1.username = action.data.onlineOpponentUserName;
