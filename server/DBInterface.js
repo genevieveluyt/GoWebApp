@@ -139,9 +139,9 @@ class DBInterface{
 							assert.equal(modifyErr, null);
 							// Update the temporary ObjectIDs in the relevant game history
 							var gameCollection = _this._db.collection('gamecollection');
-							gameCollection.update({'player1' : srcObj._id}, {$set: {'player1' : dstObj._id}}, function(err, result){
+							gameCollection.update({'player1' : srcObj._id}, {$set: {'player1' : dstObj._id}}, {multi : true}, function(err, result){
 								assert.equal(err, null);
-								gameCollection.update({'player2' : srcObj._id}, {$set: {'player2' : dstObj._id}}, function(err, result){
+								gameCollection.update({'player2' : srcObj._id}, {$set: {'player2' : dstObj._id}}, {multi : true}, function(err, result){
 									assert.equal(err, null);
 									callback(true);
 								});

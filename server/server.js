@@ -120,6 +120,8 @@ var initializeServer = function() {
 					accountHolderTokenType = (gameObject.player1.toString() == userObjID.toString())? 1: 2;
 					player1CapturedTokens = 0;
 					player2CapturedTokens = 0;
+					player1Passed = false;
+					player2Passed = false;
 					currentGameID = gameObjectID;
 				}
 				var latestGameBoard = gameObject.moveHistory[gameObject.moveHistory.length - 1];
