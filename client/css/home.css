@@ -78,6 +78,16 @@
  	bottom: 0;
 }
 
+.board-white {
+  fill: #f5e3d6;
+  stroke: #eac8ae;
+}
+
+.board-nonwhite {
+  fill: #DEB887;
+  stroke: #786449;
+}
+
 #music-control-panel {
   position: fixed;
   bottom: 0;
@@ -89,3 +99,76 @@
   width: 30%;
   margin: 0 auto;
 }
+
+.button{
+  position: relative;
+  display: inline-block;
+  background: #e6e6ff;  /*light purple*/
+  border: none;
+  padding: 15px 25px;
+  border-radius: 15px;  
+  cursor: pointer;
+  outline: none;
+  box-shadow: 0 5px #999;
+}
+
+.button:hover{
+  background-color: #8080ff;
+}
+
+
+.button:active{
+  background-color: #8080ff;
+  box-shadow: 0 5px #666;
+  transform: translateY(4px);
+}
+/*-----------------------------------------*/
+.button2{
+  background-color: #cceeff;  /*blue*/
+  border-radius: 15px;
+}
+
+.button2:hover{
+  background-color: #00aaff;
+}
+
+
+.button2:active{
+  background-color: #00aaff;
+  box-shadow: 0 5px #666;
+  transform: translateY(4px);
+}
+/*-----------------------------------------*/
+.button3{
+  background-color: #ffe6f2;  /*light pink*/
+  border-radius: 15px;
+}
+
+.button3:hover{
+  background-color:#ff80bf;
+}
+
+.button3:active{
+  background-color: #ff80bf;
+  box-shadow: 0 5px #666;
+  transform: translateY(4px);
+}
+
+/*-----------------------------------------*/
+.button4{
+  background-color: #ffffff;  /* White */
+  border-radius: 15px;
+}
+
+.button4:hover{
+  background-color:#f2f2f2;
+}
+
+.button4:active{
+  background-color: #f2f2f2;
+  box-shadow: 0 5px #666;
+  transform: translateY(4px);
+}
+
+
+>>>>>>> origin/finalInterface

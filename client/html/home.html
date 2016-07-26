@@ -43,20 +43,26 @@
 	  	<!--================================ NAVBAR ===================================-->
 
 	  	<div id="navigation-bar">
-		  	<nav class="navbar navbar-default">
+		  	<nav class="navbar navbar-default" id="barColor">
 		  		<div class="container">
 			  		<div class="nav navbar-header">
 			         	<a id="logo" class="navbar-brand home-button initially-hidden" href="#home">Go Online</a>
 		       		</div>
 		          	<ul class="nav navbar-nav pull-right">
-		            	<li class="nav-link"><a href="#game-rules-modal" data-toggle="modal">Game Rules</a></li>
-		            	<li class="nav-link"><a href="#login-modal" id="login-button" class="login-button" data-toggle="modal">Login</a></li>
+		          		<li>
+		          			<button class="button" onclick="changeColor('#e6e6ff')"></button>
+		          			<button class="button button2" onclick="changeColor('#cceeff')"></button>
+		          			<button class="button button3" onclick="changeColor('#ffe6f2')"></button>
+		          			<button class="button button4" onclick="changeColor('#ffffff')"></button>
+		          		</li>
+		            	<li class="nav-link"><a href="#game-rules-modal" data-toggle="modal" style="font-weight: bold">Game Rules</a></li>
+		            	<li class="nav-link"><a href="#login-modal" id="login-button" class="login-button" data-toggle="modal" style="font-weight: bold">Login</a></li>
 	            		<li class="dropdown">
-	            			<a href="#" id="username-button" class="dropdown-toggle" data-toggle="dropdown"></a>
+	            			<a href="#" id="username-button" class="dropdown-toggle" data-toggle="dropdown" style="font-weight: bold"></a>
 	            			<ul class="dropdown-menu">
-	            				<li><a href="#" id="game-history-button">Game History</a></li>
-	            				<li><a href='#' id="view-online-game-button">Online Matchmaking</li>
-	            				<li><a href="#" id="logout-button">Logout</a></li>
+	            				<li><a href='#' id="view-online-game-button" style="font-weight: bold">Online Matchmaking</li>
+	            				<li><a href="#" id="game-history-button" style="font-weight: bold">Game History</a></li>
+	            				<li><a href="#" id="logout-button" style="font-weight: bold">Logout</a></li>
 	            			</ul>
 	            		</li>
 		          	</ul>
@@ -477,6 +483,11 @@
 			<img id="muteButton" src="assets/volume.png" style="width:20px;height:20px;">
 			<strong id="musicTitle"></strong>
 			<input id="volumeslider" type="range" min="0" max="100" value="25" step="1">
+		</div>
+
+		<div id="color_control">
+
+
 		</div>
 		
 	    <!--=====================================ALERT===================================-->
