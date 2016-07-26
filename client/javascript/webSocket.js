@@ -58,41 +58,45 @@ function auth(username, password, callback){
 	});
 }
 
+function _continueGame(gameInfo, callback){
+	console.log('Resuming game');
+	console.log(gameInfo);
+	currentGameMode = gameInfo.gameMode;
+	player1UserName = gameInfo.player1;
+	player2UserName = gameInfo.player2;
+	accountHolderTokenType = gameInfo.accountHolderTokenType;
+
+	if(callback)
+		callback(gameInfo);
+
+	board.setSize(gameInfo.boardSize);
+    board.hotseat = (gameInfo.gameMode === 0);
+    board.online = gameInfo.gameMode == 2;
+
+    if (board.hotseat)
+		$('#undo-button').show();
+	else
+		$('#undo-button').hide();
+
+    if (primary === 1 && gameInfo.player2 === player1.username) {
+		primary = 2;
+		if(gameInfo.gameMode != 2)
+			swapPlayerTokens();
+	} else if (primary === 2 && gameInfo.player1 === player2.username) {
+		primary = 1;
+		if(gameInfo.gameMode != 2)
+			swapPlayerTokens();
+	}
+
+	player1.username = gameInfo.player1;
+	player2.username = gameInfo.player2;
+
+	updatePlayerNames();
+}
+
 function continueGame(gameID, gameParameters, callback) {
 	socket.emit('continue', {'gameID' : gameID, 'gameParameters': gameParameters}, function(gameInfo){
-		console.log('Resuming game');
-		console.log(gameInfo);
-		currentGameMode = gameInfo.gameMode;
-		player1UserName = gameInfo.player1;
-		player2UserName = gameInfo.player2;
-		accountHolderTokenType = gameInfo.accountHolderTokenType;
-
-		if(callback)
-			callback(gameInfo);
-
-		board.setSize(gameInfo.boardSize);
-        board.hotseat = (gameInfo.gameMode === 0);
-        board.online = gameInfo.gameMode == 2;
-
-        if (board.hotseat)
-			$('#undo-button').show();
-		else
-			$('#undo-button').hide();
-
-        if (primary === 1 && gameInfo.player2 === player1.username) {
-			primary = 2;
-			if(gameInfo.gameMode != 2)
-				swapPlayerTokens();
-		} else if (primary === 2 && gameInfo.player1 === player2.username) {
-			primary = 1;
-			if(gameInfo.gameMode != 2)
-				swapPlayerTokens();
-		}
-
-		player1.username = gameInfo.player1;
-		player2.username = gameInfo.player2;
-
-		updatePlayerNames();
+		_continueGame(gameInfo, callback(gameInfo));
 	});
 }
 
@@ -258,7 +262,7 @@ function undo(step){
 
 function join(onlineGameID){
 	socket.emit('join', onlineGameID, function(result){
-		switch(result){
+		switch(result.code){
 			case -1:
 				showAlert('Specified game does not exist. The host might have terminated the game.');
 				break;
@@ -267,6 +271,7 @@ function join(onlineGameID){
 				break;
 			case 0:
 				console.log('Try to join the game: ' + onlineGameID);
+				_continueGame(result.gameObject);
 				break;
 			default:
 				console.log('Unidentified response number.');
@@ -309,10 +314,15 @@ socket.on('actionRequired', function(action){
 			break;
 		case 5:
 			// Remote player connected, notify the server
-			socket.emit('opponentConnected', action.data, function(){
-				console.log('Notified the server about the connected opponent');
-				showAlert('Opponent connected');
-			});
+			console.log(action.data);
+			if(primary == 1){
+				player2.username = action.data.onlineOpponentUserName;
+			}else{
+				player1.username = action.data.onlineOpponentUserName;
+			}
+			updatePlayerNames();
+			showAlert('Opponent connected');
+			socket.emit('opponentConnected', action.data);
 			break;
 		case 6:
 			// Opponent disconnected.

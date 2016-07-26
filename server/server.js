@@ -166,7 +166,7 @@ var initializeServer = function() {
 					player1Passed = false;
 					player2Passed = false;
 					currentGameID = gameObjectID;
-					opponentAccountObjectID = (gameObject.player1.toString() == userObjID.toString())? 1: 2;
+					opponentAccountObjectID = null;
 					onlineOpponentUserName = null;
 					onlineOpponentSocket = acquiredOpponentSocket;
 					onlineOpponentAccountObjectID = (gameMode == 2)? ((accountHolderTokenType == 1)? gameObject.player2: gameObject.player1): null;
@@ -278,11 +278,11 @@ var initializeServer = function() {
 			var gameObjectID = ObjectID(data);
 
 			if(!availableMatchList[gameObjectID.toString()]){
-				response(-1); // Game session does not exist
+				response({code : -1}); // Game session does not exist
 			}else{
 				var gameAllowedPlayer = availableMatchList[gameObjectID.toString()].allowedPlayer;
 				if(gameAllowedPlayer != 'anonymous' && gameAllowedPlayer != username){
-					response(-2); // Permission denied
+					response({code : -2}); // Permission denied
 				}else{
 					// Game exist and the current user has the permission to participate this game
 					var tempSocket = connectionList[availableMatchList[gameObjectID.toString()].hostSocketID].socket;
@@ -290,7 +290,8 @@ var initializeServer = function() {
 					db.modifyAccountInformation(userObjID, {currentGame : gameObjectID}, function(err, result){
 						db.joinGame(gameObjectID, userObjID, availableMatchList[gameObjectID.toString()].accountHolderTokenType, function(){
 							resumeData(gameObjectID, true, tempSocket, false, function(gameObject){
-								response(0);
+								delete gameObject['moveHistory'];
+								response({code : 0, gameObject : gameObject});
 								tempSocket.emit('actionRequired', {code : 5, data : {onlineOpponentAccountObjectID : userObjID, onlineOpponentSocket : socket.id, onlineOpponentUserName : username}}, function(){
 									console.log('Notified the host about the connection of the opponent');
 								});
@@ -309,7 +310,7 @@ var initializeServer = function() {
 			console.log(onlineGameObjectID);
 			availableMatchList[onlineGameObjectID.toString()].status = 1;
 			notifyClientForUpdate();
-			response(0);
+			// response(0);
 		});
 
 		socket.on('opponentDisconnected', function(data, response){

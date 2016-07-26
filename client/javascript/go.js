@@ -301,7 +301,7 @@ function onFinishedGame(score1, score2) {
 		if (primary == 1? score1.totalScore > score2.totalScore: score2.totalScore > score1.totalScore){
 			$('#score-text').html("Nice going, you won!");
 		}else{
-			$('#score-text').html("You lose! <Better message here>");
+			$('#score-text').html("Try harder next time.");
 		}
 	}
 
