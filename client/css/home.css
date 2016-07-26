@@ -8,6 +8,7 @@
   top: 50%;
   left: 50%;
   margin: -100px 0 0 -150px;
+  z-index: 99;
 }
 
 .curr-player{
@@ -82,4 +83,9 @@
   bottom: 0;
   right: 0;
   width: 15%;
+}
+
+#multiplayer-username-container {
+  width: 30%;
+  margin: 0 auto;
 }

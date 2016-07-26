@@ -377,15 +377,25 @@ function getScreenNames() {
 	var p1;
 	var p2;
 
-	if (player1.username.substring(0,5) === "temp_" || player1.username === "anonymous")
-        p1 = "Player 1";
+	if (player1.username === "anonymous")
+        p1 = (!board.hotseat)? "CPU": "Player 1";
     else
         p1 = player1.username;
 
-    if (!board.hotseat && !board.online)
-        p2 = "CPU";
-    else if (player2.username === "anonymous")
-        p2 = "Player 2";
+	// if (player1.username.substring(0,5) === "temp_" || player1.username === "anonymous")
+ //        p1 = "Player 1";
+ //    else
+ //        p1 = player1.username;
+
+    // if (!board.hotseat && !board.online)
+    //     p2 = "CPU";
+    // else if (player2.username === "anonymous")
+    //     p2 = "Player 2";
+    // else
+    //     p2 = player2.username;
+
+ 	if (player2.username === "anonymous")
+        p2 = (!board.hotseat)? "CPU": "Player 2";
     else
         p2 = player2.username;
 

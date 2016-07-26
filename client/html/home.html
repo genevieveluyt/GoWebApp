@@ -55,6 +55,7 @@
 	            			<a href="#" id="username-button" class="dropdown-toggle" data-toggle="dropdown"></a>
 	            			<ul class="dropdown-menu">
 	            				<li><a href="#" id="game-history-button">Game History</a></li>
+	            				<li><a href='#' id="view-online-game-button">Online Matchmaking</li>
 	            				<li><a href="#" id="logout-button">Logout</a></li>
 	            			</ul>
 	            		</li>
@@ -161,7 +162,47 @@
 					<label class="btn btn-default">
 						<input type="radio" name="play-mode-radio" value="single" autocomplete="off"> 1 Player
 					</label>
+					<label class="btn btn-default">
+						<input type="radio" name="play-mode-radio" value="online" autocomplete="off"> Online Multiplayer
+					</label>
 				</div>
+
+				<br><br>
+
+				<p><b>Token type</b></p>
+				<div class="btn-group" data-toggle="buttons">
+					<label class="btn btn-default active">
+						<input type="radio" name="token-type-radio" value="black" autocomplete="off" checked> Black
+					</label>
+					<label class="btn btn-default">
+						<input type="radio" name="token-type-radio" value="white" autocomplete="off"> White
+					</label>
+				</div>
+
+				<div id="multiplayer-control-panel" class="initially-hidden">
+					<br>
+
+					<p><b>Multiplayer game type</b></p>
+					<div class="btn-group" data-toggle="buttons">
+						<label class="btn btn-default active">
+							<input type="radio" name="multiplayer-restriction-radio" value="public" autocomplete="off" checked> Public
+						</label>
+						<label class="btn btn-default">
+							<input type="radio" name="multiplayer-restriction-radio" value="private" autocomplete="off"> Private
+						</label>
+					</div>
+
+					<br><br>
+
+					<div id="private-game-limitation-panel" class="initially-hidden">
+						<p><b>Private game limitation</b></p>
+						<div class="input-group" id="multiplayer-username-container">
+							<span class="input-group-addon">Play with</span>
+							<input type="text" class="form-control" placeholder="username" id="multiplayer-username">
+						</div>
+					</div>			
+				</div>
+
 				<br><br><br>
 
 				<input id="submit-options-button" class="btn btn-default" value="Let's Go!">
@@ -353,6 +394,25 @@
             </table>
 	    </div>
 
+		<!--=================================AVAILABLE GAMES=============================-->
+
+		<div id="online-game-page" class="page-section initially-hidden container">
+            <h2>Available Games <a href="#"><img src="assets/refresh.png" style="width:25px;height:25px;margin: 0 0 5px 0" id="available-game-refresh-button"></a></h2><br>
+         	<table class="table">
+                <thead>
+                    <tr>
+                        <th>Host User</th>
+                        <th>Host Token Type</th>
+                        <th>Allowed Player</th>
+                        <th>Status</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                	<tbody id="online-game-table" >
+                </tbody>
+            </table>
+	    </div>
+
 	    <!--===============================GAME RULES MODAL==============================-->
 
 	    <div id="game-rules-modal" class="modal fade" role="dialog">
@@ -431,6 +491,7 @@
 	    <script src="javascript/svgFactory.js"></script>
 	    <script src="javascript/go.js"></script>
 	    <script src="javascript/history.js"></script>
+	    <script src="javascript/availableGames.js"></script>
 	    <script src="javascript/chat.js"></script>
 	    <script src="javascript/home.js"></script>
 	    <script src="javascript/backgroundMusic.js"></script>

@@ -269,6 +269,10 @@ function join(onlineGameID){
 			case -2:
 				showAlert('Permission denied. Only the specified user could participate the game.');
 				break;
+			case -3:
+				showAlert('The selected game is already started. Please try another one');
+				loadAvailableGames();
+				break;
 			case 0:
 				console.log('Try to join the game: ' + onlineGameID);
 				_continueGame(result.gameObject);
@@ -280,9 +284,10 @@ function join(onlineGameID){
 	});
 }
 
-function getAvailableMatchList(){
+function getAvailableMatchList(callback){
 	socket.emit('getAvailableMatchList', null, function(result){
 		console.log(result);
+		callback(result);
 	});
 }
 

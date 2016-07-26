@@ -5,6 +5,9 @@ window.onload = function() {
 	// Event Listeners
 	$('.new-game-button').click(showNewGamePage);
 	$('.home-button').click(showHomePage);
+	$('input[name="play-mode-radio"]:radio').change(displayMultiplayerControlPanel);
+	$('input[name="multiplayer-restriction-radio"]:radio').change(displayMultiplayerUsernamePanel);
+	$('#available-game-refresh-button').click(loadAvailableGames);
 	$('#submit-options-button').click(startGame);
 	$('#submit-login-button').click(function() {
 		userSigningIn = 1;
@@ -38,6 +41,10 @@ window.onload = function() {
 		$('#score-modal').modal('hide');
 		showHistoryPage();
 	})
+	$('#view-online-game-button').click(function() {
+		$('#score-modal').modal('hide');
+		showOnlineGamePage();
+	})
 	// send message if user hits enter in chat box
 	$('#chat-input').keyup(function(e){
 	    if(e.keyCode == 13)	// enter button
@@ -53,6 +60,21 @@ window.onload = function() {
 	backgroundMusicInit();
 }
 
+function displayMultiplayerControlPanel(){
+	if($('input[name="play-mode-radio"]:checked').val() === "online"){
+		$('#multiplayer-control-panel').show();
+	}else{
+		$('#multiplayer-control-panel').hide();
+	}
+}
+
+function displayMultiplayerUsernamePanel(){
+	if($('input[name="multiplayer-restriction-radio"]:checked').val() == "private")
+		$('#private-game-limitation-panel').show();
+	else
+		$('#private-game-limitation-panel').hide();
+}
+
 function showHomePage() {
 	$('.initially-hidden').hide();
 	if (player1.username)	// if logged in, show username
@@ -64,6 +86,8 @@ function showHomePage() {
 function showNewGamePage() {
 	$('.page-section').hide();
 	$('#game-setup-page').show();
+	displayMultiplayerControlPanel();
+	displayMultiplayerUsernamePanel();
 	$('#logo').show();
 	pageSwitched();
 }
@@ -88,6 +112,14 @@ function showHistoryPage() {
 	pageSwitched();
 }
 
+function showOnlineGamePage() {
+	loadAvailableGames();
+	$('.page-section').hide();
+	$('#online-game-page').show();
+	$('#logo').show();
+	pageSwitched();
+}
+
 // gets called whenever pages are switched
 function pageSwitched() {
 	onGamePage = false;
@@ -96,21 +128,37 @@ function pageSwitched() {
 
 
 function startGame() {
+	var gameMode = 0;
 	board.setSize(parseInt($('input[name="board-size-radio"]:checked').val()));
 	board.hotseat = $('input[name="play-mode-radio"]:checked').val() === "hotseat";
-	if (board.hotseat)
+	if (board.hotseat){
 		$('#undo-button').show();
-	else
+	}
+	else{
 		$('#undo-button').hide();
+		gameMode = 1;
+	}
+	board.online = $('input[name="play-mode-radio"]:checked').val() === "online";
+	if (board.online){
+		gameMode = 2;
+	}
+
+	var tokenType = ($('input[name="token-type-radio"]:checked').val() === "black")? 1: 2;
+
+	var privateUsername = null;
+
+	if($('input[name="multiplayer-restriction-radio"]:checked').val() === "private"){
+		privateUsername = $('#multiplayer-username').val();
+	}
 
 	currPlayer = 1;
 
 	if (primary === 2) {
 		primary = 1
 		swapPlayerTokens();
-	}  
+	}
 
-	onNewGameButtonClick(board.size, (board.hotseat ? 0 : 1), 1, null);
+	onNewGameButtonClick(board.size, gameMode, tokenType, privateUsername);
 }
 
 function submitLogin() {

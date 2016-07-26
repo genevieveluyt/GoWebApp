@@ -283,6 +283,8 @@ var initializeServer = function() {
 				var gameAllowedPlayer = availableMatchList[gameObjectID.toString()].allowedPlayer;
 				if(gameAllowedPlayer != 'anonymous' && gameAllowedPlayer != username){
 					response({code : -2}); // Permission denied
+				}else if(availableMatchList[gameObjectID.toString()].status != 0){
+					response({code : -3}); // Game closed
 				}else{
 					// Game exist and the current user has the permission to participate this game
 					var tempSocket = connectionList[availableMatchList[gameObjectID.toString()].hostSocketID].socket;
@@ -511,9 +513,12 @@ var initializeServer = function() {
 							socket.emit('actionRequired', {code : 2, data : gameRecord}, function() {
 								console.log('End of game signal sent')
 							});
-							onlineOpponentSocket.emit('actionRequired', {code : 2, data : gameRecord}, function() {
-								console.log('End of game signal sent to the opponent');
-							});
+							if(gameMode == 2 && onlineOpponentSocket != null){
+								onlineOpponentSocket.emit('actionRequired', {code : 2, data : gameRecord}, function() {
+									console.log('End of game signal sent to the opponent');
+								});								
+							}
+
 							delete availableMatchList[onlineGameObjectID];
 						});
 
