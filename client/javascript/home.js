@@ -15,7 +15,7 @@ window.onload = function() {
 	    {
 	        userSigningIn = 1;
 			submitLogin();
-			$('login-modal').modal('hide');
+			$('#login-modal').modal('hide');
 	    }
 	});
 	$('#game-history-button').click(showHistoryPage);

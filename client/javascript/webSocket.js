@@ -275,7 +275,11 @@ socket.on('actionRequired', function(action){
 
 socket.on('publish', function(data) {
 	console.log('>> ' + data);
-	document.getElementById('chat-box').innerHTML += (data + "<br>");
+	var usern = data.split(":")[0];
+	if (usern === player1.username)
+		document.getElementById('chat-box').innerHTML += ("<strong>Me</strong>: " + (data.substring(usern.length+1)) + "<br>");
+	else
+		document.getElementById('chat-box').innerHTML += (data + "<br>");
 });
 
 socket.on('connect', function(){
