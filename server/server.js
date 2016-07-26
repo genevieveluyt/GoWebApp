@@ -489,6 +489,7 @@ var initializeServer = function() {
 		socket.on('disconnect', function(){
 			console.log("Connection closed, removing socket..");
 			delete connectionList[socket.id];
+			broadcastUserListUpdateSignal();
 		});
 	});
 
