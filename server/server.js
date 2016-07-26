@@ -465,11 +465,11 @@ var initializeServer = function() {
 					socket.emit('privateMsg', {sender: 'SYSTEM', msg: 'Specified user does not exist'});
 				}else{
 					connectionList[sID].socket.emit('privateMsg', {sender: username, msg : message.msg});
-					socket.emit('publicMsg', '[Private -> ' + connectionList[sID].username + ']: ' + message.msg);
+					socket.emit('publicMsg', {sender: connectionList[socket.id].username, msg: '[Private -> ' + connectionList[sID].username + ']: ' + message.msg});
 				}
 			}
 			if(message.command == 'regularMessage'){
-				io.sockets.emit('publicMsg', (connectionList[socket.id].username + ': ' + message.msg));
+				io.sockets.emit('publicMsg', {sender: connectionList[socket.id].username, msg: message.msg});
 			}
 		});
 

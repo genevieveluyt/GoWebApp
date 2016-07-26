@@ -273,17 +273,20 @@ socket.on('actionRequired', function(action){
 	console.log('updateRequired signal received');
 });
 
-socket.on('publish', function(data) {
-	console.log('>> ' + data);
-	var usern = data.split(":")[0];
-	if (usern === player1.username)
-		document.getElementById('chat-box').innerHTML += ("<strong>Me</strong>: " + (data.substring(usern.length+1)) + "<br>");
-	else
-		document.getElementById('chat-box').innerHTML += (data + "<br>");
-});
+//==== Obsolete
+// socket.on('publish', function(data) {
+// 	console.log('>> ' + data);
+// 	var usern = data.split(":")[0];
+// 	if (usern === player1.username)
+// 		document.getElementById('chat-box').innerHTML += ("<strong>Me</strong>: " + (data.substring(usern.length+1)) + "<br>");
+// 	else
+// 		document.getElementById('chat-box').innerHTML += (data + "<br>");
+// });
 
 socket.on('publicMsg', function(data){
-	console.log('>> ' + data);
+	var sender = data.sender;
+	var message = data.msg;
+	console.log('>> ' + sender + ': '+ message);
 });
 
 socket.on('privateMsg', function(data){
