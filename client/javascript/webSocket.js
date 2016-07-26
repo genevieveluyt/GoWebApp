@@ -282,6 +282,16 @@ socket.on('publish', function(data) {
 		document.getElementById('chat-box').innerHTML += (data + "<br>");
 });
 
+socket.on('publicMsg', function(data){
+	console.log('>> ' + data);
+});
+
+socket.on('privateMsg', function(data){
+	var sender = data.sender;
+	var message = data.msg;
+	console.log('User: ' + sender + ' says: ' + message);
+});
+
 socket.on('connect', function(){
 	var credential = getCredentialCookie();
 	auth(credential.username, credential.password, function(isSucceed, statusNo){

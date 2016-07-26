@@ -462,14 +462,14 @@ var initializeServer = function() {
 					}
 				}	
 			 	if(sID == null){
-					socket.emit('publish', 'Specified user does not exist');
+					socket.emit('privateMsg', {sender: 'SYSTEM', msg: 'Specified user does not exist'});
 				}else{
-					connectionList[sID].socket.emit('publish', '[Private @ ' + username + ']: ' + message.msg);
-					socket.emit('publish', '[Private - ' + connectionList[sID].username + ']: ' + message.msg);
+					connectionList[sID].socket.emit('privateMsg', {sender: username, msg : message.msg});
+					socket.emit('publicMsg', '[Private -> ' + connectionList[sID].username + ']: ' + message.msg);
 				}
 			}
 			if(message.command == 'regularMessage'){
-				io.sockets.emit('publish', (connectionList[socket.id].username + ': ' + message.msg));
+				io.sockets.emit('publicMsg', (connectionList[socket.id].username + ': ' + message.msg));
 			}
 		});
 
