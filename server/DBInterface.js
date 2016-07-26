@@ -267,16 +267,16 @@ class DBInterface{
 								assert.equal(updateErr, null);
 								callback(newGameDocumentID);
 						});
-						if(opponentAccountObjectID != null){
-							collection.findOne({_id : opponentAccountObjectID}, function(oppFindErr, oppUser){
-								var opponentGameHistory = oppUser.gameHistory;
-								opponentGameHistory.push(newGameDocumentID);
-								collection.updateOne({_id : opponentAccountObjectID}, {$set: {gameHistory : opponentGameHistory, currentGame: newGameDocumentID}}, 
-									function(oppUpdateErr, result){
-										assert.equal(oppUpdateErr, null);
-								});
-							});
-						}						
+						// if(opponentAccountObjectID != null){
+						// 	collection.findOne({_id : opponentAccountObjectID}, function(oppFindErr, oppUser){
+						// 		var opponentGameHistory = oppUser.gameHistory;
+						// 		opponentGameHistory.push(newGameDocumentID);
+						// 		collection.updateOne({_id : opponentAccountObjectID}, {$set: {gameHistory : opponentGameHistory, currentGame: newGameDocumentID}}, 
+						// 			function(oppUpdateErr, result){
+						// 				assert.equal(oppUpdateErr, null);
+						// 		});
+						// 	});
+						// }						
 					});
 				}
 			});
@@ -356,7 +356,24 @@ class DBInterface{
 		var _this = this;
 		this.connect(function(){
 			var gameCollection = _this._db.collection('gamecollection');
-
+			var collection = _this._db.collection('users');
+			collection.findOne({_id : myUserObjectID}, function(oppFindErr, userObj){
+				var myGameHistory = userObj.gameHistory;
+				var gameHistoryFound = false;
+				for (var i = 0; i < myGameHistory.length; i++) {
+					if(myGameHistory[i].toString() == gameObjectID.toString()){
+						gameHistoryFound = true;
+						break;
+					}
+				}
+				if(!gameHistoryFound){
+					myGameHistory.push(ObjectID(gameObjectID));
+					collection.updateOne({_id : ObjectID(myUserObjectID)}, {$set: {gameHistory : myGameHistory}}, 
+						function(myHistUpdateErr, result){
+							assert.equal(myHistUpdateErr, null);
+					});
+				}
+			});
 			if(hostTokenType == 1){
 				gameCollection.updateOne({_id : gameObjectID}, {$set: {player2 : ObjectID(myUserObjectID)}}, 
 					function(gameUpdateErr, result){
@@ -370,7 +387,6 @@ class DBInterface{
 					callback();
 				});
 			}
-
 		});		
 	}
 

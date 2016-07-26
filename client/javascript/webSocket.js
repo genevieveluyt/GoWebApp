@@ -264,6 +264,7 @@ function getAvailableMatchList(){
 }
 
 socket.on('actionRequired', function(action){
+	console.log('Action required: ' + action.code);
 	switch(action.code){
 		case 0:
 			updateGameStatus();
@@ -292,6 +293,7 @@ socket.on('actionRequired', function(action){
 			// Remote player connected, notify the server
 			socket.emit('opponentConnected', action.data, function(){
 				console.log('Notified the server about the connected opponent');
+				showAlert('Opponent connected');
 			});
 			break;
 		case 6:

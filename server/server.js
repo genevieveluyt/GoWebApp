@@ -115,6 +115,8 @@ var initializeServer = function() {
 
 		var fetchUsernameForGameObject = function(gameObject, callback){
 			// Fetch the players' usernames and put them into gameObject before sending back to client
+			console.log('>>>>>');
+			console.log(gameObject);
 			db.getAccountInfo(gameObject.player1, function(player1UserObj){
 				if(player1UserObj){
 					gameObject.player1 = player1UserObj.username;
@@ -135,14 +137,20 @@ var initializeServer = function() {
 			});
 		};
 
-		var resumeData = function(gameObjectID, initRequired, acquiredOpponentSocket, callback){
+		var resumeData = function(gameObjectID, initRequired, acquiredOpponentSocket, suppressSubroutine, callback){
 			db.getGameObject(gameObjectID, function(gameObject){
 
 				if(initRequired){
 					// If initialization is required
 					if(gameMode){
 						if(gameMode == 2){
-							delete availableMatchList[onlineGameObjectID.toString()];
+							if(availableMatchList[onlineGameObjectID]){
+								if(availableMatchList[onlineGameObjectID].hostUser == username){
+									delete availableMatchList[onlineGameObjectID];
+								}else{
+									availableMatchList[onlineGameObjectID].status = 0;
+								}
+							}
 						}
 					}
 					prevBoard = [];
@@ -188,13 +196,15 @@ var initializeServer = function() {
 					delete gameObject['moveHistory'];
 					fetchUsernameForGameObject(gameObject, function(gameObject){
 						callback(gameObject);
-						externalNodeSubroutine(0);
+						if(!suppressSubroutine)
+							externalNodeSubroutine(0);
 					});
 				}
 			});
 		};
 
 		var externalNodeSubroutine = function(count){
+			console.log('Inside externalNodeSubroutine');
 			// If the game is in AI mode, and this is the AI's turn, call the AI interface and get a random move.
 			if(gameMode == 1 && (currentTurn != accountHolderTokenType)){
 				if(count > aiRetryThreshold){
@@ -279,7 +289,7 @@ var initializeServer = function() {
 					console.log('Join the game: ' + gameObjectID);
 					db.modifyAccountInformation(userObjID, {currentGame : gameObjectID}, function(err, result){
 						db.joinGame(gameObjectID, userObjID, availableMatchList[gameObjectID.toString()].accountHolderTokenType, function(){
-							resumeData(gameObjectID, true, tempSocket, function(gameObject){
+							resumeData(gameObjectID, true, tempSocket, false, function(gameObject){
 								response(0);
 								tempSocket.emit('actionRequired', {code : 5, data : {onlineOpponentAccountObjectID : userObjID, onlineOpponentSocket : socket.id, onlineOpponentUserName : username}}, function(){
 									console.log('Notified the host about the connection of the opponent');
@@ -295,7 +305,10 @@ var initializeServer = function() {
 			onlineOpponentAccountObjectID = ObjectID(data.onlineOpponentAccountObjectID);
 			onlineOpponentSocket = connectionList[data.onlineOpponentSocket].socket;
 			onlineOpponentUserName = data.onlineOpponentUserName;
+			console.log(availableMatchList);
+			console.log(onlineGameObjectID);
 			availableMatchList[onlineGameObjectID.toString()].status = 1;
+			notifyClientForUpdate();
 			response(0);
 		});
 
@@ -304,7 +317,7 @@ var initializeServer = function() {
 			if(availableMatchList[onlineGameObjectID.toString()]){
 				availableMatchList[onlineGameObjectID.toString()].status = 0;
 			}
-			response(0);
+			// response(0);
 		});
 
 		socket.on('getAvailableMatchList', function(data, response){
@@ -391,7 +404,7 @@ var initializeServer = function() {
 				// Continue a specific game
 				console.log('Continue the game: ' + unfinishedGameObjectID);
 				db.modifyAccountInformation(userObjID, {currentGame : unfinishedGameObjectID}, function(err, result){
-					resumeData(unfinishedGameObjectID, true, null, function(gameObject){
+					resumeData(unfinishedGameObjectID, true, null, false, function(gameObject){
 						response(gameObject);
 					});
 				})
@@ -404,7 +417,7 @@ var initializeServer = function() {
 				var allowedPlayer = gameParameters.allowedPlayer;
 
 				db.newGame(userObjID, playMode < 2? opponentAccountObjectID: allowedPlayer, newBoardSize, playMode, tokenType, function(newGameObjectID) {
-					resumeData(newGameObjectID, true, null, function(gameObject){
+					resumeData(newGameObjectID, true, null, false, function(gameObject){
 						response(gameObject);
 					});
 				});
@@ -413,7 +426,7 @@ var initializeServer = function() {
 
 		var makeMove = function(moveObj, callback){
 			if(gameMode == 2 && onlineOpponentSocket == null){
-				response(-5);
+				callback(-5);
 				return;
 			}
 			var _makeMove = function(resultCode){
@@ -472,10 +485,13 @@ var initializeServer = function() {
 							score1 : player1Score,
 							score2 : player2Score
 						};
-						db.endGame(userObjID, opponentAccountObjectID, currentGameID, gameRecord, function(){
+						db.endGame(userObjID, gameMode == 2? onlineOpponentAccountObjectID: opponentAccountObjectID, currentGameID, gameRecord, function(){
 							console.log('Game ended');
 							socket.emit('actionRequired', {code : 2, data : gameRecord}, function() {
 								console.log('End of game signal sent')
+							});
+							onlineOpponentSocket.emit('actionRequired', {code : 2, data : gameRecord}, function() {
+								console.log('End of game signal sent to the opponent');
 							});
 						});
 
@@ -499,7 +515,7 @@ var initializeServer = function() {
 
 		socket.on('undo', function(step, response){
 			db.undo(currentGameID, step, function(moveHistoryLength){
-				resumeData(currentGameID, moveHistoryLength == 0, null, function(){
+				resumeData(currentGameID, moveHistoryLength == 0, null, false, function(){
 					console.log('Undo request completed');
 				});
 			});
@@ -559,7 +575,7 @@ var initializeServer = function() {
 				res(updateResponse);
 			};
 			if(gameMode == 2){
-				resumeData(onlineGameObjectID, false, null, function(gameObject){
+				resumeData(onlineGameObjectID, false, null, true, function(gameObject){
 					_update(response);
 				});
 			}else{
@@ -602,7 +618,13 @@ var initializeServer = function() {
 			delete connectionList[socket.id];
 			if(gameMode != null){
 				if(gameMode == 2){
-					delete availableMatchList[onlineGameObjectID];
+					if(availableMatchList[onlineGameObjectID]){
+						if(availableMatchList[onlineGameObjectID].hostUser == username){
+							delete availableMatchList[onlineGameObjectID];
+						}else{
+							availableMatchList[onlineGameObjectID].status = 0;
+						}
+					}
 				}
 				if(onlineOpponentSocket){
 					onlineOpponentSocket.emit('actionRequired', {code : 6, data : null}, function(){
