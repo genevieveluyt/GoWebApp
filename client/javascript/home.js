@@ -38,7 +38,6 @@ window.onload = function() {
 		$('#score-modal').modal('hide');
 		showHistoryPage();
 	})
-	$('#chat-send-button').click(sendMessage);
 	// send message if user hits enter in chat box
 	$('#chat-input').keyup(function(e){
 	    if(e.keyCode == 13)	// enter button
@@ -46,6 +45,7 @@ window.onload = function() {
 	        sendMessage();
 	    }
 	});
+	$('#public-messages-button').click(clickPublic);
 
 	$('#username-button').parent().hide();	// not sure why giving it the class 'initially-hidden' does not work...
 

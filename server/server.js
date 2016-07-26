@@ -632,6 +632,7 @@ var initializeServer = function() {
 					})
 				}
 			}
+			broadcastUserListUpdateSignal();
 		});
 	});
 

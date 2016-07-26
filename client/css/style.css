@@ -843,25 +843,6 @@ a:hover, a:focus, a:active {
   color: #fff;
 }
 
-.form-control {
-  box-shadow: none;
-  border: 2px solid #ccc;
-  font-size: 10px;
-  height: 30px;
-  padding: 0 1em;
-  moz-border-radius: 30px;
-  webkit-border-radius: 30px;
-  border-radius: 30px;
-  -moz-transition: all 0.2s ease;
-  -o-transition: all 0.2s ease;
-  -webkit-transition: all 0.2s ease;
-  transition: all 0.2s ease;
-}
-.form-control:focus, .form-control:active {
-  box-shadow: none;
-  border: 2px solid #87b6c4;
-}
-
 #fh5co-footer-links {
   margin-bottom: 3em;
 }
@@ -1069,7 +1050,7 @@ a:hover, a:focus, a:active {
 .panel-body
 {
     overflow-y: scroll;
-    height: 340px;
+    height: 300px;
 	
 }
 
