@@ -60,9 +60,9 @@
 	            		<li class="dropdown">
 	            			<a href="#" id="username-button" class="dropdown-toggle" data-toggle="dropdown" style="font-weight: bold"></a>
 	            			<ul class="dropdown-menu">
-	            				<li><a href='#' id="view-online-game-button" style="font-weight: bold">Online Matchmaking</li>
-	            				<li><a href="#" id="game-history-button" style="font-weight: bold">Game History</a></li>
-	            				<li><a href="#" id="logout-button" style="font-weight: bold">Logout</a></li>
+	            				<li><a href='#' id="view-online-game-button">Online Matchmaking</li>
+	            				<li><a href="#" id="game-history-button">Game History</a></li>
+	            				<li><a href="#" id="logout-button">Logout</a></li>
 	            			</ul>
 	            		</li>
 		          	</ul>
@@ -175,19 +175,18 @@
 
 				<br><br>
 
-				<p><b>Token type</b></p>
+				<p><b>Game Order</b></p>
 				<div class="btn-group" data-toggle="buttons">
 					<label class="btn btn-default active">
-						<input type="radio" name="token-type-radio" value="black" autocomplete="off" checked> Black
+						<input type="radio" name="token-type-radio" value="black" autocomplete="off" checked> Go First
 					</label>
 					<label class="btn btn-default">
-						<input type="radio" name="token-type-radio" value="white" autocomplete="off"> White
+						<input type="radio" name="token-type-radio" value="white" autocomplete="off"> Go Second
 					</label>
 				</div>
 
 				<div id="multiplayer-control-panel" class="initially-hidden">
 					<br>
-
 					<p><b>Multiplayer game type</b></p>
 					<div class="btn-group" data-toggle="buttons">
 						<label class="btn btn-default active">
@@ -198,20 +197,22 @@
 						</label>
 					</div>
 
-					<br><br>
-
 					<div id="private-game-limitation-panel" class="initially-hidden">
+						<br>
 						<p><b>Private game limitation</b></p>
 						<div class="input-group" id="multiplayer-username-container">
 							<span class="input-group-addon">Play with</span>
 							<input type="text" class="form-control" placeholder="username" id="multiplayer-username">
 						</div>
-					</div>			
+					</div>	
 				</div>
 
-				<br><br><br>
+				<div>
+				<br><br>
+				</div>
 
 				<input id="submit-options-button" class="btn btn-default" value="Let's Go!">
+				<br><br><br><br>
 			</form>
 	    </div>
 
@@ -408,7 +409,7 @@
                 <thead>
                     <tr>
                         <th>Host User</th>
-                        <th>Host Token Type</th>
+                        <th>Host Goes</th>
                         <th>Allowed Player</th>
                         <th>Status</th>
                         <th></th>

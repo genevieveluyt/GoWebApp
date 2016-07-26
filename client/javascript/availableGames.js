@@ -19,7 +19,7 @@ function loadAvailableGames() {
 
 			// Cell: Host Token Type
 			cell = row.insertCell();
-			cell.innerHTML = (data[i].accountHolderTokenType == 1)? "Black": "White";
+			cell.innerHTML = (data[i].accountHolderTokenType == 1)? "First": "Second";
 
 			// Cell: Allowed Player
 			cell = row.insertCell();
