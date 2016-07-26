@@ -1,10 +1,4 @@
-body {
-  font-family: 'Lato', arial, sans-serif;
-  font-size: 20px;
-  line-height: 1.7;
-  font-weight: 300;
-  color: #2e2e2e;
-}
+
 @media screen and (max-width: 768px) {
   body {
     font-size: 18px;
@@ -25,17 +19,6 @@ body {
 ::selection {
   color: #ffffff;
   background: #2e2e2e;
-}
-
-h1, h2, h3, h4, h5 {
-  margin-bottom: .5em;
-  line-height: 1.5;
-  font-weight: 300;
-}
-
-p {
-  margin-bottom: 30px;
-  line-height: 1.7;
 }
 
 a {
@@ -863,8 +846,8 @@ a:hover, a:focus, a:active {
 .form-control {
   box-shadow: none;
   border: 2px solid #ccc;
-  font-size: 20px;
-  height: 50px;
+  font-size: 10px;
+  height: 30px;
   padding: 0 1em;
   moz-border-radius: 30px;
   webkit-border-radius: 30px;

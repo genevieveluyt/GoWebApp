@@ -78,9 +78,9 @@
 						Login or create a new account. <br><br>
 
 						<form id="login-form">
-						<input name="username" type="text" class="form-control" placeholder="Username" />
+						<input id="login-username" type="text" class="form-control" placeholder="Username" />
 						<br>
-						<input name="password" type="password" class="form-control" placeholder="Password" />
+						<input id="login-password" type="password" class="form-control" placeholder="Password" />
 						</form>
 
 					</div>
@@ -172,8 +172,7 @@
 
 	    <div id="game-page" class="page-section initially-hidden container">
             <div class="row">
-            	<div id="gameboard-container" class="col-md-8"></div>
-            	<div class="col-md-4">
+            	<div class="col-md-3">
             		<table class="table">
 	            		<tr id="player-1">
 	            			<td  class="center-cell-contents">
@@ -200,30 +199,8 @@
 	            		<button id="undo-button" class="btn btn-default">Undo</button>
 	            		<button id="pass-button" class="btn btn-default">Pass</button>
 	            	</div>
-					<br>
-					
-					<div class="container">
-						<div class="row">
-							<div class="col-md-5">
-								<div class="panel panel-primary">
 
-									<div class="panel-body">
-										
-									</div>
-									<div class="panel-footer">
-										<div class="input-group">
-											<input id="btn-input" type="text" class="form-control input-md" placeholder="Type your message here..." />
-											<span class="input-group-btn">
-												<button class="btn btn-warning btn-lg" id="btn-chat">Send</button>
-											</span>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-					
-            		<div id="history-controls" class="center-contents-horizontal initially-hidden">
+	            	<div id="history-controls" class="center-contents-horizontal initially-hidden">
             			<strong>View History</strong><br>
 	            		<button id="prev-board-button" class="btn btn-default"><</button>
 	            		<button id="play-history-button" class="btn btn-default">&#9658;</button>
@@ -232,8 +209,26 @@
 	            		<br>
 	            		<button id="replay-score-button" class="btn btn-default">Scores</button>
 		            </div>
+				</div>
 					
-            	</div>
+            	<div id="gameboard-container" class="col-md-6"></div>
+				
+				<div class="col-md-3">
+					<div class="panel panel-primary">
+
+						<div id="chat-box" class="panel-body">
+							
+						</div>
+						<div class="panel-footer">
+							<div class="input-group">
+								<input id="chat-input" type="text" class="form-control input-sm" placeholder="Type your message here..." />
+								<span class="input-group-btn">
+									<button class="btn btn-warning btn-sm" id="chat-send-button">Send</button>
+								</span>
+							</div>
+						</div>
+					</div>
+				</div>
             </div>
 	    </div>
 
@@ -428,6 +423,7 @@
 	    <script src="javascript/svgFactory.js"></script>
 	    <script src="javascript/go.js"></script>
 	    <script src="javascript/history.js"></script>
+	    <script src="javascript/chat.js"></script>
 	    <script src="javascript/home.js"></script>
 	    <script src="javascript/backgroundMusic.js"></script>
 		

@@ -471,7 +471,7 @@ var initializeServer = function() {
 			}
 		});
 
-		socket.emit('publish', 'Welcome, your id is: ' + socket.id);
+		//socket.emit('publish', 'Welcome, your id is: ' + socket.id);
 
 		socket.on('disconnect', function(){
 			console.log("Connection closed, removing socket..");
