@@ -319,9 +319,15 @@ socket.on('actionRequired', function(action){
 			break;
 		case 10:
 			// User list updated
-			var htmlUserList = action.data.replyMessage;
-			var latestUserList = action.data.userList;
-			console.log(latestUserList);
+			// Obsolete
+			// var htmlUserList = action.data.replyMessage;
+			// var latestUserList = action.data.userList;
+			// console.log(latestUserList);
+
+			// Should put process related to refreshing user list in the getUserList() function as much as possible
+			getUserList(function(result){
+				// Also, you may put things here if you want functionality specific for signal handler
+			}); 
 			break;
 		default:
 			console.log('Unsupported action');

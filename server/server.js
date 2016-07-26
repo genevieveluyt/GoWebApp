@@ -95,7 +95,7 @@ var initializeServer = function() {
 		}
 
 		var broadcastUserListUpdateSignal = function(){
-			io.sockets.emit('actionRequired', {code : 10, data : generateUserList()});
+			io.sockets.emit('actionRequired', {code : 10, data : null});
 		}
 
 		var generateUserList = function(){
