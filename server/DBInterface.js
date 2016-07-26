@@ -352,6 +352,28 @@ class DBInterface{
 		});
 	}
 
+	joinGame(gameObjectID, myUserObjectID, hostTokenType, callback){
+		var _this = this;
+		this.connect(function(){
+			var gameCollection = _this._db.collection('gamecollection');
+
+			if(hostTokenType == 1){
+				gameCollection.updateOne({_id : gameObjectID}, {$set: {player2 : ObjectID(myUserObjectID)}}, 
+					function(gameUpdateErr, result){
+						assert.equal(gameUpdateErr, null);
+					callback();	
+				});
+			}else{
+				gameCollection.updateOne({_id : gameObjectID}, {$set: {player1 : ObjectID(myUserObjectID)}}, 
+					function(gameUpdateErr, result){
+						assert.equal(gameUpdateErr, null);
+					callback();
+				});
+			}
+
+		});		
+	}
+
 	// Close the connection
 	close(){
 		if(this._db)
@@ -368,7 +390,7 @@ class DBInterface{
 			}else{
 				console.log('Database structure verified');
 			}
-			callback();
+			callback(anonymousUserObjectID);
 		});
 	}
 

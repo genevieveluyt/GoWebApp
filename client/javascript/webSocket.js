@@ -156,11 +156,12 @@ function delCredentialCookie(){
 // boardSize: size of the board
 // playMode: 0: Local 1: AI
 // token: The token type (black == 1/white == 2)
-function onNewGameButtonClick(boardSize, playMode, tokenType, callback){
+function onNewGameButtonClick(boardSize, playMode, tokenType, allowedPlayer, callback){
 	var gameParameters = {
 		boardSize : boardSize,
 		playMode : playMode,
-		tokenType : tokenType
+		tokenType : tokenType,
+		allowedPlayer : allowedPlayer
 	};
 	continueGame(null, gameParameters, function(result){
 		console.log('callback - onNewGameButtonClick');
@@ -250,6 +251,18 @@ function undo(step){
 	socket.emit('undo', step);
 }
 
+function join(onlineGameID){
+	socket.emit('join', onlineGameID, function(){
+		console.log('Try to join the game: ' + onlineGameID);
+	});
+}
+
+function getAvailableMatchList(){
+	socket.emit('getAvailableMatchList', null, function(result){
+		console.log(result);
+	});
+}
+
 socket.on('actionRequired', function(action){
 	switch(action.code){
 		case 0:
@@ -266,6 +279,25 @@ socket.on('actionRequired', function(action){
 			// When the game is finished, following code will be executed
 			//alert('Game finished :)');
 			onFinishedGame(action.data.score1, action.data.score2);
+			break;
+		case 3:
+			// After an on-line game session is created, display a notification
+			showAlert(action.data == 'anonymous'? 'Waiting for the other player...': 'Waiting for ' + action.data + ' to start the game...');
+			break;
+		case 4:
+			// Handle the auto-join request.
+			join(action.data); 
+			break;
+		case 5:
+			// Remote player connected, notify the server
+			socket.emit('opponentConnected', action.data, function(){
+				console.log('Notified the server about the connected opponent');
+			});
+			break;
+		case 6:
+			// Opponent disconnected.
+			showAlert('Another player disconnected, standing by...');
+			socket.emit('opponentDisconnected');
 			break;
 		case 10:
 			// User list updated

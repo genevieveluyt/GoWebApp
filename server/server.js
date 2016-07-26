@@ -31,11 +31,13 @@ app.listen(30094, function() {
 
 /* =========================================== */
 var connectionList = {};
+var availableMatchList = {};
 var gameLogicModule = require('./gameboard.js');
 var dbInterface = require('./DBInterface.js');
 var aiInterface = require('./aiInterface.js');
 var assert = require('assert');
 var ObjectID = require('mongodb').ObjectID;
+var anonymousUserObjectID = null;
 
 var db = new dbInterface(null, null);
 
@@ -48,7 +50,10 @@ db.connect(function(error){
 		process.exit(1);
 	}else{
 		console.log('Database connection established');
-		db.init(initializeServer);
+		db.init(function(initAnonymID){
+			anonymousUserObjectID = initAnonymID;
+			initializeServer();
+		});
 	}
 });
 
@@ -57,6 +62,7 @@ var initializeServer = function() {
 	console.log('WebSocket>>> Listening');
 	io.sockets.on('connection', function(socket){
 		console.log("Connection accepted: %s", socket.id);
+		console.log('anonymousUserObjectID: ' + anonymousUserObjectID.toString());
 		// connectionList.push({id : socket.id, socket : socket});
 		connectionList[socket.id] = {username : null, socket : socket};
 		var isLoggedIn = false;
@@ -77,6 +83,10 @@ var initializeServer = function() {
 		var player1CapturedTokens = 0;
 		var player2CapturedTokens = 0;
 		var aiRetryThreshold = 10;
+		var onlineOpponentUserName = null;
+		var onlineOpponentSocket = null;
+		var onlineOpponentAccountObjectID = null;
+		var onlineGameObjectID = null;
 
 		var notifyClientForUpdate = function(){
 			socket.emit('actionRequired', {code : 0, data : null}, function(){
@@ -125,10 +135,16 @@ var initializeServer = function() {
 			});
 		};
 
-		var resumeData = function(gameObjectID, initRequired, callback){
+		var resumeData = function(gameObjectID, initRequired, acquiredOpponentSocket, callback){
 			db.getGameObject(gameObjectID, function(gameObject){
+
 				if(initRequired){
 					// If initialization is required
+					if(gameMode){
+						if(gameMode == 2){
+							delete availableMatchList[onlineGameObjectID.toString()];
+						}
+					}
 					prevBoard = [];
 					currBoard = [];
 					tempBoard = [];
@@ -142,6 +158,11 @@ var initializeServer = function() {
 					player1Passed = false;
 					player2Passed = false;
 					currentGameID = gameObjectID;
+					opponentAccountObjectID = (gameObject.player1.toString() == userObjID.toString())? 1: 2;
+					onlineOpponentUserName = null;
+					onlineOpponentSocket = acquiredOpponentSocket;
+					onlineOpponentAccountObjectID = (gameMode == 2)? ((accountHolderTokenType == 1)? gameObject.player2: gameObject.player1): null;
+					onlineGameObjectID = gameMode == 2? gameObjectID: null;
 				}
 				var latestGameBoard = gameObject.moveHistory[gameObject.moveHistory.length - 1];
 				console.log(latestGameBoard);
@@ -197,6 +218,32 @@ var initializeServer = function() {
 						notifyClientForUpdate();
 					});
 				});
+			}else if(gameMode == 2 && onlineOpponentSocket == null){
+				db.getAccountInfo(ObjectID(onlineOpponentAccountObjectID), function(tempUsrObj){
+					if(tempUsrObj){
+						onlineOpponentUserName = tempUsrObj.username;
+					}
+					if(availableMatchList[onlineGameObjectID.toString()]){
+						// If this game is already pending
+						// Join that game automatically
+						socket.emit('actionRequired', {code : 4, data : onlineGameObjectID.toString()}, function(){
+							console.log('Auto join request sent');
+						});
+					}else{
+						availableMatchList[onlineGameObjectID.toString()] = {
+							hostUser : username,
+							hostUserID : userObjID,
+							hostSocketID : socket.id,
+							gameID : onlineGameObjectID,
+							allowedPlayer : onlineOpponentUserName,
+							accountHolderTokenType : accountHolderTokenType,
+							status : 0 // 0: Waiting 1 : Gaming
+						};
+						socket.emit('actionRequired', {code : 3, data : onlineOpponentUserName}, function(){
+							console.log('Waiting request sent');
+						});
+					}
+				});
 			}else{
 				// else, simply notify the client for update
 				notifyClientForUpdate();
@@ -216,6 +263,53 @@ var initializeServer = function() {
 			}
 			console.log('===Scan complete');
 		};
+
+		socket.on('join', function(data, response){
+			var gameObjectID = ObjectID(data);
+
+			if(!availableMatchList[gameObjectID.toString()]){
+				response(-1); // Game session does not exist
+			}else{
+				var gameAllowedPlayer = availableMatchList[gameObjectID.toString()].allowedPlayer;
+				if(gameAllowedPlayer != 'anonymous' && gameAllowedPlayer != username){
+					response(-2); // Permission denied
+				}else{
+					// Game exist and the current user has the permission to participate this game
+					var tempSocket = connectionList[availableMatchList[gameObjectID.toString()].hostSocketID].socket;
+					console.log('Join the game: ' + gameObjectID);
+					db.modifyAccountInformation(userObjID, {currentGame : gameObjectID}, function(err, result){
+						db.joinGame(gameObjectID, userObjID, availableMatchList[gameObjectID.toString()].accountHolderTokenType, function(){
+							resumeData(gameObjectID, true, tempSocket, function(gameObject){
+								response(0);
+								tempSocket.emit('actionRequired', {code : 5, data : {onlineOpponentAccountObjectID : userObjID, onlineOpponentSocket : socket.id, onlineOpponentUserName : username}}, function(){
+									console.log('Notified the host about the connection of the opponent');
+								});
+							});
+						});
+					});
+				}
+			}
+		});
+
+		socket.on('opponentConnected', function(data, response){
+			onlineOpponentAccountObjectID = ObjectID(data.onlineOpponentAccountObjectID);
+			onlineOpponentSocket = connectionList[data.onlineOpponentSocket].socket;
+			onlineOpponentUserName = data.onlineOpponentUserName;
+			availableMatchList[onlineGameObjectID.toString()].status = 1;
+			response(0);
+		});
+
+		socket.on('opponentDisconnected', function(data, response){
+			onlineOpponentSocket = null;
+			if(availableMatchList[onlineGameObjectID.toString()]){
+				availableMatchList[onlineGameObjectID.toString()].status = 0;
+			}
+			response(0);
+		});
+
+		socket.on('getAvailableMatchList', function(data, response){
+			response(availableMatchList);
+		});
 
 		socket.on('getGameDetail', function(data, response){
 			var gameObjectID = ObjectID(data);
@@ -297,7 +391,7 @@ var initializeServer = function() {
 				// Continue a specific game
 				console.log('Continue the game: ' + unfinishedGameObjectID);
 				db.modifyAccountInformation(userObjID, {currentGame : unfinishedGameObjectID}, function(err, result){
-					resumeData(unfinishedGameObjectID, true, function(gameObject){
+					resumeData(unfinishedGameObjectID, true, null, function(gameObject){
 						response(gameObject);
 					});
 				})
@@ -307,9 +401,10 @@ var initializeServer = function() {
 				var newBoardSize = gameParameters.boardSize;
 				var playMode = gameParameters.playMode;
 				var tokenType = gameParameters.tokenType;
+				var allowedPlayer = gameParameters.allowedPlayer;
 
-				db.newGame(userObjID, opponentAccountObjectID, newBoardSize, playMode, tokenType, function(newGameObjectID) {
-					resumeData(newGameObjectID, true, function(gameObject){
+				db.newGame(userObjID, playMode < 2? opponentAccountObjectID: allowedPlayer, newBoardSize, playMode, tokenType, function(newGameObjectID) {
+					resumeData(newGameObjectID, true, null, function(gameObject){
 						response(gameObject);
 					});
 				});
@@ -317,6 +412,10 @@ var initializeServer = function() {
 		});
 
 		var makeMove = function(moveObj, callback){
+			if(gameMode == 2 && onlineOpponentSocket == null){
+				response(-5);
+				return;
+			}
 			var _makeMove = function(resultCode){
 				var tokenList;
 				if(moveObj.pass){
@@ -343,6 +442,12 @@ var initializeServer = function() {
 				db.makeMove(currentGameID, boardStateObject, function(){
 					console.log('Move saved');
 					callback(resultCode);
+					if(gameMode == 2){
+						onlineOpponentSocket.emit('actionRequired', {code : 0, data : null}, function(){
+							console.log('Update notification sent');
+						});
+					}
+					
 				});
 			};
 
@@ -394,7 +499,7 @@ var initializeServer = function() {
 
 		socket.on('undo', function(step, response){
 			db.undo(currentGameID, step, function(moveHistoryLength){
-				resumeData(currentGameID, moveHistoryLength == 0, function(){
+				resumeData(currentGameID, moveHistoryLength == 0, null, function(){
 					console.log('Undo request completed');
 				});
 			});
@@ -436,24 +541,30 @@ var initializeServer = function() {
 		});
 
 		socket.on('update', function(data, response){
-			var updateResponse = {
-				board : currBoard,
-				player1Passed : player1Passed,
-				player2Passed : player2Passed,
-				player1CapturedTokens : player1CapturedTokens,
-				player2CapturedTokens : player2CapturedTokens,
-				lastMove : lastMove,
-				gameMode : gameMode,
-				accountHolderTokenType : accountHolderTokenType,
-				currentTurn : currentTurn
+			var _update = function(res){
+				var updateResponse = {
+					board : currBoard,
+					player1Passed : player1Passed,
+					player2Passed : player2Passed,
+					player1CapturedTokens : player1CapturedTokens,
+					player2CapturedTokens : player2CapturedTokens,
+					lastMove : lastMove,
+					gameMode : gameMode,
+					accountHolderTokenType : accountHolderTokenType,
+					currentTurn : currentTurn
+				};
+				console.log('===Update===');
+				console.log(currBoard);
+				console.log('============');
+				res(updateResponse);
 			};
-			console.log('===Update===');
-			console.log(currBoard);
-			console.log('============');
-			response(updateResponse);
-		});
-
-		socket.on('getAvailableMatchList', function(data, response){
+			if(gameMode == 2){
+				resumeData(onlineGameObjectID, false, null, function(gameObject){
+					_update(response);
+				});
+			}else{
+				_update(response);
+			}
 
 		});
 
@@ -489,6 +600,16 @@ var initializeServer = function() {
 		socket.on('disconnect', function(){
 			console.log("Connection closed, removing socket..");
 			delete connectionList[socket.id];
+			if(gameMode != null){
+				if(gameMode == 2){
+					delete availableMatchList[onlineGameObjectID];
+				}
+				if(onlineOpponentSocket){
+					onlineOpponentSocket.emit('actionRequired', {code : 6, data : null}, function(){
+						console.log('Notified the opponent about disconnection.');
+					})
+				}
+			}
 		});
 	});
 

@@ -110,8 +110,7 @@ function startGame() {
 		swapPlayerTokens();
 	}  
 
-	onNewGameButtonClick(board.size, (board.hotseat ? 0 : 1), 1);
-
+	onNewGameButtonClick(board.size, (board.hotseat ? 0 : 1), 1, null);
 }
 
 function submitLogin() {
