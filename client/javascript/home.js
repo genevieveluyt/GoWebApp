@@ -86,6 +86,11 @@ function showHomePage() {
 function showNewGamePage() {
 	$('.page-section').hide();
 	$('#game-setup-page').show();
+	if(primaryAccountUserName.substring(0,5) != "temp_"){
+		$('#online-multiplayer-radio').show();
+	}else{
+		$('#online-multiplayer-radio').hide();
+	}
 	displayMultiplayerControlPanel();
 	displayMultiplayerUsernamePanel();
 	$('#logo').show();

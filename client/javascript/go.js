@@ -378,13 +378,13 @@ function getScreenNames() {
 	var p2;
 
 	if (accountHolderTokenType == 1){
-		p1 = accountInfo.username;
+		p1 = primaryAccountUserName;
 	 	if (player2.username === "anonymous")
 	        p2 = (!board.hotseat && !board.online)? "CPU": "Player 2";
 	    else
 	        p2 = player2.username;
 	}else{
-		p2 = accountInfo.username;
+		p2 = primaryAccountUserName;
 		if (player1.username === "anonymous")
 	        p1 = (!board.hotseat && !board.online)? "CPU": "Player 1";
 	    else

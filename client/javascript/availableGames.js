@@ -35,7 +35,7 @@ function loadAvailableGames() {
 			button.setAttribute('gameId', data[i].gameID);
 			button.className = "btn btn-primary";
 			button.innerHTML = "Join";
-			if (data[i].status == 0 && (data[i].allowedPlayer == 'anonymous' || data[i].allowedPlayer == accountInfo.username)) {
+			if (data[i].status == 0 && (data[i].allowedPlayer == 'anonymous' || data[i].allowedPlayer == primaryAccountUserName)) {
 				button.onclick = clickJoinGame;
 			} else {
 				button.className = 'btn btn-primary disabled';
