@@ -214,18 +214,26 @@
             	<div id="gameboard-container" class="col-md-6"></div>
 				
 				<div class="col-md-3">
-					<div class="panel panel-primary">
 
+					<div class="panel panel-primary">
 						<div id="chat-box" class="panel-body">
-							
 						</div>
 						<div class="panel-footer">
-							<div class="input-group">
-								<input id="chat-input" type="text" class="form-control input-sm" placeholder="Type your message here..." />
-								<span class="input-group-btn">
-									<button class="btn btn-warning btn-sm" id="chat-send-button">Send</button>
-								</span>
+							<div class="btn-group btn-group-justified" role="group" aria-label="...">
+								<div class="btn-group" role="group">
+									<button id="public-messages-button" type="button" class="btn btn-default active">Public</button>
+								</div>
+								<div class="btn-group dropup" role="group">
+								    <button id="private-messages-button" type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+								    	<span id="private-button-text">Private</span><span class="caret"></span>
+								    </button>
+								    <ul id="private-messages-dropdown" class="dropdown-menu">
+								    </ul>
+								</div>
 							</div>
+							<br>
+							<textarea id="chat-input" class="form-control" rows="3" style="resize:none;" placeholder="Type your message here..." ></textarea>
+							<p align="right">Hit enter to send</p>
 						</div>
 					</div>
 				</div>

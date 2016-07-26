@@ -228,7 +228,9 @@ function sendRegularMessage(msg) {
 function getUserList(callback){
 	socket.emit('control', {command : 'getUserList'}, function(result){
 		console.log(result.userList);
-		callback(result);
+		updateUsers(result.userList);
+		if (callback)
+			callback(result);
 	});
 }
 
@@ -268,16 +270,9 @@ socket.on('actionRequired', function(action){
 			onFinishedGame(action.data.score1, action.data.score2);
 			break;
 		case 10:
-			// User list updated
-			// Obsolete
-			// var htmlUserList = action.data.replyMessage;
-			// var latestUserList = action.data.userList;
-			// console.log(latestUserList);
 
 			// Should put process related to refreshing user list in the getUserList() function as much as possible
-			getUserList(function(result){
-				// Also, you may put things here if you want functionality specific for signal handler
-			}); 
+			getUserList(); 
 			break;
 		default:
 			console.log('Unsupported action');
@@ -296,15 +291,23 @@ socket.on('actionRequired', function(action){
 // });
 
 socket.on('publicMsg', function(data){
-	var sender = data.sender;
-	var message = data.msg;
-	console.log('>> ' + sender + ': '+ message);
+	console.log('>> ' + data.sender + ': '+ data.msg);
+	if (data.sender === player1.username) 
+		return;
+
+	chatMessages['public'] += (data.sender + ": " + data.msg + "<br>");
+	if (!messageRecipient)
+		document.getElementById('chat-box').innerHTML += (data.sender + ": " + data.msg + "<br>");
 });
 
 socket.on('privateMsg', function(data){
-	var sender = data.sender;
-	var message = data.msg;
-	console.log('User: ' + sender + ' says: ' + message);
+	console.log('User: ' + data.sender + ' says: ' + data.msg);
+	if (data.sender === player1.username)
+		return;
+
+	chatMessages[data.sender] += (data.sender + ": " + data.msg + "<br>");
+	if (messageRecipient === data.sender)
+		document.getElementById('chat-box').innerHTML += (data.sender + ": " + data.msg + "<br>");
 });
 
 socket.on('connect', function(){
