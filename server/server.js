@@ -464,7 +464,7 @@ var initializeServer = function() {
 				});
 			};
 
-			if(moveObj.c == currentTurn){
+			if(moveObj.c == currentTurn && (gameMode == 2? moveObj.c == accountHolderTokenType: true)){
 				if(moveObj.pass){
 					if(moveObj.c == 1){
 						player1Passed = true;

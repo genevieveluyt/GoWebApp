@@ -29,6 +29,7 @@ var board = {
 	size: 0,
 	sqSize: 0,		// in percent
 	hotseat: true,	// TODO: get from game options
+	online: false,
 	state: [],		// board as 2D array
 	setSize: function(sizeValue){
 		this.size = sizeValue;
@@ -101,7 +102,11 @@ function clickPass(event) {
 		if (result < 0) {
 			//showAlert("result = " + result);
 			if (result === -4) {
-				showAlert("Our hamsters are taking a break.", "Try again in a moment");
+				if(board.online){
+					showAlert('Opps! This is not your turn...');
+				}else{
+					showAlert("Our hamsters are taking a break.", "Try again in a moment");
+				}
 			}
 			isLoading = false;
 		}
@@ -242,6 +247,14 @@ function onClickToken(event) {
 			case -3:
 				showAlert("That move would cause your army to be immediately captured!", "Suicide");
 				isLoading = false;
+				break;
+			case -4:
+				if(board.online){
+					showAlert('Opps! This is not your turn...');
+				}else{
+					showAlert("Our hamsters are taking a break.", "Try again in a moment");
+				}
+				break;
 		}
 	});
 	
@@ -271,7 +284,7 @@ function onFinishedGame(score1, score2) {
 
 	var names = getScreenNames();
 
-	if (board.hotseat) {
+	if (board.hotseat && !board.online) {
 		var str = "Congratulations <strong>"
 		if (score1.totalScore > score2.totalScore)
 			str += names.player1;
@@ -279,11 +292,17 @@ function onFinishedGame(score1, score2) {
 			str += names.player2;
 		str += "</strong>, you won!"
 		$('#score-text').html(str);
-	} else {
+	} else if(!board.online){
 		if (score1.totalScore > score2.totalScore) 
 			$('#score-text').html("Nice going, you won!");
 		else
 			$('#score-text').html("There will be a time when we are all bested by robots. It's starting.");
+	} else{
+		if (primary == 1? score1.totalScore > score2.totalScore: score2.totalScore > score1.totalScore){
+			$('#score-text').html("Nice going, you won!");
+		}else{
+			$('#score-text').html("You lose! <Better message here>");
+		}
 	}
 
 	populateScoreTable(score1, score2);
@@ -363,12 +382,12 @@ function getScreenNames() {
     else
         p1 = player1.username;
 
-    if (!board.hotseat)
+    if (!board.hotseat && !board.online)
         p2 = "CPU";
     else if (player2.username === "anonymous")
         p2 = "Player 2";
     else
-        p2 = player1.username;
+        p2 = player2.username;
 
 
 	return { player1: p1, player2: p2 };

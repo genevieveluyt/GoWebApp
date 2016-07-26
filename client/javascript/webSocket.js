@@ -72,6 +72,7 @@ function continueGame(gameID, gameParameters, callback) {
 
 		board.setSize(gameInfo.boardSize);
         board.hotseat = (gameInfo.gameMode === 0);
+        board.online = gameInfo.gameMode == 2;
 
         if (board.hotseat)
 			$('#undo-button').show();
@@ -80,10 +81,12 @@ function continueGame(gameID, gameParameters, callback) {
 
         if (primary === 1 && gameInfo.player2 === player1.username) {
 			primary = 2;
-			swapPlayerTokens();
+			if(gameInfo.gameMode != 2)
+				swapPlayerTokens();
 		} else if (primary === 2 && gameInfo.player1 === player2.username) {
 			primary = 1;
-			swapPlayerTokens();
+			if(gameInfo.gameMode != 2)
+				swapPlayerTokens();
 		}
 
 		player1.username = gameInfo.player1;
@@ -252,8 +255,21 @@ function undo(step){
 }
 
 function join(onlineGameID){
-	socket.emit('join', onlineGameID, function(){
-		console.log('Try to join the game: ' + onlineGameID);
+	socket.emit('join', onlineGameID, function(result){
+		switch(result){
+			case -1:
+				showAlert('Specified game does not exist. The host might have terminated the game.');
+				break;
+			case -2:
+				showAlert('Permission denied. Only the specified user could participate the game.');
+				break;
+			case 0:
+				console.log('Try to join the game: ' + onlineGameID);
+				break;
+			default:
+				console.log('Unidentified response number.');
+		}
+		
 	});
 }
 
@@ -283,7 +299,7 @@ socket.on('actionRequired', function(action){
 			break;
 		case 3:
 			// After an on-line game session is created, display a notification
-			showAlert(action.data == 'anonymous'? 'Waiting for the other player...': 'Waiting for ' + action.data + ' to start the game...');
+			showAlert('You are the host :) </br>' + (action.data == 'anonymous'? 'Waiting for the other player...': 'Waiting for ' + action.data + ' to start the game...'));
 			break;
 		case 4:
 			// Handle the auto-join request.
@@ -298,7 +314,7 @@ socket.on('actionRequired', function(action){
 			break;
 		case 6:
 			// Opponent disconnected.
-			showAlert('Another player disconnected, standing by...');
+			showAlert('Another player disconnected, standing by... </br> If you are the guest, try to refresh the page :)');
 			socket.emit('opponentDisconnected');
 			break;
 		case 10:
