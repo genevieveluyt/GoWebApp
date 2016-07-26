@@ -87,8 +87,7 @@
 .button{
   position: relative;
   display: inline-block;
-  background-color: #99ff99;  /*light green*/
-  background: #99ff99;
+  background: #e6e6ff;  /*light purple*/
   border: none;
   padding: 15px 25px;
   border-radius: 15px;  
@@ -98,89 +97,61 @@
 }
 
 .button:hover{
-  background-color: #4CAF50;
+  background-color: #8080ff;
 }
 
 
 .button:active{
-  background-color: #4CAF50;
+  background-color: #8080ff;
   box-shadow: 0 5px #666;
   transform: translateY(4px);
 }
 /*-----------------------------------------*/
 .button2{
-  background-color: #ff99cc;  /*pink*/
+  background-color: #cceeff;  /*blue*/
   border-radius: 15px;
 }
 
 .button2:hover{
-  background-color: #ff3399;
+  background-color: #00aaff;
 }
 
 
 .button2:active{
-  background-color: #ff3399;
+  background-color: #00aaff;
   box-shadow: 0 5px #666;
   transform: translateY(4px);
 }
 /*-----------------------------------------*/
 .button3{
-  background-color: #66ccff;  /*light blue*/
+  background-color: #ffe6f2;  /*light pink*/
   border-radius: 15px;
 }
 
 .button3:hover{
-  background-color:#0088cc;
+  background-color:#ff80bf;
 }
 
 .button3:active{
-  background-color: #0088cc;
+  background-color: #ff80bf;
   box-shadow: 0 5px #666;
   transform: translateY(4px);
 }
+
 /*-----------------------------------------*/
 .button4{
-  background-color: #ff3300;  /*red*/
+  background-color: #ffffff;  /* White */
   border-radius: 15px;
 }
 
 .button4:hover{
-  background-color:#b32400;
+  background-color:#f2f2f2;
 }
 
 .button4:active{
-  background-color: #b32400;
+  background-color: #f2f2f2;
   box-shadow: 0 5px #666;
   transform: translateY(4px);
 }
-/*-----------------------------------------*/
-.button5{
-  background-color: #555555;  /* Black */
-  border-radius: 15px;
-}
 
-.button5:hover{
-  background-color:#262626;
-}
-
-.button5:active{
-  background-color: #262626;
-  box-shadow: 0 5px #666;
-  transform: translateY(4px);
-}
-/*-----------------------------------------*/
-.button6{
-  background-color: #FFFFFF;  /* Black */
-  border-radius: 15px;
-}
-
-.button6:hover{
-  background-color:#d9d9d9;
-}
-
-.button6:active{
-  background-color: #d9d9d9;
-  box-shadow: 0 5px #666;
-  transform: translateY(4px);
-}
 

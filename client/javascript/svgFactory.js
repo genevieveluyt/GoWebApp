@@ -55,12 +55,13 @@ function makeSquare(x, y, length){
 	square.setAttribute("y", y);
 	square.setAttribute("width", length);
 	square.setAttribute("height", length);
-	square.style.fill = '#87D2DE';
+	square.style.fill = '#DEB887';
 	square.style.stroke = '#786449';
 	square.style.strokeWidth = 2;
 
   return square; 
 }
+
 
 /**
 * Makes and returns a new SVG token object. 

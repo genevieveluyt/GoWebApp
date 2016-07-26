@@ -44,6 +44,17 @@ var backgroundMusicInit = function(){
 
 var changeColor = function(color){
 	document.body.style.background = color;
-	document.getElementById("barColor").style.background = color;
+	if(color == '#e6e6ff'){	//light purple
+		document.getElementById("barColor").style.background = '#ccccff';
+	}
+	if(color == '#cceeff'){	//light blue
+		document.getElementById("barColor").style.background = '#99ddff';
+	}
+	if(color == '#ffe6f2'){	//light pink
+		document.getElementById("barColor").style.background = '#ffcce6';
+	}
+	if(color == '#ffffff'){	//white
+		document.getElementById("barColor").style.background = '#ffffff';
+	}
 }
 
