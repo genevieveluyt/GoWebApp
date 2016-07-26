@@ -84,6 +84,25 @@ var initializeServer = function() {
 			});
 		}
 
+		var broadcastUserListUpdateSignal = function(){
+			io.sockets.emit('actionRequired', {code : 10, data : generateUserList()});
+		}
+
+		var generateUserList = function(){
+			var userList = [];
+			var replyMessage = 'The user list is as follows:<br>';
+			for(var socketID in connectionList){
+				if(connectionList[socketID].username == null){
+					continue;
+				}
+				if(socketID != socket.id){
+					userList.push(connectionList[socketID].username);
+					replyMessage += (socketID + ': ' + connectionList[socketID].username + '<br>');
+				}
+			}
+			return {userList : userList, replyMessage : replyMessage};
+		}
+
 		var fetchUsernameForGameObject = function(gameObject, callback){
 			// Fetch the players' usernames and put them into gameObject before sending back to client
 			db.getAccountInfo(gameObject.player1, function(player1UserObj){
@@ -218,6 +237,7 @@ var initializeServer = function() {
 						userObjID = objID;
 						username = credential.username;
 						terminateDuplicatedSession(username);
+						broadcastUserListUpdateSignal();
 						connectionList[socket.id].username = username;
 					}
 					response(result); // 0: Password incorrect 1: Login succeed 2: Account created
@@ -234,6 +254,7 @@ var initializeServer = function() {
 								assert.equal(err, null);
 								username = credential.username;
 								terminateDuplicatedSession(username);
+								broadcastUserListUpdateSignal();
 								connectionList[socket.id].username = username;
 								response(3); // 3: Account upgraded
 							});
@@ -244,6 +265,7 @@ var initializeServer = function() {
 									userObjID = objID;
 									username = credential.username;
 									terminateDuplicatedSession(username);
+									broadcastUserListUpdateSignal();
 									connectionList[socket.id].username = username;
 									if(isAccountMerged){
 										response(4); // Temporary account merged to formal account
@@ -440,18 +462,7 @@ var initializeServer = function() {
 				response('' + isLoggedIn.toString());
 			}
 			if(message.command == 'getUserList'){
-				var userList = [];
-				var replyMessage = 'The user list is as follows:<br>';
-				for(var socketID in connectionList){
-					if(connectionList[socketID].username == null){
-						continue;
-					}
-					if(socketID != socket.id){
-						userList.push(connectionList[socketID].username);
-						replyMessage += (socketID + ': ' + connectionList[socketID].username + '<br>');
-					}
-				}
-				response({userList : userList, replyMessage : replyMessage});
+				response(generateUserList());
 			}
 			if(message.command == 'privateMessage'){
 				var sID = null;

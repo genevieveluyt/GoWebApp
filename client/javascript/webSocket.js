@@ -267,6 +267,12 @@ socket.on('actionRequired', function(action){
 			//alert('Game finished :)');
 			onFinishedGame(action.data.score1, action.data.score2);
 			break;
+		case 10:
+			// User list updated
+			var htmlUserList = action.data.replyMessage;
+			var latestUserList = action.data.userList;
+			console.log(latestUserList);
+			break;
 		default:
 			console.log('Unsupported action');
 	}
