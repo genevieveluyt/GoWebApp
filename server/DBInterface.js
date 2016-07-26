@@ -390,6 +390,22 @@ class DBInterface{
 		});		
 	}
 
+	findUser(username, callback){
+		var _this = this;
+		this.connect(function(){
+			var collection = _this._db.collection('users');
+			collection.findOne({username : username}, function(findErr, user){
+				if(!user){
+					callback(null);
+				}else{
+					var infoObj = user;
+					delete user.password; // Sending password back to client is not a good option
+					callback(infoObj);
+				}
+			});
+		});
+	}
+
 	// Close the connection
 	close(){
 		if(this._db)

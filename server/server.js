@@ -396,6 +396,15 @@ var initializeServer = function() {
 				response('ERROR: Not logged in');
 				return;
 			}
+			if(gameMode){
+				if(gameMode == 2){
+					if(onlineOpponentSocket){
+						onlineOpponentSocket.emit('actionRequired', {code : 6, data : null}, function(){
+							console.log('Notified the opponent about disconnection.');
+						});
+					}
+				}
+			}
 			var parameterObject = data;
 			var unfinishedGameObjectID = parameterObject.gameID == null? null: ObjectID(parameterObject.gameID);
 			var gameParameters = parameterObject.gameParameters;
@@ -416,11 +425,22 @@ var initializeServer = function() {
 				var tokenType = gameParameters.tokenType;
 				var allowedPlayer = gameParameters.allowedPlayer;
 
-				db.newGame(userObjID, playMode < 2? opponentAccountObjectID: allowedPlayer, newBoardSize, playMode, tokenType, function(newGameObjectID) {
-					resumeData(newGameObjectID, true, null, false, function(gameObject){
-						response(gameObject);
+				if(playMode == 2){
+					db.findUser(allowedPlayer, function(result){
+						db.newGame(userObjID, result? result._id: null, newBoardSize, playMode, tokenType, function(newGameObjectID) {
+							resumeData(newGameObjectID, true, null, false, function(gameObject){
+								response(gameObject);
+							});
+						});
 					});
-				});
+				}else{
+					db.newGame(userObjID, opponentAccountObjectID, newBoardSize, playMode, tokenType, function(newGameObjectID) {
+						resumeData(newGameObjectID, true, null, false, function(gameObject){
+							response(gameObject);
+						});
+					});
+				}
+
 			}
 		});
 
@@ -493,6 +513,7 @@ var initializeServer = function() {
 							onlineOpponentSocket.emit('actionRequired', {code : 2, data : gameRecord}, function() {
 								console.log('End of game signal sent to the opponent');
 							});
+							delete availableMatchList[onlineGameObjectID];
 						});
 
 					}
