@@ -171,6 +171,7 @@ function showNewGamePage() {
 function showGamePage() {
 	$('.page-section').hide();
 	$('#history-controls').hide();
+	$('#game-chat-container').append($('#online-games-chat-container').children());
 	$('#gameplay-buttons').show();
 	$('#game-page').show();
 	$('#logo').show();
@@ -191,6 +192,7 @@ function showHistoryPage() {
 function showOnlineGamePage() {
 	loadAvailableGames();
 	$('.page-section').hide();
+	$('#online-games-chat-container').append($('#game-chat-container').children());
 	$('#online-game-page').show();
 	$('#logo').show();
 	pageSwitched();

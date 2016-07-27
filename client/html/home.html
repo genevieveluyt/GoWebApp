@@ -213,7 +213,7 @@
 				
 				<div class="col-md-3">
 
-					<div class="panel panel-primary">
+					<div id="game-chat-container" class="panel panel-primary">
 						<div id="chat-box" class="panel-body">
 						</div>
 						<div class="panel-footer">
@@ -360,19 +360,27 @@
             	<a id="open-host-modal-button" href="#host-modal" data-toggle="modal" class="btn btn-default" style="float: right;"">Host New Game</a>
             </h2>
             <br>
-         	<table class="table">
-                <thead>
-                    <tr>
-                        <th>Host User</th>
-                        <th>Host Plays</th>
-                        <th>Allowed Player</th>
-                        <th>Status</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                	<tbody id="online-game-table" >
-                </tbody>
-            </table>
+
+            <div class="row">
+            	<div class="col-md-8">
+		         	<table class="table">
+		                <thead>
+		                    <tr>
+		                        <th>Host User</th>
+		                        <th>Host Plays</th>
+		                        <th>Allowed Player</th>
+		                        <th>Status</th>
+		                        <th></th>
+		                    </tr>
+		                </thead>
+		                	<tbody id="online-game-table" >
+		                </tbody>
+		            </table>
+		        </div>
+		        <div class="col-md-4">
+		        	<div id="online-games-chat-container" class="panel panel-primary"></div>
+		        </div>
+		    </div>
 	    </div>
 
 	    <!-- =========================================HOST GAME MODAL=======================================-->
