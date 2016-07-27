@@ -162,8 +162,9 @@ function showNewGamePage() {
 	}else{
 		$('#online-multiplayer-radio').hide();
 	}
-	displayMultiplayerControlPanel();
-	displayMultiplayerUsernamePanel();
+	// displayMultiplayerControlPanel();
+	// displayMultiplayerUsernamePanel();
+	showGameModePage();
 	$('#logo').show();
 	pageSwitched();
 }
