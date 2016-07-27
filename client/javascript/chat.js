@@ -103,6 +103,18 @@ function updateUsers(updatedUserList) {
 				document.getElementById('chat-box').innerHTML += chatMsg;
 			chatMessages['public'] += chatMsg;
 			delete chatMessages[userList[i]];
+
+			// if have unread messages from them, remove notification
+			if (jQuery.inArray(userList[i], unreadPrivateMessages) >= 0) {
+				// remove from unread private messages list
+				var index = jQuery.inArray(userList[i], unreadPrivateMessages);
+				if (index>=0) unreadPrivateMessages.splice(index, 1);
+
+				// if no other unread private messages, hide unread messages circle on private button
+				if (unreadPrivateMessages.length === 0) {
+					$('#private-messages-button svg').hide();
+				}
+			}
 		}
 	}
 
