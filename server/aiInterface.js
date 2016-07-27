@@ -41,6 +41,9 @@ function getRandomMove(size, board, lastMove, TTL, cb){
 			console.log(str);
 			console.log('No more response');
 			var move = JSON.parse(str);
+			var temp = move.x;
+			move.x = move.y;
+			move.y = temp;
 			cb(move);
 		});
 	};
