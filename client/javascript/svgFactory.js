@@ -11,6 +11,11 @@
 //  Namespace for SVG elements, different than normal HTML element namespace.
 var SVGNameSpace = "http://www.w3.org/2000/svg";
 
+var colorControlObject = {
+  squareFill : 'rgb(245, 227, 214)',
+  squareStroke : 'rgb(234, 200, 174)'
+};
+
 /**
  * Makes a new SVG line object and returns it. 
  *
@@ -55,8 +60,8 @@ function makeSquare(x, y, length){
 	square.setAttribute("y", y);
 	square.setAttribute("width", length);
 	square.setAttribute("height", length);
-	square.style.fill = '#DEB887';
-	square.style.stroke = '#786449';
+	square.style.fill = colorControlObject.squareFill;
+	square.style.stroke = colorControlObject.squareStroke;
 	square.style.strokeWidth = 2;
 
   return square; 
