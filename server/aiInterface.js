@@ -21,7 +21,7 @@ function getRandomMove(size, board, lastMove, TTL, cb){
 	// See https://nodejs.org/api/http.html#http_http_request_options_callback
 	var options = {
 		host : '127.0.0.1',
-		path : TTL == 15? '/ai/attackEnemy': (TTL == 14? '/ai/formEyes': (TTL == 13? '/ai/maxLibs': '/ai/random')),
+		path : TTL == 0? '/ai/attackEnemy': (TTL == 1? '/ai/formEyes': (TTL == 2? '/ai/maxLibs': '/ai/random')),
 		port : '30000',
 		method : 'POST',
 		headers: {
