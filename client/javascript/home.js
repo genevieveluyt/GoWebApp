@@ -162,7 +162,7 @@ function logout() {
  */
 function showAlert(text, header) {
 	var div = document.createElement("div");
-	div.className = "alert alert-success alert-dismissible fade in";
+	div.className = "alert alert-danger alert-dismissible fade in";
 	div.setAttribute("role", "alert");
 
 	var closeBtn = document.createElement("button");
@@ -192,4 +192,8 @@ function showAlert(text, header) {
 
 	$('#alert').html(div);
 	$('#alert').show();
+
+	setTimeout(function () {
+	    $('#alert').children().remove();
+	}, 2000);
 }

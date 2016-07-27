@@ -236,11 +236,11 @@ function onClickToken(event) {
 	makeMove(parseInt(token.getAttribute("X")), parseInt(token.getAttribute("Y")), currPlayer, false, function(result) {
 		switch(result) {
 			case -2:
-				showAlert("That move would recreate the past board state!", "Ko Move");
+				showAlert("If you want to reverse the gameboad, use \"Undo\".", "Ko Move");
 				isLoading = false;
 				break;
 			case -3:
-				showAlert("That move would cause your army to be immediately captured!", "Suicide");
+				showAlert("Think twice. Every life matters.", "Suicide");
 				isLoading = false;
 		}
 	});
