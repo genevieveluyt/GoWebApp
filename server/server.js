@@ -98,6 +98,10 @@ var initializeServer = function() {
 			io.sockets.emit('actionRequired', {code : 10, data : null});
 		};
 
+		var broadcastAvailableGameListUpdateSignal = function() {
+			io.sockets.emit('actionRequired', {code : 8, data : null});
+		};
+
 		var terminateCurrentOnlineMultiplaySession = function(){
 			if(gameMode){
 				if(gameMode == 2){
@@ -107,6 +111,7 @@ var initializeServer = function() {
 						}else{
 							availableMatchList[onlineGameObjectID].status = 0;
 						}
+						broadcastAvailableGameListUpdateSignal();
 					}
 					if(onlineOpponentSocket){
 						onlineOpponentSocket.emit('actionRequired', {code : 6, data : null}, function(){
@@ -162,17 +167,7 @@ var initializeServer = function() {
 
 				if(initRequired){
 					// If initialization is required
-					if(gameMode){
-						if(gameMode == 2){
-							if(availableMatchList[onlineGameObjectID]){
-								if(availableMatchList[onlineGameObjectID].hostUser == username){
-									delete availableMatchList[onlineGameObjectID];
-								}else{
-									availableMatchList[onlineGameObjectID].status = 0;
-								}
-							}
-						}
-					}
+					terminateCurrentOnlineMultiplaySession();
 					prevBoard = [];
 					currBoard = [];
 					tempBoard = [];
@@ -282,6 +277,7 @@ var initializeServer = function() {
 						socket.emit('actionRequired', {code : 3, data : onlineOpponentUserName}, function(){
 							console.log('Waiting request sent');
 						});
+						broadcastAvailableGameListUpdateSignal();
 					}
 				});
 			}else{
@@ -324,6 +320,7 @@ var initializeServer = function() {
 							resumeData(gameObjectID, true, tempSocket, false, function(gameObject){
 								delete gameObject['moveHistory'];
 								response({code : 0, gameObject : gameObject});
+								broadcastAvailableGameListUpdateSignal();
 								tempSocket.emit('actionRequired', {code : 5, data : {onlineOpponentAccountObjectID : userObjID, onlineOpponentSocket : socket.id, onlineOpponentUserName : username}}, function(){
 									console.log('Notified the host about the connection of the opponent');
 								});
@@ -341,6 +338,7 @@ var initializeServer = function() {
 			console.log(availableMatchList);
 			console.log(onlineGameObjectID);
 			availableMatchList[onlineGameObjectID.toString()].status = 1;
+			broadcastAvailableGameListUpdateSignal();
 			notifyClientForUpdate();
 			// response(0);
 		});
@@ -349,6 +347,7 @@ var initializeServer = function() {
 			onlineOpponentSocket = null;
 			if(availableMatchList[onlineGameObjectID.toString()]){
 				availableMatchList[onlineGameObjectID.toString()].status = 0;
+				broadcastAvailableGameListUpdateSignal();
 			}
 			// response(0);
 		});
@@ -546,6 +545,7 @@ var initializeServer = function() {
 							}
 
 							delete availableMatchList[onlineGameObjectID];
+							broadcastAvailableGameListUpdateSignal();
 						});
 						_makeMove(-10);
 					}else{

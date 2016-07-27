@@ -103,9 +103,9 @@ function clickPass(event) {
 			//showAlert("result = " + result);
 			if (result === -4) {
 				if(board.online){
-					showAlert('Opps! This is not your turn...');
+					showAlert('Opps! This is not your turn...', 2000);
 				}else{
-					showAlert("Our hamsters are taking a break.", "Try again in a moment");
+					showAlert("Our hamsters are taking a break.", "Try again in a moment", 2000);
 				}
 			}
 			isLoading = false;
@@ -232,7 +232,7 @@ function onClickToken(event) {
 	if (token.getAttribute("class") !== "token-image unplaced")
 		return;
 	if (isLoading) {
-		showAlert("Our hamsters are taking a break", "Try again in a moment.");
+		showAlert("Our hamsters are taking a break", "Try again in a moment.", 2000);
 		return;
 	}
 
@@ -241,18 +241,18 @@ function onClickToken(event) {
 	makeMove(parseInt(token.getAttribute("X")), parseInt(token.getAttribute("Y")), currPlayer, false, function(result) {
 		switch(result) {
 			case -2:
-				showAlert("If you want to reverse the gameboad, use \"Undo\".", "Ko Move");
+				showAlert("If you want to reverse the gameboad, use \"Undo\".", "Ko Move", 2000);
 				isLoading = false;
 				break;
 			case -3:
-				showAlert("Think twice. Every life matters.", "Suicide");
+				showAlert("Think twice. Every life matters.", "Suicide", 2000);
 				isLoading = false;
 				break;
 			case -4:
 				if(board.online){
-					showAlert('Opps! This is not your turn...');
+					showAlert('Opps! This is not your turn...', 2000);
 				}else{
-					showAlert("Our hamsters are taking a break.", "Try again in a moment");
+					showAlert("Our hamsters are taking a break.", "Try again in a moment", 2000);
 				}
 				break;
 		}

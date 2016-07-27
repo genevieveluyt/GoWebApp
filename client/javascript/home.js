@@ -1,6 +1,7 @@
 var userSigningIn; //which player is signing in
 var onGamePage = false;
 var loggingInBeforeOnline = false;
+var alertIntervalID = null;
 
 window.onload = function() {
 
@@ -261,10 +262,10 @@ function submitLogin() {
 	auth(username, password, function(saveCredentialToCookie, result) {
 		switch(result) {
 			case -1:
-				showAlert("You're already logged in!");
+				showAlert("You're already logged in!", 2000);
 				break;
 			case 0:
-				showAlert("Check your password", "Oops...");
+				showAlert("Check your password", "Oops...", 2000);
 				break;
 			case 3: showAlert("New account created", "Welcome!");
 			case 1:
@@ -300,7 +301,10 @@ function logout() {
  * @param text {string} alert message
  * @param header {string} optional, bolded text before message
  */
-function showAlert(text, header) {
+function showAlert(text, header, time) {
+	if(alertIntervalID){
+		clearInterval(alertIntervalID);
+	}
 	var div = document.createElement("div");
 	div.className = "alert alert-danger alert-dismissible fade in";
 	div.setAttribute("role", "alert");
@@ -333,7 +337,14 @@ function showAlert(text, header) {
 	$('#alert').html(div);
 	$('#alert').show();
 
-	setTimeout(function () {
-	    $('#alert').children().remove();
-	}, 2000);
+	// setTimeout(function () {
+	//     $('#alert').children().remove();
+	// }, 2000);
+	if (time) {
+		alertIntervalID = setInterval(function(){
+			$('#alert').hide();
+			clearInterval(alertIntervalID);
+		}, time);		
+	}
+
 }
