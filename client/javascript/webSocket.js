@@ -340,8 +340,11 @@ socket.on('actionRequired', function(action){
 			showAlert('Another player disconnected, standing by... </br> If you are the guest, try to refresh the page :)');
 			socket.emit('opponentDisconnected');
 			break;
+		case 7:
+			// AI Interface currently unavailable
+			showAlert('AI Interface currently unavailable');
+			break;
 		case 10:
-
 			// Should put process related to refreshing user list in the getUserList() function as much as possible
 			getUserList(); 
 			break;

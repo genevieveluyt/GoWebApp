@@ -51,7 +51,9 @@ function getRandomMove(size, board, lastMove, cb){
 	var req = http.request(options, callback);
 
 	req.on('error', function (e) {
-		console.log('Problem with request: ${e.message}' + e.toString());
+		console.log('Problem with request: ' + e.toString());
+		console.log('Go AI Server is now offline');
+		cb(null);
 	});
 
 	req.write(postData);

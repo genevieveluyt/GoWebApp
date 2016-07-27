@@ -216,6 +216,10 @@ var initializeServer = function() {
 				// Need to fetch data from the AI server
 				console.log('getting random move');
 				aiInterface.getRandomMove(currBoard.length, currBoard, lastMove, function(move){
+					if(!move){
+						socket.emit('actionRequired', {code : 7, data : null});
+						move = {x : 0, y : 0, c : currentTurn, pass : true};
+					}
 					if(move.pass){
 						move = {x : 0, y : 0, c : currentTurn, pass : true};
 					}
