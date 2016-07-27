@@ -376,8 +376,11 @@ socket.on('publicMsg', function(data){
 		return;
 
 	chatMessages['public'] += (data.sender + ": " + data.msg + "<br>");
-	if (!messageRecipient)
+	if (!messageRecipient) {	// on public tab
 		document.getElementById('chat-box').innerHTML += (data.sender + ": " + data.msg + "<br>");
+	} else {
+		$('#public-messages-button svg').show();
+	}
 });
 
 socket.on('privateMsg', function(data){
@@ -386,8 +389,15 @@ socket.on('privateMsg', function(data){
 		return;
 
 	chatMessages[data.sender] += (data.sender + ": " + data.msg + "<br>");
-	if (messageRecipient === data.sender)
+	if (messageRecipient === data.sender)	// private tab with user
 		document.getElementById('chat-box').innerHTML += (data.sender + ": " + data.msg + "<br>");
+	else {
+		$('#private-messages-button svg').show();
+		if (jQuery.inArray(data.sender, unreadPrivateMessages) === -1) {	// user doesn't have unread messages from this person
+			unreadPrivateMessages.push(data.sender);
+			$('#private-messages-dropdown a[username=' + data.sender + ']>svg').show();
+		}
+	}
 });
 
 socket.on('connect', function(){

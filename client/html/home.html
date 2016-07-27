@@ -268,11 +268,19 @@
 						<div class="panel-footer">
 							<div class="btn-group btn-group-justified" role="group" aria-label="...">
 								<div class="btn-group" role="group">
-									<button id="public-messages-button" type="button" class="btn btn-default active">Public</button>
+									<button id="public-messages-button" type="button" class="btn btn-default active">
+										Public
+										<svg class="unread-svg initially-hidden">
+											<circle class="unread-circle" cx="4" cy="4" r="3"/>
+										</svg>
+									</button>
 								</div>
 								<div class="btn-group dropup" role="group">
 								    <button id="private-messages-button" type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 								    	<span id="private-button-text">Private</span><span class="caret"></span>
+								    	<svg class="unread-svg initially-hidden" height="8" width="8">
+											<circle class="unread-circle" cx="4" cy="4" r="3"/>
+										</svg>
 								    </button>
 								    <ul id="private-messages-dropdown" class="dropdown-menu">
 								    </ul>

@@ -96,7 +96,7 @@ window.onload = function() {
 	// Game Page - Score Modal
 	$('#score-new-game-button').click(function() {
 		$('#score-modal').modal('hide');
-		showNewGamePage();
+		showGameModePage();
 	})
 	$('#score-view-history-button').click(function() {
 		$('#score-modal').modal('hide');
@@ -152,21 +152,6 @@ function showGameOptionsPage() {
 	$('.page-section').hide();
 	$('#logo').show();
 	$('#game-options-page').show();
-	pageSwitched();
-}
-
-function showNewGamePage() {
-	$('.page-section').hide();
-	$('#game-setup-page').show();
-	if(primaryAccountUserName.substring(0,5) != "temp_"){
-		$('#online-multiplayer-radio').show();
-	}else{
-		$('#online-multiplayer-radio').hide();
-	}
-	// displayMultiplayerControlPanel();
-	// displayMultiplayerUsernamePanel();
-	showGameModePage();
-	$('#logo').show();
 	pageSwitched();
 }
 
