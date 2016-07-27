@@ -83,15 +83,15 @@ function _continueGame(gameInfo, callback){
 	else
 		$('#undo-button').hide();
 
-    if (primary === 1 && gameInfo.player2 === player1.username) {
-		primary = 2;
-		if(gameInfo.gameMode != 2)
-			swapPlayerTokens();
-	} else if (primary === 2 && gameInfo.player1 === player2.username) {
-		primary = 1;
-		if(gameInfo.gameMode != 2)
-			swapPlayerTokens();
-	}
+ //    if (primary === 1 && gameInfo.player2 === primaryAccountUserName) {
+	// 	primary = 2;
+	// 	// if(gameInfo.gameMode != 2)
+	// 		swapPlayerTokens();
+	// } else if (primary === 2 && gameInfo.player1 === primaryAccountUserName) {
+	// 	primary = 1;
+	// 	// if(gameInfo.gameMode != 2)
+	// 		swapPlayerTokens();
+	// }
 
 	player1.username = gameInfo.player1;
 	player2.username = gameInfo.player2;

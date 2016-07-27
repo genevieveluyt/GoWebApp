@@ -341,6 +341,17 @@ class DBInterface{
 		});
 	}
 
+	clearCurrentGame(userAccountObjectID, callback){
+		var _this = this;
+		this.connect(function(){
+			var userCollection = _this._db.collection('users');
+			userCollection.updateOne({_id : userAccountObjectID}, {$set: {currentGame : null}},
+				function(clearCurrError, result){
+					callback(clearCurrError, result);
+				});
+		});
+	}
+
 	getGameObject(gameObjectID, callback){
 		var _this = this;
 		this.connect(function(){

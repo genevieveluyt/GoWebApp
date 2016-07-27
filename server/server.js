@@ -138,6 +138,7 @@ var initializeServer = function() {
 		};
 
 		var resumeData = function(gameObjectID, initRequired, acquiredOpponentSocket, suppressSubroutine, callback){
+			console.log('Inside resume data');
 			db.getGameObject(gameObjectID, function(gameObject){
 
 				if(initRequired){
@@ -204,26 +205,32 @@ var initializeServer = function() {
 		};
 
 		var externalNodeSubroutine = function(count){
-			console.log('Inside externalNodeSubroutine');
+			console.log('Inside externalNodeSubroutine currentTurn: ' + currentTurn);
 			// If the game is in AI mode, and this is the AI's turn, call the AI interface and get a random move.
 			if(gameMode == 1 && (currentTurn != accountHolderTokenType)){
-				if(count > aiRetryThreshold){
+				if(count == aiRetryThreshold){
 					makeMove({x : 0 ,y : 0, c : currentTurn, pass : true}, function(result){
 						notifyClientForUpdate();
 					});
 					return;
 				}
 				// Need to fetch data from the AI server
-				console.log('getting random move');
+				console.log('getting AI move');
 				aiInterface.getRandomMove(currBoard.length, currBoard, lastMove, count, function(move){
 					if(!move){
 						socket.emit('actionRequired', {code : 7, data : null});
 						move = {x : 0, y : 0, c : currentTurn, pass : true};
+						return;
 					}
-					if(move.pass){
+					if(move.pass && count < 3 && !lastMove.pass){
+						externalNodeSubroutine(count + 1);
+						return;
+					}else if (move.pass){
 						move = {x : 0, y : 0, c : currentTurn, pass : true};
 					}
+
 					makeMove(move, function(result){
+						console.log('Make move result: '+ result + ' ' + move);
 						if(result < 0){
 							externalNodeSubroutine(count + 1);
 							return;
@@ -463,7 +470,7 @@ var initializeServer = function() {
 				}else{
 					tokenList = gameLogicModule.applyMove(prevBoard, currBoard, tempBoard);
 				}
-				var tokensCaptured = resultCode;
+				var tokensCaptured = moveObj.pass? 0: resultCode;
 				if(currentTurn == 1){
 					player1CapturedTokens += tokensCaptured;
 				}else{
@@ -490,8 +497,11 @@ var initializeServer = function() {
 					
 				});
 			};
-
+				console.log('>>> ');
+				console.log(moveObj, currentTurn);
+				console.log('<<<');
 			if(moveObj.c == currentTurn && (gameMode == 2? moveObj.c == accountHolderTokenType: true)){
+				console.log('===Inside if')
 				if(moveObj.pass){
 					if(moveObj.c == 1){
 						player1Passed = true;
@@ -499,7 +509,8 @@ var initializeServer = function() {
 					if(moveObj.c == 2){
 						player2Passed = player1Passed;
 					}
-					_makeMove(0);
+					console.log(player1Passed, player2Passed);
+					
 					if(player1Passed && player2Passed){
 						console.log('Game over');
 						var scoreList = gameLogicModule.calculateScore(currBoard, player1CapturedTokens, player2CapturedTokens);
@@ -525,7 +536,9 @@ var initializeServer = function() {
 
 							delete availableMatchList[onlineGameObjectID];
 						});
-
+						_makeMove(-10);
+					}else{
+						_makeMove(0);
 					}
 				}else{
 					console.log('lastMove: ' + JSON.stringify(lastMove));
@@ -557,7 +570,7 @@ var initializeServer = function() {
 			console.log('====');
 
 			makeMove(moveObj, function(result){
-				response(result);
+				response(moveObj.pass? 0: result);
 				if(result >= 0){
 					externalNodeSubroutine(0);
 				}
@@ -572,8 +585,30 @@ var initializeServer = function() {
 		});
 
 		socket.on('getGameHistory', function(data, response){
-			db.getGameHistory(userObjID, function(gameHistoryList){
-				response(gameHistoryList);
+			// Since this function will only be called when the client 
+			// tring to perform a history replay. It's reasonable to terminate it's 
+			// current gaming session.
+			if(gameMode){
+				if(gameMode == 2){
+					if(availableMatchList[onlineGameObjectID]){
+						if(availableMatchList[onlineGameObjectID].hostUser == username){
+							delete availableMatchList[onlineGameObjectID];
+						}else{
+							availableMatchList[onlineGameObjectID].status = 0;
+						}
+					}
+					if(onlineOpponentSocket){
+						onlineOpponentSocket.emit('actionRequired', {code : 6, data : null}, function(){
+							console.log('Notified the opponent about disconnection.');
+						})
+					}
+				}
+			}
+			db.clearCurrentGame(userObjID, function(error, result){
+				assert.equal(error, null);
+				db.getGameHistory(userObjID, function(gameHistoryList){
+					response(gameHistoryList);
+				});
 			});
 		});
 
