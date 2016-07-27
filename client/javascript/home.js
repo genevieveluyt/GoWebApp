@@ -1,14 +1,25 @@
 var userSigningIn; //which player is signing in
 var onGamePage = false;
+var loggingInBeforeOnline = false;
 
 window.onload = function() {
-	// Event Listeners
-	$('.new-game-button').click(showNewGamePage);
+
+	// Navbar
 	$('.home-button').click(showHomePage);
-	$('input[name="play-mode-radio"]:radio').change(displayMultiplayerControlPanel);
-	$('input[name="multiplayer-restriction-radio"]:radio').change(displayMultiplayerUsernamePanel);
-	$('#available-game-refresh-button').click(loadAvailableGames);
-	$('#submit-options-button').click(startGame);
+	$('#game-history-button').click(showHistoryPage);
+	$('#logout-button').click(logout);
+	$('.login-button').click(function() {
+		loggingInBeforeOnline = false;
+	});
+	$('#username-button').parent().hide();	// not sure why giving it the class 'initially-hidden' does not work...
+
+
+	// Home Page
+	$('.new-game-button').click(showGameModePage);
+	backgroundMusicInit();
+
+
+	// Login Modal
 	$('#submit-login-button').click(function() {
 		userSigningIn = 1;
 		submitLogin();
@@ -21,31 +32,92 @@ window.onload = function() {
 			$('#login-modal').modal('hide');
 	    }
 	});
-	$('#game-history-button').click(showHistoryPage);
-	$('#logout-button').click(logout);
-	$('#choose-token-modal').on('show.bs.modal', onTokenModalOpened);
-	$('#score-modal').on('hide.bs.modal', onScoreModalClosed);
+
+
+	// Game Mode Page
+	$('#game-mode-hotseat-button').click(function() {
+		board.hotseat = true;
+		board.online = false;
+		showGameOptionsPage();
+	});
+	$('#game-mode-online-button').click(function() {
+		// if not logged in, prompt login
+		if (primaryAccountUserName.substring(0,5) === "temp_") {
+			loggingInBeforeOnline = true;
+			$('#login-modal').modal('show');
+		} else {
+			showOnlineGamePage();
+		}
+	});
+	$('#game-mode-single-button').click(function() {
+		board.hotseat = false;
+		board.online = false;
+		showGameOptionsPage();
+	});
+
+
+	// Game Options Page
+	$('#submit-options-button').click(startGame);
+
+
+	// Online Game Page
+	$('open-host-modal-button').click(function() {
+		// browser automatically remember input, overriding initially-hidden
+		$('#host-private-username').hide();
+		$('#host-error-message').hide();
+	});
+
+
+	// Host Game Modal
+	$('#host-options-form input[name="public-private-radio"]:radio').change(function() {
+		if ($('#host-options-form input[name="public-private-radio"]:checked').val() === "public") {
+			$('#host-private-username').hide();
+			$('#host-error-message').hide();
+		} else {
+			$('#host-private-username').show();
+		}
+	});
+	$('#submit-host-button').click(submitHostForm);
+	$('#host-private-username').keyup(function(e){
+	    if(e.keyCode == 13)	// enter button
+	    {
+	        submitHostForm();
+	    }
+	});
+
+
+	// Game Page
+	$('#undo-button').click(clickUndo);
+	$('#pass-button').click(clickPass);
+	loadTokenSelectionModal();
+
+
+	// Game Page - Score Modal
+	$('#score-new-game-button').click(function() {
+		$('#score-modal').modal('hide');
+		showNewGamePage();
+	})
+	$('#score-view-history-button').click(function() {
+		$('#score-modal').modal('hide');
+		showHistoryPage();
+	})
+
+
+	// Game Page - Replay
 	$('#prev-board-button').click(clickPrevBoard);
 	$('#play-history-button').click(clickPlayBoard);
 	$('#next-board-button').click(clickNextBoard);
 	$('#replay-score-button').click(function() {
 		$('#score-modal').modal('show');
 	})
-	$('#undo-button').click(clickUndo);
-	$('#pass-button').click(clickPass);
-	$('#new-game-button').click(function() {
-		$('#score-modal').modal('hide');
-		showNewGamePage();
-	})
-	$('#view-history-button').click(function() {
-		$('#score-modal').modal('hide');
-		showHistoryPage();
-	})
-	$('#view-online-game-button').click(function() {
-		$('#score-modal').modal('hide');
-		showOnlineGamePage();
-	})
-	// send message if user hits enter in chat box
+
+
+	// Game Page - Token Selection Modal
+	$('#choose-token-modal').on('show.bs.modal', onTokenModalOpened);
+	$('#score-modal').on('hide.bs.modal', onScoreModalClosed);
+
+
+	// Chat
 	$('#chat-input').keyup(function(e){
 	    if(e.keyCode == 13)	// enter button
 	    {
@@ -54,25 +126,10 @@ window.onload = function() {
 	});
 	$('#public-messages-button').click(clickPublic);
 
-	$('#username-button').parent().hide();	// not sure why giving it the class 'initially-hidden' does not work...
 
-	loadTokenSelectionModal();
-	backgroundMusicInit();
-}
-
-function displayMultiplayerControlPanel(){
-	if($('input[name="play-mode-radio"]:checked').val() === "online"){
-		$('#multiplayer-control-panel').show();
-	}else{
-		$('#multiplayer-control-panel').hide();
-	}
-}
-
-function displayMultiplayerUsernamePanel(){
-	if($('input[name="multiplayer-restriction-radio"]:checked').val() == "private")
-		$('#private-game-limitation-panel').show();
-	else
-		$('#private-game-limitation-panel').hide();
+	// Online Multiplayer
+	$('#available-game-refresh-button').click(loadAvailableGames);
+	
 }
 
 function showHomePage() {
@@ -80,6 +137,20 @@ function showHomePage() {
 	if (player1.username)	// if logged in, show username
 		$('#username-button').parent().parent().show();
 	$('#home-page').show();
+	pageSwitched();
+}
+
+function showGameModePage() {
+	$('.page-section').hide();
+	$('#logo').show();
+	$('#game-mode-page').show(); 
+	pageSwitched();
+}
+
+function showGameOptionsPage() {
+	$('.page-section').hide();
+	$('#logo').show();
+	$('#game-options-page').show();
 	pageSwitched();
 }
 
@@ -100,6 +171,7 @@ function showNewGamePage() {
 function showGamePage() {
 	$('.page-section').hide();
 	$('#history-controls').hide();
+	$('#game-chat-container').append($('#online-games-chat-container').children());
 	$('#gameplay-buttons').show();
 	$('#game-page').show();
 	$('#logo').show();
@@ -120,6 +192,7 @@ function showHistoryPage() {
 function showOnlineGamePage() {
 	loadAvailableGames();
 	$('.page-section').hide();
+	$('#online-games-chat-container').append($('#game-chat-container').children());
 	$('#online-game-page').show();
 	$('#logo').show();
 	pageSwitched();
@@ -131,11 +204,24 @@ function pageSwitched() {
 	$('#alert').hide();
 }
 
+function submitHostForm() {
+	console.log("radio val = " + $('#host-options-form input[name="public-private-radio"]:checked').val());
+	console.log("")
+	if (($('#host-options-form input[name="public-private-radio"]:checked').val() === "public") || (jQuery.inArray($('#host-private-username').val(), userList)) > -1) {
+		board.online = true;
+		$('#host-modal').modal('hide');
+		startGame();
+		loadAvailableGames();
+	} else {
+		$('#host-error-message').html("Couldn't find user <strong>" + $('#host-private-username').val() + "</strong>");
+		$('#host-error-message').show();
+	}
+}
 
 function startGame() {
 	var gameMode = 0;
-	board.setSize(parseInt($('input[name="board-size-radio"]:checked').val()));
-	board.hotseat = $('input[name="play-mode-radio"]:checked').val() === "hotseat";
+	var privateUsername = null;
+	
 	if (board.hotseat){
 		$('#undo-button').show();
 	}
@@ -143,25 +229,21 @@ function startGame() {
 		$('#undo-button').hide();
 		gameMode = 1;
 	}
-	board.online = $('input[name="play-mode-radio"]:checked').val() === "online";
+
 	if (board.online){
 		gameMode = 2;
-	}
-
-	var tokenType = ($('input[name="token-type-radio"]:checked').val() === "black")? 1: 2;
-
-	var privateUsername = null;
-
-	if($('input[name="multiplayer-restriction-radio"]:checked').val() === "private"){
-		privateUsername = $('#multiplayer-username').val();
+		board.setSize(parseInt($('#host-options-form input[name="board-size-radio"]:checked').val()));
+		var tokenType = ($('#host-options-form input[name="token-type-radio"]:checked').val() === "black")? 1: 2;
+		if (!$('#host-public-button').hasClass('active')) {
+			privateUsername = $('#host-private-username').val();
+			$('#host-private-username').val('');
+		}
+	} else { console.log("tokenType val = " + $('#host-options-form input[name="token-type-radio"]:checked').val());
+		board.setSize(parseInt($('#game-options-form input[name="board-size-radio"]:checked').val()));
+		var tokenType = ($('#game-options-form input[name="token-type-radio"]:checked').val() === "black")? 1: 2;
 	}
 
 	currPlayer = 1;
-
-	if (primary === 2) {
-		primary = 1
-		swapPlayerTokens();
-	}
 
 	onNewGameButtonClick(board.size, gameMode, tokenType, privateUsername);
 }
@@ -200,6 +282,11 @@ function login() {
 	$('#login-button').parent().hide();
 	$('#username-button').html(player1.username + '<b class="caret"></b>');
 	$('#username-button').parent().show();
+
+	if (loggingInBeforeOnline) {
+		loggingInBeforeOnline = false;
+		showOnlineGamePage();
+	}
 }
 
 function logout() {

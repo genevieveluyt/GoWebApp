@@ -31,17 +31,15 @@ function loadAvailableGames() {
 
 			// Cell: Join
 			cell = row.insertCell();
-			var button = document.createElement('button');
-			button.setAttribute('gameId', data[i].gameID);
-			button.className = "btn btn-primary";
-			button.innerHTML = "Join";
 			if (data[i].status == 0 && (data[i].allowedPlayer == 'anonymous' || data[i].allowedPlayer == primaryAccountUserName)) {
+				var button = document.createElement('button');
+				button.setAttribute('gameId', data[i].gameID);
+				button.className = "btn btn-primary";
+				button.innerHTML = "Join";
 				button.onclick = clickJoinGame;
-			} else {
-				button.className = 'btn btn-primary disabled';
+				cell.className = "center-horizontal";
+				cell.appendChild(button);
 			}
-			cell.className = "center-horizontal";
-			cell.appendChild(button);
 		}
 	});	
 }
