@@ -344,6 +344,9 @@ socket.on('actionRequired', function(action){
 			// AI Interface currently unavailable
 			showAlert('AI Interface currently unavailable');
 			break;
+		case 8:
+			// Multi-player game list requires refresh
+			break;
 		case 10:
 			// Should put process related to refreshing user list in the getUserList() function as much as possible
 			getUserList(); 

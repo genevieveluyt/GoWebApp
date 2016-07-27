@@ -92,11 +92,30 @@ var initializeServer = function() {
 			socket.emit('actionRequired', {code : 0, data : null}, function(){
 				console.log('Update notification sent');
 			});
-		}
+		};
 
 		var broadcastUserListUpdateSignal = function(){
 			io.sockets.emit('actionRequired', {code : 10, data : null});
-		}
+		};
+
+		var terminateCurrentOnlineMultiplaySession = function(){
+			if(gameMode){
+				if(gameMode == 2){
+					if(availableMatchList[onlineGameObjectID]){
+						if(availableMatchList[onlineGameObjectID].hostUser == username){
+							delete availableMatchList[onlineGameObjectID];
+						}else{
+							availableMatchList[onlineGameObjectID].status = 0;
+						}
+					}
+					if(onlineOpponentSocket){
+						onlineOpponentSocket.emit('actionRequired', {code : 6, data : null}, function(){
+							console.log('Notified the opponent about disconnection.');
+						})
+					}
+				}
+			}
+		};
 
 		var generateUserList = function(){
 			var userList = [];
@@ -111,7 +130,7 @@ var initializeServer = function() {
 				}
 			}
 			return {userList : userList, replyMessage : replyMessage};
-		}
+		};
 
 		var fetchUsernameForGameObject = function(gameObject, callback){
 			// Fetch the players' usernames and put them into gameObject before sending back to client
@@ -410,15 +429,7 @@ var initializeServer = function() {
 				response('ERROR: Not logged in');
 				return;
 			}
-			if(gameMode){
-				if(gameMode == 2){
-					if(onlineOpponentSocket){
-						onlineOpponentSocket.emit('actionRequired', {code : 6, data : null}, function(){
-							console.log('Notified the opponent about disconnection.');
-						});
-					}
-				}
-			}
+			terminateCurrentOnlineMultiplaySession();
 			var parameterObject = data;
 			var unfinishedGameObjectID = parameterObject.gameID == null? null: ObjectID(parameterObject.gameID);
 			var gameParameters = parameterObject.gameParameters;
@@ -588,22 +599,7 @@ var initializeServer = function() {
 			// Since this function will only be called when the client 
 			// tring to perform a history replay. It's reasonable to terminate it's 
 			// current gaming session.
-			if(gameMode){
-				if(gameMode == 2){
-					if(availableMatchList[onlineGameObjectID]){
-						if(availableMatchList[onlineGameObjectID].hostUser == username){
-							delete availableMatchList[onlineGameObjectID];
-						}else{
-							availableMatchList[onlineGameObjectID].status = 0;
-						}
-					}
-					if(onlineOpponentSocket){
-						onlineOpponentSocket.emit('actionRequired', {code : 6, data : null}, function(){
-							console.log('Notified the opponent about disconnection.');
-						})
-					}
-				}
-			}
+			terminateCurrentOnlineMultiplaySession();
 			db.clearCurrentGame(userObjID, function(error, result){
 				assert.equal(error, null);
 				db.getGameHistory(userObjID, function(gameHistoryList){
@@ -650,6 +646,10 @@ var initializeServer = function() {
 
 		});
 
+		socket.on('suspendCurrentOnlineMultiplaySession', function(){
+			terminateCurrentOnlineMultiplaySession();
+		});
+
 		socket.on('control', function(message, response){
 			if(message.command == 'getAuthStatus'){
 				response('' + isLoggedIn.toString());
@@ -682,22 +682,7 @@ var initializeServer = function() {
 		socket.on('disconnect', function(){
 			console.log("Connection closed, removing socket..");
 			delete connectionList[socket.id];
-			if(gameMode != null){
-				if(gameMode == 2){
-					if(availableMatchList[onlineGameObjectID]){
-						if(availableMatchList[onlineGameObjectID].hostUser == username){
-							delete availableMatchList[onlineGameObjectID];
-						}else{
-							availableMatchList[onlineGameObjectID].status = 0;
-						}
-					}
-				}
-				if(onlineOpponentSocket){
-					onlineOpponentSocket.emit('actionRequired', {code : 6, data : null}, function(){
-						console.log('Notified the opponent about disconnection.');
-					})
-				}
-			}
+			terminateCurrentOnlineMultiplaySession();
 			broadcastUserListUpdateSignal();
 		});
 	});
