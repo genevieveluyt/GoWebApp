@@ -81,7 +81,7 @@ function updateUsers(updatedUserList) {
 
 	for (i = 0; i < unreadPrivateMessages.length; i++) {
 		// show unread messages circle on username
-		$('#private-messages-dropdown a[username=' + unreadPrivateMessages[i] + ']>svg').hide();
+		$('#private-messages-dropdown a[username=' + unreadPrivateMessages[i] + ']>svg').show();
 	}
 
 	// show users that signed in
