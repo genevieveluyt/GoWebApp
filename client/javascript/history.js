@@ -144,7 +144,7 @@ function clickPrevBoard(event) {
 function clickPlayBoard(event) {
 	if(!history.intervalID){
 		history.intervalID = setInterval(function(){
-			if($('#play-history-button').css('display') == 'none'){
+			if($('#history-controls').css('display') == 'none'){
 				clearInterval(history.intervalID);
 				history.intervalID = null;
 				return;
