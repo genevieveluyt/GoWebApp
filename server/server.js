@@ -82,7 +82,7 @@ var initializeServer = function() {
 		var currentTurn = null;
 		var player1CapturedTokens = 0;
 		var player2CapturedTokens = 0;
-		var aiRetryThreshold = 10;
+		var aiRetryThreshold = 15;
 		var onlineOpponentUserName = null;
 		var onlineOpponentSocket = null;
 		var onlineOpponentAccountObjectID = null;
@@ -215,7 +215,7 @@ var initializeServer = function() {
 				}
 				// Need to fetch data from the AI server
 				console.log('getting random move');
-				aiInterface.getRandomMove(currBoard.length, currBoard, lastMove, function(move){
+				aiInterface.getRandomMove(currBoard.length, currBoard, lastMove, count, function(move){
 					if(!move){
 						socket.emit('actionRequired', {code : 7, data : null});
 						move = {x : 0, y : 0, c : currentTurn, pass : true};

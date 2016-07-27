@@ -1,6 +1,6 @@
 var http = require("http");
 
-function getRandomMove(size, board, lastMove, cb){
+function getRandomMove(size, board, lastMove, TTL, cb){
 
 	// TODO: Implement me...
 	var tempLastMove = {
@@ -21,7 +21,7 @@ function getRandomMove(size, board, lastMove, cb){
 	// See https://nodejs.org/api/http.html#http_http_request_options_callback
 	var options = {
 		host : '127.0.0.1',
-		path : '/ai/random',
+		path : TTL == 15? '/ai/attackEnemy': (TTL == 14? '/ai/formEyes': (TTL == 13? '/ai/maxLibs': '/ai/random')),
 		port : '30000',
 		method : 'POST',
 		headers: {

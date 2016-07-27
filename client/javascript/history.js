@@ -22,17 +22,18 @@ function loadGameHistory() {
 			console.log(data[i].player2);
 			console.log(Object.keys(data[i]));
 
-			if (data[i].player1 === "anonymous")
-				names.player1 = "Player 1";
-			else
+			if (data[i].gameMode == 0){
+				names.player1 = (data[i].player1 == "anonymous")? 'Player 1': data[i].player1;
+				names.player2 = (data[i].player2 == "anonymous")? 'Player 2': data[i].player2;
+			}
+			if (data[i].gameMode == 1){
+				names.player1 = (data[i].player1 == "anonymous")? 'CPU': data[i].player1;
+				names.player2 = (data[i].player2 == "anonymous")? 'CPU': data[i].player2;
+			}
+			if (data[i].gameMode == 2){
 				names.player1 = data[i].player1;
-
-			if (data[i].gameMode === 1)
-				names.player2 = "CPU";
-			else if (data[i].player2 === "anonymous")
-				names.player2 = "Player 2";
-			else
 				names.player2 = data[i].player2;
+			}
 
 			var winnerImg = "<img src='assets/icon_crown.svg' class='winner-icon'></img>   "
 
@@ -46,14 +47,14 @@ function loadGameHistory() {
 
 			// Cell: Player 1
 			cell = row.insertCell();
-			if (data[i].finished && (data[i].score1 > data[i].score2))
+			if (data[i].finished && (data[i].score1.totalScore > data[i].score2.totalScore))
 				cell.innerHTML = winnerImg + names.player1;
 			else
 				cell.innerHTML = names.player1;
 
 			// Cell: Player 2
 			cell = row.insertCell();
-			if (data[i].finished && (data[i].score2 > data[i].score1))
+			if (data[i].finished && (data[i].score2.totalScore > data[i].score1.totalScore))
 				cell.innerHTML = winnerImg + names.player2;
 			else
 				cell.innerHTML = names.player2;
