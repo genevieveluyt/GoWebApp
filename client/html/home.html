@@ -60,7 +60,6 @@
 	            		<li class="dropdown">
 	            			<a href="#" id="username-button" class="dropdown-toggle" data-toggle="dropdown" style="font-weight: bold"></a>
 	            			<ul class="dropdown-menu">
-	            				<li><a href='#' id="view-online-game-button">Online Matchmaking</li>
 	            				<li><a href="#" id="game-history-button">Game History</a></li>
 	            				<li><a href="#" id="logout-button">Logout</a></li>
 	            			</ul>
@@ -117,32 +116,23 @@
 				</div>
 			</header>
 
-			<a href="#new-game" class="fh5co-block-links text-center new-game-button">
+			<a href="#" class="fh5co-block-links text-center new-game-button">
 				<h2>Play the Game</h2>
 			</a>
 	    </div>
 
-		<!--============================= GAME SETUP PAGE =============================-->
+	    <!--============================== GAME MODE PAGE =============================-->
 
-	    <div id="game-setup-page" class="page-section initially-hidden ">
-		
-			
-			<header id="fh5co-header" role="banner" height=200px>
-				<img src="assets/token_raccoon.svg" align="right"></img>
-				<img src="assets/token_panda.svg" align="right"></img>
-				<img src="assets/token_fox.svg" align="right"></img>
-				<img src="assets/token_cat.svg" align="center"></img>
-				<img src="assets/token_wolf.svg" align="left"></img>
-				<img src="assets/token_bear.svg" align="left"></img>
-				<div class="container">	
-					<h1 class="fh5co-header-intro" align="center">New Game Settings</h1>
-				</div>
-			</header>
-			
-			
-			<br>
-			
-			<form id="game-setup-form" class="center-contents-horizontal">
+	    <div id="game-mode-page" class="page-section initially-hidden">
+	    	<button id="game-mode-hotseat-button" type="button" class="btn btn-default">Local Multiplayer</button>
+	    	<button id="game-mode-single-button" type="button" class="btn btn-default">Single Player</button>
+	    	<button id="game-mode-online-button" type="button" class="btn btn-default">Online Multiplayer</button>
+	    </div>
+
+	    <!--============================= GAME OPTIONS PAGE =============================-->
+
+	    <div id="game-options-page" class="page-section initially-hidden ">
+	    	<form id="game-options-form" class="center-contents-horizontal">
 
 				<p><b>Board size</b></p>
 				
@@ -155,21 +145,6 @@
 					</label>
 					<label class="btn btn-default">
 						<input type="radio" name="board-size-radio" value=19 autocomplete="off"> 19x19
-					</label>
-				</div>
-				
-				<br><br>
-
-				<p><b>Play mode</b></p>
-				<div class="btn-group" data-toggle="buttons">
-					<label class="btn btn-default active">
-						<input type="radio" name="play-mode-radio" value="hotseat" autocomplete="off" checked> Local Multiplayer
-					</label>
-					<label class="btn btn-default">
-						<input type="radio" name="play-mode-radio" value="single" autocomplete="off"> 1 Player
-					</label>
-					<label class="btn btn-default initially-hidden" id="online-multiplayer-radio">
-						<input type="radio" name="play-mode-radio" value="online" autocomplete="off"> Online Multiplayer
 					</label>
 				</div>
 
@@ -185,34 +160,9 @@
 					</label>
 				</div>
 
-				<div id="multiplayer-control-panel" class="initially-hidden">
-					<br>
-					<p><b>Multiplayer game type</b></p>
-					<div class="btn-group" data-toggle="buttons">
-						<label class="btn btn-default active">
-							<input type="radio" name="multiplayer-restriction-radio" value="public" autocomplete="off" checked> Public
-						</label>
-						<label class="btn btn-default">
-							<input type="radio" name="multiplayer-restriction-radio" value="private" autocomplete="off"> Private
-						</label>
-					</div>
-
-					<div id="private-game-limitation-panel" class="initially-hidden">
-						<br>
-						<p><b>Private game limitation</b></p>
-						<div class="input-group" id="multiplayer-username-container">
-							<span class="input-group-addon">Play with</span>
-							<input type="text" class="form-control" placeholder="username" id="multiplayer-username">
-						</div>
-					</div>	
-				</div>
-
-				<div>
-				<br><br>
-				</div>
+				<br><br><br>
 
 				<input id="submit-options-button" class="btn btn-default" value="Let's Go!">
-				<br><br><br><br>
 			</form>
 	    </div>
 
@@ -281,7 +231,7 @@
 							</div>
 							<br>
 							<textarea id="chat-input" class="form-control" rows="3" style="resize:none;" placeholder="Type your message here..." ></textarea>
-							<p align="right">Hit enter to send</p>
+							<p align="right">Press enter to send</p>
 						</div>
 					</div>
 				</div>
@@ -356,8 +306,8 @@
 			            </div>
 				        
                         <div id="finished-game-buttons" class="center-contents-horizontal">
-                        	<button id="new-game-button" type="button" class="btn btn-default">New Game</button>
-                        	<button id="view-history-button" type="button" class="btn btn-default">View Game History</button>
+                        	<button id="score-new-game-button" type="button" class="btn btn-default">New Game</button>
+                        	<button id="score-view-history-button" type="button" class="btn btn-default">View Game History</button>
                         </div>
                     </div>
                 </div>
@@ -404,12 +354,17 @@
 		<!--=================================AVAILABLE GAMES=============================-->
 
 		<div id="online-game-page" class="page-section initially-hidden container">
-            <h2>Available Games <a href="#"><img src="assets/refresh.png" style="width:25px;height:25px;margin: 0 0 5px 0" id="available-game-refresh-button"></a></h2><br>
+            <h2>
+            	Available Games
+            	<a href="#"><img src="assets/refresh.png" style="width:25px;height:25px;margin: 0 0 5px 0" id="available-game-refresh-button"></a>
+            	<a id="open-host-modal-button" href="#host-modal" data-toggle="modal" class="btn btn-default" style="float: right;"">Host New Game</a>
+            </h2>
+            <br>
          	<table class="table">
                 <thead>
                     <tr>
                         <th>Host User</th>
-                        <th>Host Goes</th>
+                        <th>Host Plays</th>
                         <th>Allowed Player</th>
                         <th>Status</th>
                         <th></th>
@@ -419,6 +374,74 @@
                 </tbody>
             </table>
 	    </div>
+
+	    <!-- =========================================HOST GAME MODAL=======================================-->
+
+	    <div id="host-modal" class="modal fade" role="dialog">
+			<div class="modal-dialog modal-sm">
+
+				<!-- Modal content-->
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">&times;</button>
+						<h4 class="modal-title">Host a New Game</h4>
+					</div>
+					<div class="modal-body">
+
+						<form id="host-options-form" class="center-contents-horizontal">
+							<p><b>Board size</b></p>
+							
+							<div class="btn-group btn-group-justified" data-toggle="buttons">
+								<label class="btn btn-default active">
+									<input type="radio" name="board-size-radio" value=9 autocomplete="off" checked> 9x9
+								</label>
+								<label class="btn btn-default">
+									<input type="radio" name="board-size-radio" value=13 autocomplete="off"> 13x13
+								</label>
+								<label class="btn btn-default">
+									<input type="radio" name="board-size-radio" value=19 autocomplete="off"> 19x19
+								</label>
+							</div>
+
+							<br><br>
+
+							<p><b>Game Order</b></p>
+							<div class="btn-group btn-group-justified" data-toggle="buttons">
+								<label class="btn btn-default active">
+									<input type="radio" name="token-type-radio" value="black" autocomplete="off" checked> Go First
+								</label>
+								<label class="btn btn-default">
+									<input type="radio" name="token-type-radio" value="white" autocomplete="off"> Go Second
+								</label>
+							</div>
+
+							<br><br>
+
+							<p><b>Who Can Join</b></p>
+							<div class="btn-group btn-group-justified" data-toggle="buttons">
+								<label class="btn btn-default active">
+									<input type="radio" name="public-private-radio" value="public" autocomplete="off" checked> Anyone
+								</label>
+								<label class="btn btn-default">
+									<input type="radio" name="public-private-radio" value="private" autocomplete="off"> Specify User
+								</label>
+							</div>
+							
+							<br>
+
+							<input id="host-private-username" type="text" class="form-control initially-hidden" aria-describedby="basic-addon3" placeholder="Type username">
+							<p id="host-error-message" class="initially-hidden" style="text-align: right"></p>
+
+						</form>
+
+					</div>
+					<div class="modal-footer">
+						<button id="submit-host-button" class="btn btn-default active">Submit</button>
+					</div>
+				</div>
+
+			</div>
+		</div>
 
 	    <!--===============================GAME RULES MODAL==============================-->
 

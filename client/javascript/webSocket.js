@@ -318,7 +318,7 @@ socket.on('actionRequired', function(action){
 			break;
 		case 3:
 			// After an on-line game session is created, display a notification
-			showAlert('You are the host :) </br>' + (action.data == 'anonymous'? 'Waiting for the other player...': 'Waiting for ' + action.data + ' to start the game...'));
+			showAlert((action.data == 'anonymous'? 'Waiting for the other player...': 'Waiting for ' + action.data + ' to start the game...'), "Game created");
 			break;
 		case 4:
 			// Handle the auto-join request.
@@ -366,7 +366,7 @@ socket.on('actionRequired', function(action){
 
 socket.on('publicMsg', function(data){
 	console.log('>> ' + data.sender + ': '+ data.msg);
-	if (data.sender === player1.username) 
+	if (data.sender === primaryAccountUserName) 
 		return;
 
 	chatMessages['public'] += (data.sender + ": " + data.msg + "<br>");
@@ -376,7 +376,7 @@ socket.on('publicMsg', function(data){
 
 socket.on('privateMsg', function(data){
 	console.log('User: ' + data.sender + ' says: ' + data.msg);
-	if (data.sender === player1.username)
+	if (data.sender === primaryAccountUserName)
 		return;
 
 	chatMessages[data.sender] += (data.sender + ": " + data.msg + "<br>");
@@ -397,7 +397,7 @@ function initialize(username, password, isSucceed) {
 		console.log('Inside init. function');
 		getAccountInfo(function(accountInfoObj) {
 			console.log(accountInfoObj);
-			if(accountInfoObj.currentGame){
+			if(!loggingInBeforeOnline && accountInfoObj.currentGame){
 				// There's an unfinished game, continue automatically
 				continueGame(accountInfoObj.currentGame, null, function(gameInfo){
 					// Resume game status here (i.e. tokens on the board, turn, steps, etc.)

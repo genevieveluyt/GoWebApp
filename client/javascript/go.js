@@ -371,6 +371,7 @@ function swapPlayerTokens() {
 	var temp = player1.token;
 	player1.token = player2.token;
 	player2.token = temp;
+	updatePlayerTokens();
 }
 
 function getScreenNames() {
