@@ -545,6 +545,7 @@ var initializeServer = function() {
 						};
 						db.endGame(userObjID, gameMode == 2? onlineOpponentAccountObjectID: opponentAccountObjectID, currentGameID, gameRecord, function(){
 							console.log('Game ended');
+							currentTurn = 0;
 							socket.emit('actionRequired', {code : 2, data : gameRecord}, function() {
 								console.log('End of game signal sent')
 							});
