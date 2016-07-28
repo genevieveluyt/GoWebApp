@@ -20,7 +20,7 @@
   "homepage": "https://github.com/genevieveluyt/GoWebApp#readme",
   "dependencies": {
     "body-parser": "^1.15.1",
-    "bootstrap": "^3.3.6",
+    "bootstrap": "^3.3.7",
     "express": "^4.13.4",
     "jquery": "^2.2.4",
     "mongodb": "^2.2.1",

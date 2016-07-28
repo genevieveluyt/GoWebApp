@@ -2,6 +2,11 @@
 	display: none;
 }
 
+.light-med-text {
+  font-size: 20px;
+  color: #7b7b7b;
+}
+
 #alert {
   width: 300px;
   position: fixed;
@@ -44,10 +49,12 @@
 
 .choose-token-image:hover {
   filter: brightness(85%);
+  -webkit-filter: brightness(85%);
 }
 
 .choose-token-image.taken {
   filter: brightness(40%);
+  -webkit-filter: brightness(40%);
 }
 
 .winner-icon {
@@ -61,6 +68,10 @@
 .table > tbody > tr > td.center-cell-contents  {
   vertical-align: middle;
   text-align: center;
+}
+
+.center-on-page {
+  margin-top: 12%;
 }
 
 /* need this to make the gameboard dynamic */
@@ -181,6 +192,3 @@
   box-shadow: 0 5px #666;
   transform: translateY(4px);
 }
-
-
->>>>>>> origin/finalInterface

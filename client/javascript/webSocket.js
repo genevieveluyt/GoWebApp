@@ -5,10 +5,12 @@ var currentPlayer = null;
 var currentBoard = null;
 var player1Passed = false;
 var player2Passed = false;
-var accountHolderTokenType = null;
+var accountHolderTokenType = 1;
 var player1UserName = null;
 var player2UserName = null;
 var primaryAccountUserName = null;
+var player1TokenID = null;
+var player2TokenID = null;
 
 // Authentication function
 function auth(username, password, callback){
@@ -97,6 +99,7 @@ function _continueGame(gameInfo, callback){
 	player2.username = gameInfo.player2;
 
 	updatePlayerNames();
+	updatePlayerTokens();
 }
 
 function continueGame(gameID, gameParameters, callback) {
@@ -223,7 +226,9 @@ function makeMove(x, y, c, pass, callback) {
 
 function changeTokenImgs(tokenIds) {
 	socket.emit('changePrimaryTokenImage', tokenIds, function(isOk){
-		console.log(isOk);
+		player1TokenID = tokenIds[0];
+		player2TokenID = tokenIds[1];
+		updatePlayerTokens();
 	})
 }
 
@@ -326,6 +331,8 @@ socket.on('actionRequired', function(action){
 		case 3:
 			// After an on-line game session is created, display a notification
 			showAlert((action.data == 'anonymous'? 'Waiting for the other player...': 'Waiting for ' + action.data + ' to start the game...'), "Game created");
+			$('#stop-hosting-button').show();
+			$('#open-host-modal-button').hide();
 			break;
 		case 4:
 			// Handle the auto-join request.
@@ -438,8 +445,8 @@ function initialize(username, password, isSucceed) {
 					console.log('Unfinished game detected, automatically resume.');
 				});
 			}
-			var player1TokenID = accountInfoObj.tokenId[0];
-			var player2TokenID = accountInfoObj.tokenId[1];
+			player1TokenID = accountInfoObj.tokenId[0];
+			player2TokenID = accountInfoObj.tokenId[1];
 			// Set token images here;
 			console.log('Set token images to: P1: ' + player1TokenID + ', P2: ' + player2TokenID);
 
@@ -449,8 +456,9 @@ function initialize(username, password, isSucceed) {
 			updatePlayerTokens();
 			loadTokenSelectionModal();
 
+			player1.username = username;
+
 			if (username.substring(0,5) !== "temp_") {
-				player1.username = username;
 				login();
 			}
 
