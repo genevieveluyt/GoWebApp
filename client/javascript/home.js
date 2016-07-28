@@ -62,8 +62,8 @@ window.onload = function() {
 
 
 	// Online Game Page
-	$('open-host-modal-button').click(function() {
-		// browser automatically remember input, overriding initially-hidden
+	$('#open-host-modal-button').click(function() {
+		// browser automatically remembers input, overriding initially-hidden so hide it manually
 		$('#host-private-username').hide();
 		$('#host-error-message').hide();
 	});
@@ -182,10 +182,6 @@ function showOnlineGamePage() {
 	$('#online-games-chat-container').append($('#game-chat-container').children());
 	$('#online-game-page').show();
 	$('#logo').show();
-	if($('input[name="play-mode-radio"]:checked').val() == 'public')
-		$('#host-private-username').show();
-	else
-		$('#host-private-username').hide();
 	pageSwitched();
 }
 
