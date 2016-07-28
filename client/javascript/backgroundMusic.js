@@ -46,19 +46,27 @@ var changeColor = function(color){
 	document.body.style.background = color;
 	if(color == '#e6e6ff'){	//light purple
 		document.getElementById("barColor").style.background = '#ccccff';
-		$('#gameboard rect').attr("class","board-nonwhite");
+		colorControlObject.squareFill = '#cceeff';
+		colorControlObject.squareStroke = 'rgba(0, 51, 204, 0.15)';
+		renderUnfinishedGameBoard();
 	}
 	if(color == '#cceeff'){	//light blue
 		document.getElementById("barColor").style.background = '#99ddff';
-		$('#gameboard rect').attr("class","board-nonwhite");
+		colorControlObject.squareFill = '#ffe6cc';
+		colorControlObject.squareStroke = '#cccccc';
+		renderUnfinishedGameBoard();
 	}
 	if(color == '#ffe6f2'){	//light pink
 		document.getElementById("barColor").style.background = '#ffcce6';
-		$('#gameboard rect').attr("class","board-nonwhite");
+		colorControlObject.squareFill = '#ffb3d9';
+		colorControlObject.squareStroke = '#ffffff';
+		renderUnfinishedGameBoard();
 	}
 	if(color == '#ffffff'){	//white
 		document.getElementById("barColor").style.background = '#ffffff';
-		$('#gameboard rect').attr("class","board-white");
+		colorControlObject.squareFill = 'rgb(245, 227, 214)';
+		colorControlObject.squareStroke = 'rgb(234, 200, 174)';
+		renderUnfinishedGameBoard();
 	}
 }
 
