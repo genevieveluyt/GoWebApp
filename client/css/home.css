@@ -88,6 +88,18 @@
   stroke: #786449;
 }
 
+.unread-svg {
+  height: 8px;
+  width: 8px;
+  margin: 3px;
+}
+
+.unread-circle {
+  fill: green;
+  stroke: black;
+  stroke-width: 1;
+}
+
 #music-control-panel {
   position: fixed;
   bottom: 0;

@@ -92,11 +92,36 @@ var initializeServer = function() {
 			socket.emit('actionRequired', {code : 0, data : null}, function(){
 				console.log('Update notification sent');
 			});
-		}
+		};
 
 		var broadcastUserListUpdateSignal = function(){
 			io.sockets.emit('actionRequired', {code : 10, data : null});
-		}
+		};
+
+		var broadcastAvailableGameListUpdateSignal = function() {
+			io.sockets.emit('actionRequired', {code : 8, data : null});
+		};
+
+		var terminateCurrentOnlineMultiplaySession = function(){
+			if(gameMode){
+				if(gameMode == 2){
+					if(availableMatchList[onlineGameObjectID]){
+						if(availableMatchList[onlineGameObjectID].hostUser == username){
+							delete availableMatchList[onlineGameObjectID];
+						}else{
+							availableMatchList[onlineGameObjectID].status = 0;
+						}
+						broadcastAvailableGameListUpdateSignal();
+					}
+					if(onlineOpponentSocket){
+						onlineOpponentSocket.emit('actionRequired', {code : 6, data : null}, function(){
+							console.log('Notified the opponent about disconnection.');
+						});
+						onlineOpponentSocket = null;
+					}
+				}
+			}
+		};
 
 		var generateUserList = function(){
 			var userList = [];
@@ -111,7 +136,7 @@ var initializeServer = function() {
 				}
 			}
 			return {userList : userList, replyMessage : replyMessage};
-		}
+		};
 
 		var fetchUsernameForGameObject = function(gameObject, callback){
 			// Fetch the players' usernames and put them into gameObject before sending back to client
@@ -138,21 +163,12 @@ var initializeServer = function() {
 		};
 
 		var resumeData = function(gameObjectID, initRequired, acquiredOpponentSocket, suppressSubroutine, callback){
+			console.log('Inside resume data');
 			db.getGameObject(gameObjectID, function(gameObject){
 
 				if(initRequired){
 					// If initialization is required
-					if(gameMode){
-						if(gameMode == 2){
-							if(availableMatchList[onlineGameObjectID]){
-								if(availableMatchList[onlineGameObjectID].hostUser == username){
-									delete availableMatchList[onlineGameObjectID];
-								}else{
-									availableMatchList[onlineGameObjectID].status = 0;
-								}
-							}
-						}
-					}
+					terminateCurrentOnlineMultiplaySession();
 					prevBoard = [];
 					currBoard = [];
 					tempBoard = [];
@@ -204,26 +220,42 @@ var initializeServer = function() {
 		};
 
 		var externalNodeSubroutine = function(count){
-			console.log('Inside externalNodeSubroutine');
+			console.log('Inside externalNodeSubroutine currentTurn: ' + currentTurn);
 			// If the game is in AI mode, and this is the AI's turn, call the AI interface and get a random move.
 			if(gameMode == 1 && (currentTurn != accountHolderTokenType)){
-				if(count > aiRetryThreshold){
+				if(count == 0){
+					// This is the first time this function get called.
+					// Try to evaluate the current situation of the AI and determine the best AI behavior
+					if(currentTurn == 1? player2CapturedTokens > player1CapturedTokens: player1CapturedTokens > player2CapturedTokens){
+						// AI goes first
+						// Player is capturing more tokens than the AI
+						// The AI needs to defend its territory
+						count = 1;
+					}
+				}
+				if(count == aiRetryThreshold){
 					makeMove({x : 0 ,y : 0, c : currentTurn, pass : true}, function(result){
 						notifyClientForUpdate();
 					});
 					return;
 				}
 				// Need to fetch data from the AI server
-				console.log('getting random move');
+				console.log('getting AI move');
 				aiInterface.getRandomMove(currBoard.length, currBoard, lastMove, count, function(move){
 					if(!move){
 						socket.emit('actionRequired', {code : 7, data : null});
 						move = {x : 0, y : 0, c : currentTurn, pass : true};
+						return;
 					}
-					if(move.pass){
+					if(move.pass && count < 3 && !lastMove.pass){
+						externalNodeSubroutine(count + 1);
+						return;
+					}else if (move.pass){
 						move = {x : 0, y : 0, c : currentTurn, pass : true};
 					}
+
 					makeMove(move, function(result){
+						console.log('Make move result: '+ result + ' ' + move);
 						if(result < 0){
 							externalNodeSubroutine(count + 1);
 							return;
@@ -256,6 +288,7 @@ var initializeServer = function() {
 						socket.emit('actionRequired', {code : 3, data : onlineOpponentUserName}, function(){
 							console.log('Waiting request sent');
 						});
+						broadcastAvailableGameListUpdateSignal();
 					}
 				});
 			}else{
@@ -298,6 +331,7 @@ var initializeServer = function() {
 							resumeData(gameObjectID, true, tempSocket, false, function(gameObject){
 								delete gameObject['moveHistory'];
 								response({code : 0, gameObject : gameObject});
+								broadcastAvailableGameListUpdateSignal();
 								tempSocket.emit('actionRequired', {code : 5, data : {onlineOpponentAccountObjectID : userObjID, onlineOpponentSocket : socket.id, onlineOpponentUserName : username}}, function(){
 									console.log('Notified the host about the connection of the opponent');
 								});
@@ -315,6 +349,7 @@ var initializeServer = function() {
 			console.log(availableMatchList);
 			console.log(onlineGameObjectID);
 			availableMatchList[onlineGameObjectID.toString()].status = 1;
+			broadcastAvailableGameListUpdateSignal();
 			notifyClientForUpdate();
 			// response(0);
 		});
@@ -323,6 +358,7 @@ var initializeServer = function() {
 			onlineOpponentSocket = null;
 			if(availableMatchList[onlineGameObjectID.toString()]){
 				availableMatchList[onlineGameObjectID.toString()].status = 0;
+				broadcastAvailableGameListUpdateSignal();
 			}
 			// response(0);
 		});
@@ -403,15 +439,7 @@ var initializeServer = function() {
 				response('ERROR: Not logged in');
 				return;
 			}
-			if(gameMode){
-				if(gameMode == 2){
-					if(onlineOpponentSocket){
-						onlineOpponentSocket.emit('actionRequired', {code : 6, data : null}, function(){
-							console.log('Notified the opponent about disconnection.');
-						});
-					}
-				}
-			}
+			terminateCurrentOnlineMultiplaySession();
 			var parameterObject = data;
 			var unfinishedGameObjectID = parameterObject.gameID == null? null: ObjectID(parameterObject.gameID);
 			var gameParameters = parameterObject.gameParameters;
@@ -463,7 +491,7 @@ var initializeServer = function() {
 				}else{
 					tokenList = gameLogicModule.applyMove(prevBoard, currBoard, tempBoard);
 				}
-				var tokensCaptured = resultCode;
+				var tokensCaptured = moveObj.pass? 0: resultCode;
 				if(currentTurn == 1){
 					player1CapturedTokens += tokensCaptured;
 				}else{
@@ -490,8 +518,11 @@ var initializeServer = function() {
 					
 				});
 			};
-
+				console.log('>>> ');
+				console.log(moveObj, currentTurn);
+				console.log('<<<');
 			if(moveObj.c == currentTurn && (gameMode == 2? moveObj.c == accountHolderTokenType: true)){
+				console.log('===Inside if')
 				if(moveObj.pass){
 					if(moveObj.c == 1){
 						player1Passed = true;
@@ -499,7 +530,8 @@ var initializeServer = function() {
 					if(moveObj.c == 2){
 						player2Passed = player1Passed;
 					}
-					_makeMove(0);
+					console.log(player1Passed, player2Passed);
+					
 					if(player1Passed && player2Passed){
 						console.log('Game over');
 						var scoreList = gameLogicModule.calculateScore(currBoard, player1CapturedTokens, player2CapturedTokens);
@@ -520,12 +552,16 @@ var initializeServer = function() {
 							if(gameMode == 2 && onlineOpponentSocket != null){
 								onlineOpponentSocket.emit('actionRequired', {code : 2, data : gameRecord}, function() {
 									console.log('End of game signal sent to the opponent');
-								});								
+								});
+								onlineOpponentSocket = null;
 							}
 
 							delete availableMatchList[onlineGameObjectID];
+							broadcastAvailableGameListUpdateSignal();
 						});
-
+						_makeMove(-10);
+					}else{
+						_makeMove(0);
 					}
 				}else{
 					console.log('lastMove: ' + JSON.stringify(lastMove));
@@ -557,7 +593,7 @@ var initializeServer = function() {
 			console.log('====');
 
 			makeMove(moveObj, function(result){
-				response(result);
+				response(moveObj.pass? 0: result);
 				if(result >= 0){
 					externalNodeSubroutine(0);
 				}
@@ -572,8 +608,15 @@ var initializeServer = function() {
 		});
 
 		socket.on('getGameHistory', function(data, response){
-			db.getGameHistory(userObjID, function(gameHistoryList){
-				response(gameHistoryList);
+			// Since this function will only be called when the client 
+			// tring to perform a history replay. It's reasonable to terminate it's 
+			// current gaming session.
+			terminateCurrentOnlineMultiplaySession();
+			db.clearCurrentGame(userObjID, function(error, result){
+				assert.equal(error, null);
+				db.getGameHistory(userObjID, function(gameHistoryList){
+					response(gameHistoryList);
+				});
 			});
 		});
 
@@ -615,6 +658,13 @@ var initializeServer = function() {
 
 		});
 
+		socket.on('suspendCurrentOnlineMultiplaySession', function(isGameFinished){
+			if(isGameFinished){
+				onlineOpponentSocket = null;
+			}
+			terminateCurrentOnlineMultiplaySession();
+		});
+
 		socket.on('control', function(message, response){
 			if(message.command == 'getAuthStatus'){
 				response('' + isLoggedIn.toString());
@@ -647,22 +697,7 @@ var initializeServer = function() {
 		socket.on('disconnect', function(){
 			console.log("Connection closed, removing socket..");
 			delete connectionList[socket.id];
-			if(gameMode != null){
-				if(gameMode == 2){
-					if(availableMatchList[onlineGameObjectID]){
-						if(availableMatchList[onlineGameObjectID].hostUser == username){
-							delete availableMatchList[onlineGameObjectID];
-						}else{
-							availableMatchList[onlineGameObjectID].status = 0;
-						}
-					}
-				}
-				if(onlineOpponentSocket){
-					onlineOpponentSocket.emit('actionRequired', {code : 6, data : null}, function(){
-						console.log('Notified the opponent about disconnection.');
-					})
-				}
-			}
+			terminateCurrentOnlineMultiplaySession();
 			broadcastUserListUpdateSignal();
 		});
 	});

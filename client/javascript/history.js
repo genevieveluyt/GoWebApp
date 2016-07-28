@@ -98,14 +98,17 @@ function clickReplayGame(event) {
 		history.currHistoryIndex = 0;
 		history.playStarted = false;
 
-		if (primary === 1 && data.player2 === player1.username) {
-			swapPlayerTokens();
-		} else if (primary === 2 && data.player1 === player2.username) {
-			swapPlayerTokens();
-		}
+		// if (primary === 1 && data.player2 === primaryAccountUserName) {
+		// 	swapPlayerTokens();
+		// } else if (primary === 2 && data.player1 === primaryAccountUserName) {
+		// 	swapPlayerTokens();
+		// }
 
 		player1.username = data.player1;
 		player2.username = data.player2;
+		accountHolderTokenType = data.player1 == primaryAccountUserName? 1: 2;
+		board.hotseat = data.gameMode == 0;
+		board.online = data.gameMode == 2;
 
 		$('#finished-game-buttons').hide();
 		$('#score-text').html("");
@@ -141,7 +144,7 @@ function clickPrevBoard(event) {
 function clickPlayBoard(event) {
 	if(!history.intervalID){
 		history.intervalID = setInterval(function(){
-			if($('#play-history-button').css('display') == 'none'){
+			if($('#history-controls').css('display') == 'none'){
 				clearInterval(history.intervalID);
 				history.intervalID = null;
 				return;

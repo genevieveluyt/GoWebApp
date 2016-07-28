@@ -100,6 +100,22 @@ function makeToken(X, Y, w, src, className, onClick){
 
 }
 
+function makeUnreadMessagesCircle() {
+  var shape = document.createElementNS(SVGNameSpace, "circle");
+  shape.setAttribute("cx", 4);
+  shape.setAttribute("cy", 4);
+  shape.setAttribute("r",  3);
+  shape.setAttribute("class", "unread-circle");
+
+  return shape;
+}
+
+function makeUnreadMessagesSvg() {
+  var s = document.createElementNS(SVGNameSpace, "svg"); 
+  s.setAttribute("class", "unread-svg initially-hidden");
+  return s;
+}
+
 /**
 * Makes an SVG element which fills the parent vertically
 * and is square in shape

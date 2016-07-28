@@ -83,15 +83,15 @@ function _continueGame(gameInfo, callback){
 	else
 		$('#undo-button').hide();
 
-    if (primary === 1 && gameInfo.player2 === player1.username) {
-		primary = 2;
-		if(gameInfo.gameMode != 2)
-			swapPlayerTokens();
-	} else if (primary === 2 && gameInfo.player1 === player2.username) {
-		primary = 1;
-		if(gameInfo.gameMode != 2)
-			swapPlayerTokens();
-	}
+ //    if (primary === 1 && gameInfo.player2 === primaryAccountUserName) {
+	// 	primary = 2;
+	// 	// if(gameInfo.gameMode != 2)
+	// 		swapPlayerTokens();
+	// } else if (primary === 2 && gameInfo.player1 === primaryAccountUserName) {
+	// 	primary = 1;
+	// 	// if(gameInfo.gameMode != 2)
+	// 		swapPlayerTokens();
+	// }
 
 	player1.username = gameInfo.player1;
 	player2.username = gameInfo.player2;
@@ -263,6 +263,10 @@ function getGameDetail(gameObjectID, callback){
 	});
 }
 
+function suspendCurrentOnlineMultiplaySession(isGameFinished){
+	socket.emit('suspendCurrentOnlineMultiplaySession', isGameFinished);
+}
+
 function undo(step){
 	socket.emit('undo', step);
 }
@@ -271,13 +275,13 @@ function join(onlineGameID){
 	socket.emit('join', onlineGameID, function(result){
 		switch(result.code){
 			case -1:
-				showAlert('Specified game does not exist. The host might have terminated the game.');
+				showAlert('Specified game does not exist. The host might have terminated the game.', null, 2000);
 				break;
 			case -2:
-				showAlert('Permission denied. Only the specified user could participate the game.');
+				showAlert('Permission denied. Only the specified user could participate the game.', null, 2000);
 				break;
 			case -3:
-				showAlert('The selected game is already started. Please try another one');
+				showAlert('The selected game is already started. Please try another one', null, 2000);
 				loadAvailableGames();
 				break;
 			case 0:
@@ -315,10 +319,13 @@ socket.on('actionRequired', function(action){
 			// When the game is finished, following code will be executed
 			//alert('Game finished :)');
 			onFinishedGame(action.data.score1, action.data.score2);
+			if(currentGameMode == 2){
+				suspendCurrentOnlineMultiplaySession(true);
+			}
 			break;
 		case 3:
 			// After an on-line game session is created, display a notification
-			showAlert('You are the host :) </br>' + (action.data == 'anonymous'? 'Waiting for the other player...': 'Waiting for ' + action.data + ' to start the game...'));
+			showAlert((action.data == 'anonymous'? 'Waiting for the other player...': 'Waiting for ' + action.data + ' to start the game...'), "Game created");
 			break;
 		case 4:
 			// Handle the auto-join request.
@@ -332,7 +339,7 @@ socket.on('actionRequired', function(action){
 				player1.username = action.data.onlineOpponentUserName;
 			}
 			updatePlayerNames();
-			showAlert('Opponent connected');
+			showAlert('Opponent connected', null, 2000);
 			socket.emit('opponentConnected', action.data);
 			break;
 		case 6:
@@ -343,6 +350,12 @@ socket.on('actionRequired', function(action){
 		case 7:
 			// AI Interface currently unavailable
 			showAlert('AI Interface currently unavailable');
+			break;
+		case 8:
+			// Multi-player game list requires refresh
+			if ($('#online-game-page').css('display') != 'none') {
+				loadAvailableGames();
+			}
 			break;
 		case 10:
 			// Should put process related to refreshing user list in the getUserList() function as much as possible
@@ -366,23 +379,35 @@ socket.on('actionRequired', function(action){
 
 socket.on('publicMsg', function(data){
 	console.log('>> ' + data.sender + ': '+ data.msg);
-	if (data.sender === player1.username) 
+	if (data.sender === primaryAccountUserName) 
 		return;
 
 	chatMessages['public'] += (data.sender + ": " + data.msg + "<br>");
-	if (!messageRecipient)
+	if (!messageRecipient) {	// on public tab
 		document.getElementById('chat-box').innerHTML += (data.sender + ": " + data.msg + "<br>");
+	} else {
+		$('#public-messages-button svg').show();
+	}
 });
 
 socket.on('privateMsg', function(data){
 	console.log('User: ' + data.sender + ' says: ' + data.msg);
-	if (data.sender === player1.username)
+	if (data.sender === primaryAccountUserName)
 		return;
 
 	chatMessages[data.sender] += (data.sender + ": " + data.msg + "<br>");
-	if (messageRecipient === data.sender)
+	if (messageRecipient === data.sender)	// private tab with user
 		document.getElementById('chat-box').innerHTML += (data.sender + ": " + data.msg + "<br>");
+	else {
+		$('#private-messages-button svg').show();
+		if (jQuery.inArray(data.sender, unreadPrivateMessages) === -1) {	// user doesn't have unread messages from this person
+			unreadPrivateMessages.push(data.sender);
+			$('#private-messages-dropdown a[username=' + data.sender + ']>svg').show();
+		}
+	}
 });
+
+var connectionLoose = false;
 
 socket.on('connect', function(){
 	var credential = getCredentialCookie();
@@ -390,6 +415,15 @@ socket.on('connect', function(){
 		console.log(statusNo);
 		initialize(credential.username, credential.password, isSucceed);
 	});
+	if(connectionLoose){
+		showAlert('Connection resumed', 'Info', 1000);
+		connectionLoose = false;
+	}
+});
+
+socket.on('disconnect', function(){
+	showAlert('Connection loose.<br>Please check your network connection.', 'Warning');
+	connectionLoose = true;
 });
 
 function initialize(username, password, isSucceed) {
@@ -397,7 +431,7 @@ function initialize(username, password, isSucceed) {
 		console.log('Inside init. function');
 		getAccountInfo(function(accountInfoObj) {
 			console.log(accountInfoObj);
-			if(accountInfoObj.currentGame){
+			if(!loggingInBeforeOnline && accountInfoObj.currentGame){
 				// There's an unfinished game, continue automatically
 				continueGame(accountInfoObj.currentGame, null, function(gameInfo){
 					// Resume game status here (i.e. tokens on the board, turn, steps, etc.)
