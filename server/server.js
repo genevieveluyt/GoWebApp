@@ -227,7 +227,6 @@ var initializeServer = function() {
 					// This is the first time this function get called.
 					// Try to evaluate the current situation of the AI and determine the best AI behavior
 					if(currentTurn == 1? player2CapturedTokens > player1CapturedTokens: player1CapturedTokens > player2CapturedTokens){
-						// AI goes first
 						// Player is capturing more tokens than the AI
 						// The AI needs to defend its territory
 						count = 1;
