@@ -223,6 +223,16 @@ var initializeServer = function() {
 			console.log('Inside externalNodeSubroutine currentTurn: ' + currentTurn);
 			// If the game is in AI mode, and this is the AI's turn, call the AI interface and get a random move.
 			if(gameMode == 1 && (currentTurn != accountHolderTokenType)){
+				if(count == 0){
+					// This is the first time this function get called.
+					// Try to evaluate the current situation of the AI and determine the best AI behavior
+					if(currentTurn == 1? player2CapturedTokens > player1CapturedTokens: player1CapturedTokens > player2CapturedTokens){
+						// AI goes first
+						// Player is capturing more tokens than the AI
+						// The AI needs to defend its territory
+						count = 1;
+					}
+				}
 				if(count == aiRetryThreshold){
 					makeMove({x : 0 ,y : 0, c : currentTurn, pass : true}, function(result){
 						notifyClientForUpdate();
