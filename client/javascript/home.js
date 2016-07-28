@@ -182,6 +182,10 @@ function showOnlineGamePage() {
 	$('#online-games-chat-container').append($('#game-chat-container').children());
 	$('#online-game-page').show();
 	$('#logo').show();
+	if($('input[name="play-mode-radio"]:checked').val() == 'public')
+		$('#host-private-username').show();
+	else
+		$('#host-private-username').hide();
 	pageSwitched();
 }
 
@@ -198,7 +202,7 @@ function submitHostForm() {
 		board.online = true;
 		$('#host-modal').modal('hide');
 		startGame();
-		loadAvailableGames();
+		// loadAvailableGames();
 	} else {
 		$('#host-error-message').html("Couldn't find user <strong>" + $('#host-private-username').val() + "</strong>");
 		$('#host-error-message').show();
@@ -247,7 +251,7 @@ function submitLogin() {
 	auth(username, password, function(saveCredentialToCookie, result) {
 		switch(result) {
 			case -1:
-				showAlert("You're already logged in!", 2000);
+				showAlert("You're already logged in!", null, 2000);
 				break;
 			case 0:
 				showAlert("Check your password", "Oops...", 2000);

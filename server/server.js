@@ -116,7 +116,8 @@ var initializeServer = function() {
 					if(onlineOpponentSocket){
 						onlineOpponentSocket.emit('actionRequired', {code : 6, data : null}, function(){
 							console.log('Notified the opponent about disconnection.');
-						})
+						});
+						onlineOpponentSocket = null;
 					}
 				}
 			}
@@ -541,7 +542,8 @@ var initializeServer = function() {
 							if(gameMode == 2 && onlineOpponentSocket != null){
 								onlineOpponentSocket.emit('actionRequired', {code : 2, data : gameRecord}, function() {
 									console.log('End of game signal sent to the opponent');
-								});								
+								});
+								onlineOpponentSocket = null;
 							}
 
 							delete availableMatchList[onlineGameObjectID];
@@ -646,7 +648,10 @@ var initializeServer = function() {
 
 		});
 
-		socket.on('suspendCurrentOnlineMultiplaySession', function(){
+		socket.on('suspendCurrentOnlineMultiplaySession', function(isGameFinished){
+			if(isGameFinished){
+				onlineOpponentSocket = null;
+			}
 			terminateCurrentOnlineMultiplaySession();
 		});
 

@@ -263,6 +263,10 @@ function getGameDetail(gameObjectID, callback){
 	});
 }
 
+function suspendCurrentOnlineMultiplaySession(isGameFinished){
+	socket.emit('suspendCurrentOnlineMultiplaySession', isGameFinished);
+}
+
 function undo(step){
 	socket.emit('undo', step);
 }
@@ -271,13 +275,13 @@ function join(onlineGameID){
 	socket.emit('join', onlineGameID, function(result){
 		switch(result.code){
 			case -1:
-				showAlert('Specified game does not exist. The host might have terminated the game.', 2000);
+				showAlert('Specified game does not exist. The host might have terminated the game.', null, 2000);
 				break;
 			case -2:
-				showAlert('Permission denied. Only the specified user could participate the game.', 2000);
+				showAlert('Permission denied. Only the specified user could participate the game.', null, 2000);
 				break;
 			case -3:
-				showAlert('The selected game is already started. Please try another one', 2000);
+				showAlert('The selected game is already started. Please try another one', null, 2000);
 				loadAvailableGames();
 				break;
 			case 0:
@@ -315,6 +319,9 @@ socket.on('actionRequired', function(action){
 			// When the game is finished, following code will be executed
 			//alert('Game finished :)');
 			onFinishedGame(action.data.score1, action.data.score2);
+			if(currentGameMode == 2){
+				suspendCurrentOnlineMultiplaySession(true);
+			}
 			break;
 		case 3:
 			// After an on-line game session is created, display a notification
@@ -332,7 +339,7 @@ socket.on('actionRequired', function(action){
 				player1.username = action.data.onlineOpponentUserName;
 			}
 			updatePlayerNames();
-			showAlert('Opponent connected', 2000);
+			showAlert('Opponent connected', null, 2000);
 			socket.emit('opponentConnected', action.data);
 			break;
 		case 6:
@@ -400,12 +407,23 @@ socket.on('privateMsg', function(data){
 	}
 });
 
+var connectionLoose = false;
+
 socket.on('connect', function(){
 	var credential = getCredentialCookie();
 	auth(credential.username, credential.password, function(isSucceed, statusNo){
 		console.log(statusNo);
 		initialize(credential.username, credential.password, isSucceed);
 	});
+	if(connectionLoose){
+		showAlert('Connection resumed', 'Info', 1000);
+		connectionLoose = false;
+	}
+});
+
+socket.on('disconnect', function(){
+	showAlert('Connection loose.<br>Please check your network connection.', 'Warning');
+	connectionLoose = true;
 });
 
 function initialize(username, password, isSucceed) {

@@ -103,7 +103,7 @@ function clickPass(event) {
 			//showAlert("result = " + result);
 			if (result === -4) {
 				if(board.online){
-					showAlert('Opps! This is not your turn...', 2000);
+					showAlert('Opps! This is not your turn...', null, 2000);
 				}else{
 					showAlert("Our hamsters are taking a break.", "Try again in a moment", 2000);
 				}
@@ -250,7 +250,7 @@ function onClickToken(event) {
 				break;
 			case -4:
 				if(board.online){
-					showAlert('Opps! This is not your turn...', 2000);
+					showAlert('Opps! This is not your turn...', null, 2000);
 				}else{
 					showAlert("Our hamsters are taking a break.", "Try again in a moment", 2000);
 				}
