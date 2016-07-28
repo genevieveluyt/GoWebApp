@@ -664,6 +664,12 @@ var initializeServer = function() {
 			terminateCurrentOnlineMultiplaySession();
 		});
 
+		socket.on('clearCurrentGame', function(){
+			db.clearCurrentGame(userObjID, function(error, result){
+				assert.equal(error, null);
+			});
+		});
+
 		socket.on('control', function(message, response){
 			if(message.command == 'getAuthStatus'){
 				response('' + isLoggedIn.toString());

@@ -267,6 +267,10 @@ function suspendCurrentOnlineMultiplaySession(isGameFinished){
 	socket.emit('suspendCurrentOnlineMultiplaySession', isGameFinished);
 }
 
+function clearCurrentGameAttribute(){
+	socket.emit('clearCurrentGame');
+}
+
 function undo(step){
 	socket.emit('undo', step);
 }
