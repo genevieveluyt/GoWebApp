@@ -1,4 +1,9 @@
-
+body {
+  font-family: 'Lato', sans-serif !important;
+  line-height: 1.7;
+  font-weight: 400;
+  color: #2e2e2e;
+}
 @media screen and (max-width: 768px) {
   body {
     font-size: 18px;
@@ -21,6 +26,17 @@
   background: #2e2e2e;
 }
 
+h1, h2, h3, h4, h5 {
+  margin-bottom: .5em;
+  line-height: 1.5;
+  font-weight: 400;
+}
+
+p {
+  margin-bottom: 10px;
+  line-height: 1.7;
+}
+
 a {
   -moz-transition: all 0.2s ease;
   -o-transition: all 0.2s ease;
@@ -37,18 +53,9 @@ a:hover, a:focus, a:active {
   background: #2e2e2e url(../assets/hero_bg.jpg) no-repeat;
   background-size: cover;
   color: #ffffff;
-  padding-top: 2em;
-  height: 400px;
-  
-}
-#fh6co-header {
-  background: #2e2e2e  repeat;
-  background-size: cover;
-  color: #ffffff;
-  padding-top: 2em;
-  height: 200px;
-  width: 100%
-  
+  padding-top: 100px;
+  margin-top: -50px;
+  height:100vh;
 }
 #fh5co-header .category {
   display: block;
@@ -77,13 +84,17 @@ a:hover, a:focus, a:active {
   text-transform: uppercase;
 }
 #fh5co-header .fh5co-header-intro {
+  text-align: center;
+  line-height: 1.5;
+}
+
+#fh5co-header .fh5co-header-intro h1{
   color: #fff;
   font-size: 60px;
-  text-align: center;
-  padding: 1em 0 6em 0;
-  font-weight: 300;
-  line-height: 0.0;
+  font-weight: 400;
 }
+
+
 @media screen and (max-width: 992px) {
   #fh5co-header .fh5co-header-intro {
     font-size: 30px;
@@ -213,9 +224,10 @@ a:hover, a:focus, a:active {
 }
 .fh5co-main-service .fh5co-block-links h2 {
   font-size: 24px;
-  font-weight: 300;
+  font-weight: 400;
 }
 .fh5co-main-service .fh5co-block-links p {
+  font-size: 20px;
   color: #7b7b7b;
 }
 .fh5co-main-service .fh5co-block-links .learn-more {
@@ -272,7 +284,7 @@ a:hover, a:focus, a:active {
 }
 .fh5co-heading .fh5co-heading-intro {
   font-size: 26px;
-  font-weight: 300;
+  font-weight: 700;
   line-height: 1.7;
   margin-bottom: 0;
 }
@@ -360,7 +372,7 @@ a:hover, a:focus, a:active {
   margin: 0;
   padding: 0;
   font-size: 20px;
-  font-weight: 300;
+  font-weight: 400;
 }
 .effects .hover-img .fh5co-projects-overlay .from-top {
   position: absolute;
@@ -554,7 +566,7 @@ a:hover, a:focus, a:active {
   padding: 5em 0;
 }
 #fh5co-workwithus .fh5co-workwithus-intro h2, #fh5co-workwithus .fh5co-workwithus-intro h3 {
-  font-weight: 300;
+  font-weight: 400;
   margin: 0;
   line-height: 1.5;
 }
@@ -576,7 +588,7 @@ a:hover, a:focus, a:active {
   border: none;
   box-shadow: none;
   border-radius: 30px;
-  font-weight: 300 !important;
+  font-weight: 400 !important;
   position: relative;
   -moz-transition: all 0.2s ease;
   -o-transition: all 0.2s ease;
@@ -670,7 +682,7 @@ a:hover, a:focus, a:active {
 .fh5co-image-text .fh5co-block-links h2 {
   margin: 0;
   color: #2e2e2e;
-  font-weight: 300;
+  font-weight: 400;
   font-size: 24px;
   line-height: 1.5;
   margin-bottom: .5em;

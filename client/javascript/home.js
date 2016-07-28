@@ -39,6 +39,7 @@ window.onload = function() {
 	$('#game-mode-hotseat-button').click(function() {
 		board.hotseat = true;
 		board.online = false;
+		updatePlayerNames();
 		showGameOptionsPage();
 	});
 	$('#game-mode-online-button').click(function() {
@@ -53,6 +54,7 @@ window.onload = function() {
 	$('#game-mode-single-button').click(function() {
 		board.hotseat = false;
 		board.online = false;
+		updatePlayerNames();
 		showGameOptionsPage();
 	});
 
@@ -67,6 +69,11 @@ window.onload = function() {
 		$('#host-private-username').hide();
 		$('#host-error-message').hide();
 	});
+	$('#stop-hosting-button').click(function() {
+		suspendCurrentOnlineMultiplaySession();
+		$('#stop-hosting-button').hide();
+		$('#open-host-modal-button').show();
+	})
 
 
 	// Host Game Modal
