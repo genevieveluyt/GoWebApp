@@ -70,7 +70,7 @@ window.onload = function() {
 		$('#host-error-message').hide();
 	});
 	$('#stop-hosting-button').click(function() {
-		suspendCurrentOnlineMultiplaySession();
+		clearCurrentGameAttribute();
 		$('#stop-hosting-button').hide();
 		$('#open-host-modal-button').show();
 	})
@@ -199,8 +199,6 @@ function pageSwitched() {
 }
 
 function submitHostForm() {
-	console.log("radio val = " + $('#host-options-form input[name="public-private-radio"]:checked').val());
-	console.log("")
 	if (($('#host-options-form input[name="public-private-radio"]:checked').val() === "public") || (jQuery.inArray($('#host-private-username').val(), userList)) > -1) {
 		board.online = true;
 		$('#host-modal').modal('hide');
@@ -232,7 +230,7 @@ function startGame() {
 			privateUsername = $('#host-private-username').val();
 			$('#host-private-username').val('');
 		}
-	} else { console.log("tokenType val = " + $('#host-options-form input[name="token-type-radio"]:checked').val());
+	} else {
 		board.setSize(parseInt($('#game-options-form input[name="board-size-radio"]:checked').val()));
 		var tokenType = ($('#game-options-form input[name="token-type-radio"]:checked').val() === "black")? 1: 2;
 	}

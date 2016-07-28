@@ -73,6 +73,21 @@ function updatePlayerTokens() {
 
 	document.getElementById('options-p1-token').src = TOKEN_IMGS[player1TokenID];
 	document.getElementById('options-p2-token').src = TOKEN_IMGS[player2TokenID];
+
+	document.getElementById('p1-taunt').innerHTML = getTokenTaunt(player1TokenID);
+	document.getElementById('p2-taunt').innerHTML = getTokenTaunt(player2TokenID);
+}
+
+function getTokenTaunt(token) {
+	switch(token) {
+		case "cat": return "I'm not going back in the bag!";
+		case "bear": return "Defeating you is a necessity";
+		case "panda": return "I'll leave you bamboozled";
+		case "fox": return "I'll use all my moves to jump over this lazy dog";
+		case "raccoon": return "This game won't take a raccoon's age";
+		case "wolf": return "I came here to howl at the moon and crush noobs, and it's just about down..."
+		default: return "You're going down!"
+	}
 }
 
 /**
@@ -404,8 +419,6 @@ function getScreenNames() {
 	var p1;
 	var p2;
 
-	console.log(player1.username);
-	console.log(player2.username);
 	if (accountHolderTokenType == 1){
 		p1 = primaryAccountUserName;
 	 	if (!player2.username || player2.username === "anonymous")
