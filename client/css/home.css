@@ -44,10 +44,12 @@
 
 .choose-token-image:hover {
   filter: brightness(85%);
+  -webkit-filter: brightness(85%);
 }
 
 .choose-token-image.taken {
   filter: brightness(40%);
+  -webkit-filter: brightness(40%);
 }
 
 .winner-icon {
