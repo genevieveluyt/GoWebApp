@@ -341,7 +341,7 @@ function onFinishedGame(score1, score2) {
 		str += "</strong>, you won!"
 		$('#score-text').html(str);
 	} else if(!board.online){
-		if (score1.totalScore > score2.totalScore) 
+		if (primary == 1? score1.totalScore > score2.totalScore: score2.totalScore > score1.totalScore) 
 			$('#score-text').html("Nice going, you won!");
 		else
 			$('#score-text').html("There will be a time when we are all bested by robots. It's starting.");
