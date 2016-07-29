@@ -11,7 +11,28 @@ var musicList = ["assets/Love Yourself.mp3", "assets/River Flow in You.mp3", "as
 var backgroundMusicInit = function(){
 
 	audio = new Audio();
-	var musicFileName = musicList[Math.floor(Math.random() * 1024 % musicList.length)];
+	audio.id = 'bgMusic';
+	var musicID = Math.floor(Math.random() * 1024 % musicList.length);
+	var musicFileName = musicList[musicID];
+	var musicTitleTextBox = document.getElementById('musicTitle');
+	for (var i = 0; i < musicList.length; i++) {
+		var newOption = document.createElement('option');
+		newOption.setAttribute('value', musicList[i]);
+		var optionText = document.createTextNode(musicList[i].split('/')[1].split('.')[0]);
+		newOption.appendChild(optionText);
+		musicTitleTextBox.appendChild(newOption);
+	}
+	$('#musicTitle').change(function(){
+		var isPreviouslyPaused = audio.paused;
+		audio.src = musicList[musicTitleTextBox.selectedIndex];
+		if(isPreviouslyPaused){
+			audio.pause();
+		}
+		else{
+			audio.play();
+		}
+	});
+	musicTitleTextBox.selectedIndex = musicID;
 	audio.src = musicFileName;
 	audio.loop = true;
 	audio.play();
@@ -19,12 +40,7 @@ var backgroundMusicInit = function(){
 	playbtn = document.getElementById("playButton");
 	mutebtn = document.getElementById("muteButton");
 	volumeslider = document.getElementById("volumeslider");
-	musicTitleTextBox = document.getElementById("musicTitle");
-
-	musicTitleTextBox.innerHTML = musicFileName.split('/')[1].split('.')[0];
-
 	lastValue = volumeslider.value;
-
 	mutebtn.onclick = function() {
 		audio.muted = !audio.muted;
 		mutebtn.src = !audio.muted?'assets/volume.png':'assets/volume_mute.png';
