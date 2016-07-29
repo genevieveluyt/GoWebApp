@@ -247,8 +247,7 @@ function sendRegularMessage(msg) {
 
 function getUserList(data, callback){
 	socket.emit('control', {command : 'getUserList'}, function(result){
-		console.log(result.userList);
-		updateUsers(result.userList);
+		updateUsers(data.previousUsername, data.currentUsername, result.userList);
 		if (callback)
 			callback(result);
 	});
@@ -370,7 +369,7 @@ socket.on('actionRequired', function(action){
 			break;
 		case 10:
 			// Should put process related to refreshing user list in the getUserList() function as much as possible
-			getUserList(data); 
+			getUserList(action.data); 
 			break;
 		default:
 			console.log('Unsupported action');
@@ -406,6 +405,8 @@ socket.on('privateMsg', function(data){
 	if (data.sender === primaryAccountUserName)
 		return;
 
+	if (!chatMessages[data.sender])
+		chatMessages[data.sender] = "";
 	chatMessages[data.sender] += (data.sender + ": " + data.msg + "<br>");
 	if (messageRecipient === data.sender)	// private tab with user
 		document.getElementById('chat-box').innerHTML += (data.sender + ": " + data.msg + "<br>");

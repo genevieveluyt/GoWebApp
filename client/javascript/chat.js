@@ -2,8 +2,8 @@
 var messageRecipient;
 var activePrivateRecipient;
 var chatMessages = { "public" : "" };
-var userList = [];
 var unreadPrivateMessages = [];
+var usersPrinted = false;
 
 function sendMessage() {
 	var msg = $('#chat-input').val(); console.log("msg = " + msg);
@@ -34,6 +34,10 @@ function clickPrivateUser(event) {
 	var recipient = event.target.getAttribute('username');
 	messageRecipient = recipient;
 	activePrivateRecipient = recipient;
+
+	if (!chatMessages[recipient])
+		chatMessages[recipient] = "";
+
 	document.getElementById('chat-box').innerHTML = chatMessages[recipient];
 	document.getElementById('private-button-text').innerHTML = recipient;
 
@@ -53,9 +57,19 @@ function clickPrivateUser(event) {
 	$('#public-messages-button').removeClass('active');
 }
 
-function updateUsers(updatedUserList) {
+function updateUsers(userLoggedOut, userLoggedIn, updatedUserList) {
 	if (!updatedUserList)
 		return;
+
+	if (userLoggedOut && userLoggedIn) {
+		if (!chatMessages[userLoggedIn]) {
+			chatMessages[userLoggedIn] = chatMessages[userLoggedOut]
+			delete chatMessages[userLoggedOut];
+		}
+		else {
+			chatMessages[userLoggedIn] += chatMessages[userLoggedOut];
+		}
+	}
 
 	var dropdown = document.getElementById('private-messages-dropdown');
 	$(dropdown).empty();
@@ -84,44 +98,45 @@ function updateUsers(updatedUserList) {
 		$('#private-messages-dropdown a[username=' + unreadPrivateMessages[i] + ']>svg').show();
 	}
 
-	// show users that signed in
-	for (var i = 0; i < updatedUserList.length; i++) {
-		if ((updatedUserList[i] !== primaryAccountUserName) && (jQuery.inArray(updatedUserList[i], userList) === -1)) {
-			chatMessages[updatedUserList[i]] = "";
+	// if first time opening chat, show already signed in users
+	if (!usersPrinted) {
+		for (var i = 0; i < updatedUserList.length; i++) {
 			var chatMsg = ("<strong>" + updatedUserList[i] + " signed in</strong><br>");
 			if (!messageRecipient)
 				document.getElementById('chat-box').innerHTML += chatMsg;
 			chatMessages['public'] += chatMsg;
 		}
+		usersPrinted = true;
+		return;
 	}
 
-	// show users that signed out
-	for (i = 0; i < userList.length; i++) {
-		if ((updatedUserList[i] !== primaryAccountUserName) && jQuery.inArray(userList[i], updatedUserList) === -1) {
-			var chatMsg = ("<strong>" + userList[i] + " left</strong><br>");
-			if (!messageRecipient)
-				document.getElementById('chat-box').innerHTML += chatMsg;
-			chatMessages['public'] += chatMsg;
-			delete chatMessages[userList[i]];
+	if (userLoggedOut) {
+		var chatMsg = ("<strong>" + userLoggedOut + " left</strong><br>");
+		if (!messageRecipient)
+			document.getElementById('chat-box').innerHTML += chatMsg;
+		chatMessages['public'] += chatMsg;
 
-			// if have unread messages from them, remove notification
-			if (jQuery.inArray(userList[i], unreadPrivateMessages) >= 0) {
-				// remove from unread private messages list
-				var index = jQuery.inArray(userList[i], unreadPrivateMessages);
-				if (index>=0) unreadPrivateMessages.splice(index, 1);
+		if (messageRecipient === userLoggedOut) {
+			clickPublic();
+			showAlert("The user you were messaging left the game", "", 1000);
+		} else if (jQuery.inArray(userLoggedOut, unreadPrivateMessages) !== -1) {
+			// remove from unread private messages list
+			var index = jQuery.inArray(userLoggedOut, unreadPrivateMessages);
+			unreadPrivateMessages.splice(index, 1);
 
-				// if no other unread private messages, hide unread messages circle on private button
-				if (unreadPrivateMessages.length === 0) {
-					$('#private-messages-button svg').hide();
-				}
-			}
+			// if no other unread private messages, hide unread messages circle on private button
+			if (unreadPrivateMessages.length === 0)
+				$('#private-messages-button svg').hide();
 		}
 	}
 
-	if (messageRecipient && !(messageRecipient in updatedUserList)) {
-		clickPublic();
-		showAlert("The user you were messaging left the game");
-	}
+	if (userLoggedIn === primaryAccountUserName)
+		return;
 
-	userList = updatedUserList;
+	if (userLoggedIn) {
+		var chatMsg = ("<strong>" + userLoggedIn + " signed in</strong><br>");
+		if (!messageRecipient)
+			document.getElementById('chat-box').innerHTML += chatMsg;
+		chatMessages['public'] += chatMsg;
+	}
 }

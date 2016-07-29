@@ -74,6 +74,7 @@ window.onload = function() {
 		$('#stop-hosting-button').hide();
 		$('#open-host-modal-button').show();
 	})
+	$('#stop-hosting-button').hide(); // sometimes initially-hidden doesn't work...
 
 
 	// Host Game Modal

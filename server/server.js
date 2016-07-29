@@ -94,8 +94,8 @@ var initializeServer = function() {
 			});
 		};
 
-		var broadcastUserListUpdateSignal = function(username, isLoggedIn){
-			io.sockets.emit('actionRequired', {code : 10, data : {username: username, isLoggedIn: isLoggedIn}});
+		var broadcastUserListUpdateSignal = function(previousUsername, currentUsername){
+			io.sockets.emit('actionRequired', {code : 10, data : {previousUsername : previousUsername, currentUsername : currentUsername}});
 		};
 
 		var broadcastAvailableGameListUpdateSignal = function() {
@@ -386,7 +386,7 @@ var initializeServer = function() {
 						userObjID = objID;
 						username = credential.username;
 						terminateDuplicatedSession(username);
-						broadcastUserListUpdateSignal(username, true);
+						broadcastUserListUpdateSignal(null, username);
 						connectionList[socket.id].username = username;
 					}
 					response(result); // 0: Password incorrect 1: Login succeed 2: Account created
@@ -401,9 +401,10 @@ var initializeServer = function() {
 							// Simply rename the credential information to the new one
 							db.modifyAccountInformation(userObjID, {username : credential.username, password : credential.password}, function (err, result) {
 								assert.equal(err, null);
+								var prvUsername = username;
 								username = credential.username;
 								terminateDuplicatedSession(username);
-								broadcastUserListUpdateSignal(username, true);
+								broadcastUserListUpdateSignal(prvUsername, username);
 								connectionList[socket.id].username = username;
 								response(3); // 3: Account upgraded
 							});
@@ -412,9 +413,10 @@ var initializeServer = function() {
 								// Migrate the information in the temporary account to the formal account
 								db.mergeAccount(userObjID, objID, function(isAccountMerged) {
 									userObjID = objID;
+									var prvUsername = username;
 									username = credential.username;
 									terminateDuplicatedSession(username);
-									broadcastUserListUpdateSignal(username, true);
+									broadcastUserListUpdateSignal(prvUsername, username);
 									connectionList[socket.id].username = username;
 									if(isAccountMerged){
 										response(4); // Temporary account merged to formal account
@@ -704,7 +706,7 @@ var initializeServer = function() {
 			console.log("Connection closed, removing socket..");
 			delete connectionList[socket.id];
 			terminateCurrentOnlineMultiplaySession();
-			broadcastUserListUpdateSignal(username, false);
+			broadcastUserListUpdateSignal(username, null);
 		});
 	});
 
