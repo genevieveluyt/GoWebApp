@@ -2,6 +2,7 @@ var userSigningIn; //which player is signing in
 var onGamePage = false;
 var loggingInBeforeOnline = false;
 var alertIntervalID = null;
+var musicInitialized = false;
 
 window.onload = function() {
 

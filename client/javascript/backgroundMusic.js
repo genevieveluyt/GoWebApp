@@ -7,11 +7,13 @@ Code Reference: Development Technology Training Center: https://www.developphp.c
 
 var audio, playbtn, mutebtn, volumeslider, seeking=false, seekto;
 var lastValue;
-var musicList = ["assets/Love Yourself.mp3", "assets/River Flow in You.mp3", "assets/Thinking Out Loud.mp3", "assets/Always With Me.mp3", "assets/Counting Stars.mp3"];
+var musicList = ["assets/Love Yourself.mp3", "assets/River Flow in You.mp3", "assets/Thinking Out Loud.mp3", "assets/Always With Me.mp3", "assets/Counting Stars.mp3", "assets/Voyage 1960.mp3", "assets/Voyage 1970.mp3", "Bloom Nobly, Ink-Black Cherry Blossom ~ Border of Life.mp3", "Border of Life.mp3"];
 var backgroundMusicInit = function(){
+	if (musicInitialized) {
+		return;
+	}
 
 	audio = new Audio();
-	audio.id = 'bgMusic';
 	var musicID = Math.floor(Math.random() * 1024 % musicList.length);
 	var musicFileName = musicList[musicID];
 	var musicTitleTextBox = document.getElementById('musicTitle');
@@ -32,9 +34,15 @@ var backgroundMusicInit = function(){
 			audio.play();
 		}
 	});
+	audio.onended = function(){
+		var newIndex = (musicTitleTextBox.selectedIndex + 1) % musicList.length;
+		audio.src = musicList[newIndex];
+		musicTitleTextBox.selectedIndex = newIndex;
+		audio.play();
+	};
 	musicTitleTextBox.selectedIndex = musicID;
 	audio.src = musicFileName;
-	audio.loop = true;
+	// audio.loop = true;
 	audio.play();
 
 	playbtn = document.getElementById("playButton");
@@ -56,6 +64,7 @@ var backgroundMusicInit = function(){
 	    audio.volume = volumeslider.value / 100;
 	    lastValue = volumeslider.value;
 	};
+	musicInitialized = true;
 }
 
 var changeColor = function(color){
