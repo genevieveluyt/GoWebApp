@@ -150,8 +150,8 @@ var initializeServer = function() {
 				}
 				
 				db.getAccountInfo(gameObject.player2, function(player2UserObj){
-					if(player1UserObj){
-						gameObject.player2 = player1UserObj.username;
+					if(player2UserObj){
+						gameObject.player2 = player2UserObj.username;
 					}else{
 						gameObject.player2 = 'Temporary Account';
 					}
