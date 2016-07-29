@@ -27,8 +27,8 @@ function loadGameHistory() {
 				names.player2 = (data[i].player2 == "anonymous")? 'CPU': data[i].player2;
 			}
 			if (data[i].gameMode == 2){
-				names.player1 = data[i].player1;
-				names.player2 = data[i].player2;
+				names.player1 = (data[i].player1 == "anonymous")? 'Open Position [Online]': data[i].player1;
+				names.player2 = (data[i].player2 == "anonymous")? 'Open Position [Online]': data[i].player2;
 			}
 
 			var winnerImg = "<img src='assets/icon_crown.svg' class='winner-icon'></img>   "

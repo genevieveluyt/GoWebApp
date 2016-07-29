@@ -27,12 +27,12 @@ window.onload = function() {
 		submitLogin();
 	});
 	$('#login-password').keyup(function(e){
-	    if(e.keyCode == 13)	// enter button
-	    {
-	        userSigningIn = 1;
+		if(e.keyCode == 13)	// enter button
+		{
+			userSigningIn = 1;
 			submitLogin();
 			$('#login-modal').modal('hide');
-	    }
+		}
 	});
 
 
@@ -67,7 +67,8 @@ window.onload = function() {
 	// Online Game Page
 	$('#open-host-modal-button').click(function() {
 		// browser automatically remembers input, overriding initially-hidden so hide it manually
-		$('#host-private-username').hide();
+		if($('input[name="public-private-radio"]:checked').val() == 'public')
+			$('#host-private-username').hide();
 		$('#host-error-message').hide();
 	});
 	$('#stop-hosting-button').click(function() {
@@ -91,10 +92,10 @@ window.onload = function() {
 	});
 	$('#submit-host-button').click(submitHostForm);
 	$('#host-private-username').keyup(function(e){
-	    if(e.keyCode == 13)	// enter button
-	    {
-	        submitHostForm();
-	    }
+		if(e.keyCode == 13)	// enter button
+		{
+			submitHostForm();
+		}
 	});
 
 
@@ -131,10 +132,10 @@ window.onload = function() {
 
 	// Chat
 	$('#chat-input').keyup(function(e){
-	    if(e.keyCode == 13)	// enter button
-	    {
-	        sendMessage();
-	    }
+		if(e.keyCode == 13)	// enter button
+		{
+			sendMessage();
+		}
 	});
 	$('#public-messages-button').click(clickPublic);
 
