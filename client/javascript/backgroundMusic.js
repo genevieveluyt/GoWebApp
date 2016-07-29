@@ -73,25 +73,41 @@ var changeColor = function(color){
 		document.getElementById("barColor").style.background = '#ccccff';
 		colorControlObject.squareFill = '#cceeff';
 		colorControlObject.squareStroke = 'rgba(0, 51, 204, 0.15)';
-		renderUnfinishedGameBoard();
+		if ($('#history-controls').css('display') != 'none') {
+			renderHistoryGameBoard();
+		}else{
+			renderUnfinishedGameBoard();
+		}
 	}
 	if(color == '#cceeff'){	//light blue
 		document.getElementById("barColor").style.background = '#99ddff';
 		colorControlObject.squareFill = '#ffe6cc';
 		colorControlObject.squareStroke = '#cccccc';
-		renderUnfinishedGameBoard();
+		if ($('#history-controls').css('display') != 'none') {
+			renderHistoryGameBoard();
+		}else{
+			renderUnfinishedGameBoard();
+		}
 	}
 	if(color == '#ffe6f2'){	//light pink
 		document.getElementById("barColor").style.background = '#ffcce6';
 		colorControlObject.squareFill = '#ffb3d9';
 		colorControlObject.squareStroke = '#ffffff';
-		renderUnfinishedGameBoard();
+		if ($('#history-controls').css('display') != 'none') {
+			renderHistoryGameBoard();
+		}else{
+			renderUnfinishedGameBoard();
+		}
 	}
 	if(color == '#ffffff'){	//white
 		document.getElementById("barColor").style.background = '#ffffff';
 		colorControlObject.squareFill = 'rgb(245, 227, 214)';
 		colorControlObject.squareStroke = 'rgb(234, 200, 174)';
-		renderUnfinishedGameBoard();
+		if ($('#history-controls').css('display') != 'none') {
+			renderHistoryGameBoard();
+		}else{
+			renderUnfinishedGameBoard();
+		}
 	}
 }
 
