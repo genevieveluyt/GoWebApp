@@ -379,16 +379,6 @@ socket.on('actionRequired', function(action){
 	console.log('updateRequired signal received');
 });
 
-//==== Obsolete
-// socket.on('publish', function(data) {
-// 	console.log('>> ' + data);
-// 	var usern = data.split(":")[0];
-// 	if (usern === player1.username)
-// 		document.getElementById('chat-box').innerHTML += ("<strong>Me</strong>: " + (data.substring(usern.length+1)) + "<br>");
-// 	else
-// 		document.getElementById('chat-box').innerHTML += (data + "<br>");
-// });
-
 socket.on('publicMsg', function(data){
 	console.log('>> ' + data.sender + ': '+ data.msg);
 	if (data.sender === primaryAccountUserName) 
@@ -458,9 +448,6 @@ function initialize(username, password, isSucceed) {
 			player2TokenID = accountInfoObj.tokenId[1];
 			// Set token images here;
 			console.log('Set token images to: P1: ' + player1TokenID + ', P2: ' + player2TokenID);
-
-			player1.token = player1TokenID;
-			player2.token = player2TokenID;
 			
 			updatePlayerTokens();
 			loadTokenSelectionModal();
@@ -469,6 +456,9 @@ function initialize(username, password, isSucceed) {
 
 			if (username.substring(0,5) !== "temp_") {
 				login();
+			} else {
+				$('#login-button').parent().show();
+				$('#username-button').parent().hide();
 			}
 
 		});

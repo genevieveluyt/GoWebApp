@@ -201,9 +201,9 @@ function renderHistoryGameBoard() {
     for (var row = 0; row < (board.size); row++) {
     	for (var col = 0; col < (board.size); col++) {
     		if (boardArr[row][col] == 1)
-    			svg.append(makeToken(col, row, board.sqSize, TOKEN_IMGS[player1.token], "token-image placed 1"));
+    			svg.append(makeToken(col, row, board.sqSize, TOKEN_IMGS[player1TokenID], "token-image placed 1"));
     		else if (boardArr[row][col] == 2)
-    			svg.append(makeToken(col, row, board.sqSize, TOKEN_IMGS[player2.token], "token-image placed 2"));
+    			svg.append(makeToken(col, row, board.sqSize, TOKEN_IMGS[player2TokenID], "token-image placed 2"));
     	}
     }
 

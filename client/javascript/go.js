@@ -13,14 +13,12 @@ var primary = 1;	// player who is the primary account holder
 
 player1 = {
 	username: null,
-	token: "raccoon",
 	capturedTokens: 0,
 	passsed: false
 }
 
 player2 = {
 	username: null,
-	token: "fox",
 	capturedTokens: 0,
 	passed: false,
 }
@@ -49,15 +47,19 @@ function updatePlayerNames() {
 	document.getElementById('p1-name').innerHTML = names.player1;
 	document.getElementById('p2-name').innerHTML = names.player2;
 
-	document.getElementById('order-p1-name').innerHTML = names.player1;
-	document.getElementById('order-p2-name').innerHTML = names.player2;
 
 	if (accountHolderTokenType === 1) {
 		document.getElementById('options-p1-name').innerHTML = names.player1;
 		document.getElementById('options-p2-name').innerHTML = names.player2;
+
+		document.getElementById('order-p1-name').innerHTML = names.player1;
+		document.getElementById('order-p2-name').innerHTML = names.player2;
 	} else {
 		document.getElementById('options-p1-name').innerHTML = names.player2;
 		document.getElementById('options-p2-name').innerHTML = names.player1;
+
+		document.getElementById('order-p1-name').innerHTML = names.player2;
+		document.getElementById('order-p2-name').innerHTML = names.player1;
 	}
 }
 
@@ -161,7 +163,7 @@ function loadTokenSelectionModal() {
 		a.onclick = onClickNewToken;
 
 		// token is already being used
-		if (key === player1.token || key === player2.token ) {
+		if (key === player1TokenID || key === player2TokenID ) {
 			img.className = "choose-token-image taken";
 		} else {
 			img.className = "choose-token-image";
@@ -196,22 +198,22 @@ function onClickNewToken(event) {
 	}
 
 	if (playerNewToken === 1) {
-		player1.token = event.target.getAttribute("token");
+		player1TokenID = event.target.getAttribute("token");
 		if (playerNewToken === currPlayer)
 			updateUnplacedTokens();
-		swapPlacedTokens(1, TOKEN_IMGS[player1.token]);
+		swapPlacedTokens(1, TOKEN_IMGS[player1TokenID]);
 	} else {
-		player2.token = event.target.getAttribute("token");
+		player2TokenID = event.target.getAttribute("token");
 		if (playerNewToken === currPlayer)
 			updateUnplacedTokens();
-		swapPlacedTokens(2, TOKEN_IMGS[player2.token]);
+		swapPlacedTokens(2, TOKEN_IMGS[player2TokenID]);
 	}
 
 	$('#choose-token-modal').modal('hide');
 
 	updatePlayerTokens();
 	loadTokenSelectionModal();
-	changeTokenImgs([player1.token, player2.token]);	// save tokens to server
+	changeTokenImgs([player1TokenID, player2TokenID]);	// save tokens to server
 }
 
 function renderNewGameBoard() {
@@ -221,7 +223,7 @@ function renderNewGameBoard() {
 	// tokens
     for (var row = 0; row < (board.size); row++) {
     	for (var col = 0; col < (board.size); col++) {
-    		svg.append(makeToken(col, row, board.sqSize, TOKEN_IMGS[player1.token], "token-image unplaced", onClickToken));
+    		svg.append(makeToken(col, row, board.sqSize, TOKEN_IMGS[player1TokenID], "token-image unplaced", onClickToken));
     	}
     }
 
@@ -232,19 +234,37 @@ function renderUnfinishedGameBoard() {
 	var boardState = board.state;
 	$('#gameboard').remove();
 	var svg = makeGameBoard();
-	var unplacedToken = (currPlayer == 1 ? TOKEN_IMGS[player1.token] : TOKEN_IMGS[player2.token]);
-	
-	// tokens
-    for (var row = 0; row < (board.size); row++) {
-    	for (var col = 0; col < (board.size); col++) {
-    		if (boardState[row][col] == 1)
-    			svg.append(makeToken(col, row, board.sqSize, TOKEN_IMGS[player1.token], "token-image placed 1"));
-    		else if (boardState[row][col] == 2)
-    			svg.append(makeToken(col, row, board.sqSize, TOKEN_IMGS[player2.token], "token-image placed 2"));
-    		else
-    			svg.append(makeToken(col, row, board.sqSize, unplacedToken, "token-image unplaced", onClickToken));
-    	}
-    }
+	console.log("account token = " + accountHolderTokenType);
+	console.log('token 1 = ' + player1TokenID);
+	if (accountHolderTokenType === 1) {
+		var unplacedToken = (currPlayer == 1 ? TOKEN_IMGS[player1TokenID] : TOKEN_IMGS[player2TokenID]);
+		
+		// tokens
+	    for (var row = 0; row < (board.size); row++) {
+	    	for (var col = 0; col < (board.size); col++) {
+	    		if (boardState[row][col] == 1)
+	    			svg.append(makeToken(col, row, board.sqSize, TOKEN_IMGS[player1TokenID], "token-image placed 1"));
+	    		else if (boardState[row][col] == 2)
+	    			svg.append(makeToken(col, row, board.sqSize, TOKEN_IMGS[player2TokenID], "token-image placed 2"));
+	    		else
+	    			svg.append(makeToken(col, row, board.sqSize, unplacedToken, "token-image unplaced", onClickToken));
+	    	}
+	    }
+	} else {
+		var unplacedToken = (currPlayer == 1 ? TOKEN_IMGS[player2TokenID] : TOKEN_IMGS[player1TokenID]);
+		
+		// tokens
+	    for (var row = 0; row < (board.size); row++) {
+	    	for (var col = 0; col < (board.size); col++) {
+	    		if (boardState[row][col] == 1)
+	    			svg.append(makeToken(col, row, board.sqSize, TOKEN_IMGS[player2TokenID], "token-image placed 2"));
+	    		else if (boardState[row][col] == 2)
+	    			svg.append(makeToken(col, row, board.sqSize, TOKEN_IMGS[player1TokenID], "token-image placed 1"));
+	    		else
+	    			svg.append(makeToken(col, row, board.sqSize, unplacedToken, "token-image unplaced", onClickToken));
+	    	}
+	    }
+	}
 
 	$('#gameboard-container').append(svg);
 
@@ -321,7 +341,7 @@ function swapPlacedTokens(player, newImage) {
 }
 
 function updateUnplacedTokens() {
-	var imgPath = (currPlayer == 1 ? TOKEN_IMGS[player1.token] : TOKEN_IMGS[player2.token]);
+	var imgPath = (currPlayer == 1 ? TOKEN_IMGS[player1TokenID] : TOKEN_IMGS[player2TokenID]);
 	var unplacedTokens = document.getElementsByClassName('token-image unplaced');
 	for (var i = 0; i < unplacedTokens.length; i++)
 		unplacedTokens[i].setAttributeNS('http://www.w3.org/1999/xlink','href', imgPath);
