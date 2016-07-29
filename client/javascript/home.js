@@ -72,6 +72,8 @@ window.onload = function() {
 	});
 	$('#stop-hosting-button').click(function() {
 		clearCurrentGameAttribute();
+		suspendCurrentOnlineMultiplaySession();
+		showAlert('Host session suspended', 'Info', 1000);
 		$('#stop-hosting-button').hide();
 		$('#open-host-modal-button').show();
 	})
