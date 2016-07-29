@@ -11,6 +11,7 @@ var player2UserName = null;
 var primaryAccountUserName = null;
 var player1TokenID = null;
 var player2TokenID = null;
+var userList = [];
 
 // Authentication function
 function auth(username, password, callback){
@@ -248,6 +249,7 @@ function sendRegularMessage(msg) {
 function getUserList(data, callback){
 	socket.emit('control', {command : 'getUserList'}, function(result){
 		updateUsers(data.previousUsername, data.currentUsername, result.userList);
+		userList = result.userList;
 		if (callback)
 			callback(result);
 	});
@@ -434,7 +436,7 @@ socket.on('connect', function(){
 });
 
 socket.on('disconnect', function(){
-	showAlert('Connection loose.<br>Please check your network connection.', 'Warning');
+	showAlert('Connection lost.<br>Please check your network connection.', 'Warning');
 	connectionLoose = true;
 });
 
