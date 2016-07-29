@@ -245,7 +245,7 @@ function sendRegularMessage(msg) {
 	socket.emit('control', {command : 'regularMessage', msg});
 }
 
-function getUserList(callback){
+function getUserList(data, callback){
 	socket.emit('control', {command : 'getUserList'}, function(result){
 		console.log(result.userList);
 		updateUsers(result.userList);
@@ -370,7 +370,7 @@ socket.on('actionRequired', function(action){
 			break;
 		case 10:
 			// Should put process related to refreshing user list in the getUserList() function as much as possible
-			getUserList(); 
+			getUserList(data); 
 			break;
 		default:
 			console.log('Unsupported action');

@@ -94,8 +94,8 @@ var initializeServer = function() {
 			});
 		};
 
-		var broadcastUserListUpdateSignal = function(){
-			io.sockets.emit('actionRequired', {code : 10, data : null});
+		var broadcastUserListUpdateSignal = function(username, isLoggedIn){
+			io.sockets.emit('actionRequired', {code : 10, data : {username: username, isLoggedIn: isLoggedIn}});
 		};
 
 		var broadcastAvailableGameListUpdateSignal = function() {
@@ -386,7 +386,7 @@ var initializeServer = function() {
 						userObjID = objID;
 						username = credential.username;
 						terminateDuplicatedSession(username);
-						broadcastUserListUpdateSignal();
+						broadcastUserListUpdateSignal(username, true);
 						connectionList[socket.id].username = username;
 					}
 					response(result); // 0: Password incorrect 1: Login succeed 2: Account created
@@ -403,7 +403,7 @@ var initializeServer = function() {
 								assert.equal(err, null);
 								username = credential.username;
 								terminateDuplicatedSession(username);
-								broadcastUserListUpdateSignal();
+								broadcastUserListUpdateSignal(username, true);
 								connectionList[socket.id].username = username;
 								response(3); // 3: Account upgraded
 							});
@@ -414,7 +414,7 @@ var initializeServer = function() {
 									userObjID = objID;
 									username = credential.username;
 									terminateDuplicatedSession(username);
-									broadcastUserListUpdateSignal();
+									broadcastUserListUpdateSignal(username, true);
 									connectionList[socket.id].username = username;
 									if(isAccountMerged){
 										response(4); // Temporary account merged to formal account
@@ -704,7 +704,7 @@ var initializeServer = function() {
 			console.log("Connection closed, removing socket..");
 			delete connectionList[socket.id];
 			terminateCurrentOnlineMultiplaySession();
-			broadcastUserListUpdateSignal();
+			broadcastUserListUpdateSignal(username, false);
 		});
 	});
 
