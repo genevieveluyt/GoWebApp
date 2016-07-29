@@ -7,6 +7,10 @@
   color: #7b7b7b;
 }
 
+.home-page-token {
+  width: 11%;
+}
+
 #alert {
   width: 300px;
   position: fixed;
