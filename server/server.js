@@ -155,7 +155,6 @@ var initializeServer = function() {
 					}else{
 						gameObject.player2 = 'Temporary Account';
 					}
-					gameObject.player2 = player2UserObj.username;
 					gameObject.accountHolderTokenType = accountHolderTokenType;
 					callback(gameObject);
 				});
