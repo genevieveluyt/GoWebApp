@@ -7,7 +7,7 @@ Code Reference: Development Technology Training Center: https://www.developphp.c
 
 var audio, playbtn, mutebtn, volumeslider, seeking=false, seekto;
 var lastValue;
-var musicList = ["assets/Love Yourself.mp3", "assets/River Flow in You.mp3", "assets/Thinking Out Loud.mp3", "assets/Always With Me.mp3", "assets/Counting Stars.mp3", "assets/Voyage 1960.mp3", "assets/Voyage 1970.mp3", "Bloom Nobly, Ink-Black Cherry Blossom ~ Border of Life.mp3", "Border of Life.mp3"];
+var musicList = ["assets/Love Yourself.mp3", "assets/River Flow in You.mp3", "assets/Thinking Out Loud.mp3", "assets/Always With Me.mp3", "assets/Counting Stars.mp3", "assets/Voyage 1960.mp3", "assets/Voyage 1970.mp3", "assets/Bloom Nobly, Ink-Black Cherry Blossom ~ Border of Life.mp3", "assets/Border of Life.mp3"];
 var backgroundMusicInit = function(){
 	if (musicInitialized) {
 		return;
