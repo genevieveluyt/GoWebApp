@@ -236,6 +236,8 @@ function changeTokenImgs(tokenIds) {
 function getGameHistory(callback){
 	socket.emit('getGameHistory', null, function(gameHistoryList){
 		console.log(gameHistoryList);
+		$('#stop-hosting-button').hide();
+		$('#open-host-modal-button').show();
 		if(callback){
 			callback(gameHistoryList);
 		}
