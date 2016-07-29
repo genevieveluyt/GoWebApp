@@ -45,14 +45,49 @@ var isLoading = false;
 // Load each players' names onto game page
 function updatePlayerNames() {
 	var names = getScreenNames();
+
 	document.getElementById('p1-name').innerHTML = names.player1;
 	document.getElementById('p2-name').innerHTML = names.player2;
+
+	document.getElementById('order-p1-name').innerHTML = names.player1;
+	document.getElementById('order-p2-name').innerHTML = names.player2;
+
+	if (accountHolderTokenType === 1) {
+		document.getElementById('options-p1-name').innerHTML = names.player1;
+		document.getElementById('options-p2-name').innerHTML = names.player2;
+	} else {
+		document.getElementById('options-p1-name').innerHTML = names.player2;
+		document.getElementById('options-p2-name').innerHTML = names.player1;
+	}
 }
 
-// Load players' tokens onto game page
+// Load players' tokens onto game options page and game page
 function updatePlayerTokens() {
-	document.getElementById('p1-token').src = TOKEN_IMGS[player1.token];
-	document.getElementById('p2-token').src = TOKEN_IMGS[player2.token];
+	if (accountHolderTokenType === 2) {
+		document.getElementById('p1-token').src = TOKEN_IMGS[player2TokenID];
+		document.getElementById('p2-token').src = TOKEN_IMGS[player1TokenID];
+	} else {
+		document.getElementById('p1-token').src = TOKEN_IMGS[player1TokenID];
+		document.getElementById('p2-token').src = TOKEN_IMGS[player2TokenID];
+	}
+
+	document.getElementById('options-p1-token').src = TOKEN_IMGS[player1TokenID];
+	document.getElementById('options-p2-token').src = TOKEN_IMGS[player2TokenID];
+
+	document.getElementById('p1-taunt').innerHTML = getTokenTaunt(player1TokenID);
+	document.getElementById('p2-taunt').innerHTML = getTokenTaunt(player2TokenID);
+}
+
+function getTokenTaunt(token) {
+	switch(token) {
+		case "cat": return "I'm not going back in the bag!";
+		case "bear": return "Defeating you is a necessity";
+		case "panda": return "I'll leave you bamboozled";
+		case "fox": return "I'll use all my moves to jump over this lazy dog";
+		case "raccoon": return "This game won't take a raccoon's age";
+		case "wolf": return "I came here to howl at the moon and crush noobs, and it's just about down..."
+		default: return "You're going down!"
+	}
 }
 
 /**
@@ -138,7 +173,20 @@ function loadTokenSelectionModal() {
 }
 
 function onTokenModalOpened(event) {
-	playerNewToken = (event.relatedTarget.childNodes[0].id === "p1-token" ? 1 : 2);
+	var clickedButton;
+	if (event.relatedTarget.childNodes[0].id)
+		clickedButton = event.relatedTarget.childNodes[0].id;
+	else 
+		// not sure why but for token images on game options page, text nodes filled with
+		// empty space are added before and after the image... so get second child
+		clickedButton = event.relatedTarget.childNodes[1].id;
+
+	if ((accountHolderTokenType === 1 && clickedButton === "p1-token")
+			|| (accountHolderTokenType === 2 && clickedButton === "p2-token")
+			|| (clickedButton === "options-p1-token"))
+		playerNewToken = 1;
+	else
+		playerNewToken = 2;
 }
 
 // Clicked a new token image in the Token Selection modal
@@ -367,47 +415,23 @@ function boardListToArray(size, boardList) {
 	return boardArr;
 }
 
-function swapPlayerTokens() {
-	var temp = player1.token;
-	player1.token = player2.token;
-	player2.token = temp;
-	updatePlayerTokens();
-}
-
 function getScreenNames() {
 	var p1;
 	var p2;
 
 	if (accountHolderTokenType == 1){
 		p1 = primaryAccountUserName;
-	 	if (player2.username === "anonymous")
-	        p2 = (!board.hotseat && !board.online)? "CPU": "Player 2";
+	 	if (!player2.username || player2.username === "anonymous")
+	        p2 = (!board.hotseat && !board.online)? "CPU": "Guest";
 	    else
 	        p2 = player2.username;
 	}else{
 		p2 = primaryAccountUserName;
-		if (player1.username === "anonymous")
-	        p1 = (!board.hotseat && !board.online)? "CPU": "Player 1";
+		if (!player1.username || player1.username === "anonymous")
+	        p1 = (!board.hotseat && !board.online)? "CPU": "Guest";
 	    else
 	        p1 = player1.username;
 	}
-
-
-
-	// if (player1.username.substring(0,5) === "temp_" || player1.username === "anonymous")
- //        p1 = "Player 1";
- //    else
- //        p1 = player1.username;
-
-    // if (!board.hotseat && !board.online)
-    //     p2 = "CPU";
-    // else if (player2.username === "anonymous")
-    //     p2 = "Player 2";
-    // else
-    //     p2 = player2.username;
-
-
-
 
 	return { player1: p1, player2: p2 };
 }

@@ -55,10 +55,10 @@
 		          			<button class="button button3" onclick="changeColor('#ffe6f2')"></button>
 		          			<button class="button button4" onclick="changeColor('#ffffff')"></button>
 		          		</li>
-		            	<li class="nav-link"><a href="#game-rules-modal" data-toggle="modal" style="font-weight: bold">Game Rules</a></li>
-		            	<li class="nav-link"><a href="#login-modal" id="login-button" class="login-button" data-toggle="modal" style="font-weight: bold">Login</a></li>
+		            	<li class="nav-link"><a href="#game-rules-modal" data-toggle="modal">Game Rules</a></li>
+		            	<li class="nav-link"><a href="#login-modal" id="login-button" class="login-button" data-toggle="modal">Login</a></li>
 	            		<li class="dropdown">
-	            			<a href="#" id="username-button" class="dropdown-toggle" data-toggle="dropdown" style="font-weight: bold"></a>
+	            			<a href="#" id="username-button" class="dropdown-toggle" data-toggle="dropdown"></a>
 	            			<ul class="dropdown-menu">
 	            				<li><a href="#" id="game-history-button">Game History</a></li>
 	            				<li><a href="#" id="logout-button">Logout</a></li>
@@ -101,7 +101,6 @@
 	  	<!--=============================== HOME PAGE =================================-->
 
 	  	<div id="home-page" class="page-section">
-		
 			<header id="fh5co-header" role="banner">
 
 				<img src="assets/token_raccoon.svg" align="right"></img>
@@ -110,24 +109,22 @@
 				<img src="assets/token_cat.svg" align="center"></img>
 				<img src="assets/token_wolf.svg" align="left"></img>
 				<img src="assets/token_bear.svg" align="left"></img>
-				
-				<div class="container">	
-					<h1 class="fh5co-header-intro">The Game of Go</h1>
+
+				<div class="fh5co-header-intro">
+					<h1>The Game of Go</h1>
+					<button class="btn btn-primary btn-lg btn-uppercase btn-effect new-game-button">Play <i class="ti-angle-right"></i></button>
 				</div>
+				
+
 			</header>
 
-			<a href="#" class="fh5co-block-links text-center new-game-button">
-				<h2>Play the Game</h2>
-			</a>
 	    </div>
 
 	    <!--============================== GAME MODE PAGE =============================-->
 
 	    <div id="game-mode-page" class="page-section initially-hidden">
 
-	    	<br><br><br>
-
-	    	<div class="row">
+	    	<div class="row center-on-page">
 	    		<div class="col-md-3"></div>
 				<div class="col-md-2">
 					<div class="fh5co-main-service">
@@ -149,7 +146,7 @@
 								<i class="ti-desktop"></i>
 							</div>
 							<h2>Single Player</h2>
-							<p>Play against the computer.</p>
+							<p>Single player against the computer.</p>
 							<p><span class="learn-more">Play</span></p>
 						</a>
 					</div>	
@@ -163,7 +160,7 @@
 								<i class="ti-medall"></i>
 							</div>
 							<h2>Online Multiplayer</h2>
-							<p>Play against other signed in users.</p>
+							<p>Multiplayer against other online users.</p>
 							<p><span class="learn-more">Play</span></p>
 						</a>
 					</div>		
@@ -172,48 +169,71 @@
 				<div class="col-md-3"></div>
 
 			</div>
-
-	    	<<!-- button id="game-mode-hotseat-button" type="button" class="btn btn-primary">Local Multiplayer</button>
-	    	<button id="game-mode-single-button" type="button" class="btn btn-info btn-lg">Single Player</button>
-	    	<button id="game-mode-online-button" type="button" class="btn btn-default">Online Multiplayer</button> -->
 	    </div>
 
 	    <!--============================= GAME OPTIONS PAGE =============================-->
 
 	    <div id="game-options-page" class="page-section initially-hidden ">
-	    	<form id="game-options-form" class="center-contents-horizontal">
 
-				<p><b>Board size</b></p>
-				
-				<div class="btn-group" data-toggle="buttons">
-					<label class="btn btn-default active">
-						<input type="radio" name="board-size-radio" value=9 autocomplete="off" checked> 9x9
-					</label>
-					<label class="btn btn-default">
-						<input type="radio" name="board-size-radio" value=13 autocomplete="off"> 13x13
-					</label>
-					<label class="btn btn-default">
-						<input type="radio" name="board-size-radio" value=19 autocomplete="off"> 19x19
-					</label>
-				</div>
+	    	<div class="row center-on-page">
+	    		<div class="col-md-2"></div>
+	    		<div class="col-md-2 text-center">
+					<a href="#choose-token-modal" data-toggle="modal">
+						<img id="options-p1-token" class="player-token" />
+					</a>
+					<h2 id="options-p1-name">Player 1</h2>
+					<p id="p1-taunt" class="light-med-text"></p>
+	    		</div>
+	    		<div class="col-md-1"></div>
+	    		<div class="col-md-2 text-center">
+					<a href="#choose-token-modal" data-toggle="modal">
+						<img id="options-p2-token" class="player-token" />
+					</a>
+					<h2 id="options-p2-name">Player 2</h2>
+					<p id="p2-taunt" class="light-med-text"></p>
+	    		</div>
+	    		<div class="col-md-1"></div>
+	    		<div class="col-md-3">
 
-				<br><br>
+	    			<form id="game-options-form" class="center-contents-horizontal">
 
-				<p><b>Game Order</b></p>
-				<div class="btn-group" data-toggle="buttons">
-					<label class="btn btn-default active">
-						<input type="radio" name="token-type-radio" value="black" autocomplete="off" checked> Go First
-					</label>
-					<label class="btn btn-default">
-						<input type="radio" name="token-type-radio" value="white" autocomplete="off"> Go Second
-					</label>
-				</div>
+						<p><b>Board size</b></p>
+						
+						<div class="btn-group btn-group-justified" data-toggle="buttons">
+							<label class="btn btn-default active">
+								<input type="radio" name="board-size-radio" value=9 autocomplete="off" checked> 9x9
+							</label>
+							<label class="btn btn-default">
+								<input type="radio" name="board-size-radio" value=13 autocomplete="off"> 13x13
+							</label>
+							<label class="btn btn-default">
+								<input type="radio" name="board-size-radio" value=19 autocomplete="off"> 19x19
+							</label>
+						</div>
 
-				<br><br><br>
+						<br>
 
-				<input id="submit-options-button" class="btn btn-default" value="Let's Go!">
-			</form>
-	    </div>
+						<p><b>Who Goes First?</b></p>
+						<div class="btn-group btn-group-justified" data-toggle="buttons">
+							<label class="btn btn-default active">
+								<input  type="radio" name="token-type-radio" value="black" autocomplete="off" checked><span id="order-p1-name">Go First</span>
+							</label>
+							<label class="btn btn-default">
+								<input type="radio" name="token-type-radio" value="white" autocomplete="off">
+								<span id="order-p2-name">Go Second</span>
+							</label>
+						</div>
+
+						<br><br>
+
+						<button id="submit-options-button" class="btn btn-block btn-default">Let's Go!</button>
+					</form>
+
+	    		</div>
+	    		<div class="col-md-1"></div>
+	    	</div>
+
+		</div>
 
 	    <!--================================== GAME PAGE ================================-->
 
@@ -223,7 +243,7 @@
             		<table class="table">
 	            		<tr id="player-1">
 	            			<td  class="center-cell-contents">
-		            			<a href="#choose-token-modal" class="player-token" data-toggle="modal"><img id="p1-token" class="player-token"/></a>
+		            			<a href="#choose-token-modal" data-toggle="modal"><img id="p1-token" class="player-token"/></a>
 		            		</td>
 		            		<td>
 		            			<h4 id="p1-name"></h4>
@@ -413,8 +433,11 @@
 		<div id="online-game-page" class="page-section initially-hidden container">
             <h2>
             	Available Games
-            	<a href="#"><img src="assets/refresh.png" style="width:25px;height:25px;margin: 0 0 5px 0" id="available-game-refresh-button"></a>
+            	<a href="#" class="initially-hidden">
+            		<img src="assets/refresh.png" style="width:25px;height:25px;margin: 0 0 5px 0" id="available-game-refresh-button">
+            	</a>
             	<a id="open-host-modal-button" href="#host-modal" data-toggle="modal" class="btn btn-default" style="float: right;"">Host New Game</a>
+            	<button id="stop-hosting-button" class="btn btn-default initially-hidden" style="float: right;">Stop Hosting</button>
             </h2>
             <br>
 
@@ -570,8 +593,12 @@
 		<div id='music-control-panel'>
 			<img id="playButton" src="assets/pause.png" style="width:20px;height:20px;">
 			<img id="muteButton" src="assets/volume.png" style="width:20px;height:20px;">
+<<<<<<< HEAD
 			<select id="musicTitle">
 			</select>
+=======
+			<span id="musicTitle"></span>
+>>>>>>> 07bcf29b2a1e167649c97db640025e9729e24953
 			<input id="volumeslider" type="range" min="0" max="100" value="25" step="1">
 		</div>
 
@@ -589,6 +616,8 @@
 	    <!-- Placed at the end of the document so the pages load faster -->
 	    <script src="js/jquery.min.js"></script>
 	    <script src="js/bootstrap.min.js"></script>
+
+	    <!-- Application logic -->
 	    <script src="javascript/svgFactory.js"></script>
 	    <script src="javascript/go.js"></script>
 	    <script src="javascript/history.js"></script>
@@ -597,6 +626,11 @@
 	    <script src="javascript/home.js"></script>
 	    <script src="javascript/backgroundMusic.js"></script>
 		<script src="javascript/webSocket.js"></script>
+
+		<!-- Sprint Template -->
+		<script src="javascript/modernizr-2.6.2.min.js"></script>
+
+		<link href='https://fonts.googleapis.com/css?family=Lato:400,700,900,300' rel='stylesheet' type='text/css'>
 		
   	</body>
 

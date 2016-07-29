@@ -39,6 +39,7 @@ window.onload = function() {
 	$('#game-mode-hotseat-button').click(function() {
 		board.hotseat = true;
 		board.online = false;
+		updatePlayerNames();
 		showGameOptionsPage();
 	});
 	$('#game-mode-online-button').click(function() {
@@ -53,6 +54,7 @@ window.onload = function() {
 	$('#game-mode-single-button').click(function() {
 		board.hotseat = false;
 		board.online = false;
+		updatePlayerNames();
 		showGameOptionsPage();
 	});
 
@@ -62,11 +64,16 @@ window.onload = function() {
 
 
 	// Online Game Page
-	$('open-host-modal-button').click(function() {
-		// browser automatically remember input, overriding initially-hidden
+	$('#open-host-modal-button').click(function() {
+		// browser automatically remembers input, overriding initially-hidden so hide it manually
 		$('#host-private-username').hide();
 		$('#host-error-message').hide();
 	});
+	$('#stop-hosting-button').click(function() {
+		clearCurrentGameAttribute();
+		$('#stop-hosting-button').hide();
+		$('#open-host-modal-button').show();
+	})
 
 
 	// Host Game Modal
@@ -182,10 +189,6 @@ function showOnlineGamePage() {
 	$('#online-games-chat-container').append($('#game-chat-container').children());
 	$('#online-game-page').show();
 	$('#logo').show();
-	if($('input[name="play-mode-radio"]:checked').val() == 'public')
-		$('#host-private-username').show();
-	else
-		$('#host-private-username').hide();
 	pageSwitched();
 }
 
@@ -196,8 +199,6 @@ function pageSwitched() {
 }
 
 function submitHostForm() {
-	console.log("radio val = " + $('#host-options-form input[name="public-private-radio"]:checked').val());
-	console.log("")
 	if (($('#host-options-form input[name="public-private-radio"]:checked').val() === "public") || (jQuery.inArray($('#host-private-username').val(), userList)) > -1) {
 		board.online = true;
 		$('#host-modal').modal('hide');
@@ -229,7 +230,7 @@ function startGame() {
 			privateUsername = $('#host-private-username').val();
 			$('#host-private-username').val('');
 		}
-	} else { console.log("tokenType val = " + $('#host-options-form input[name="token-type-radio"]:checked').val());
+	} else {
 		board.setSize(parseInt($('#game-options-form input[name="board-size-radio"]:checked').val()));
 		var tokenType = ($('#game-options-form input[name="token-type-radio"]:checked').val() === "black")? 1: 2;
 	}
