@@ -95,7 +95,7 @@ var initializeServer = function() {
 		};
 
 		var broadcastUserListUpdateSignal = function(previousUsername, currentUsername){
-			io.sockets.emit('actionRequired', {code : 10, data : {previousUsername : previousUsername: currentUsername : currentUsername}});
+			io.sockets.emit('actionRequired', {code : 10, data : {previousUsername : previousUsername, currentUsername : currentUsername}});
 		};
 
 		var broadcastAvailableGameListUpdateSignal = function() {
@@ -386,7 +386,7 @@ var initializeServer = function() {
 						userObjID = objID;
 						username = credential.username;
 						terminateDuplicatedSession(username);
-						broadcastUserListUpdateSignal(null, previousUsername);
+						broadcastUserListUpdateSignal(null, username);
 						connectionList[socket.id].username = username;
 					}
 					response(result); // 0: Password incorrect 1: Login succeed 2: Account created
