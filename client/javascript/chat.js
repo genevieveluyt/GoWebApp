@@ -75,16 +75,6 @@ function updateUsers(userLoggedOut, userLoggedIn, updatedUserList) {
 	if (!updatedUserList)
 		return;
 
-	if (userLoggedOut && userLoggedIn) {
-		if (!chatMessages[userLoggedIn]) {
-			chatMessages[userLoggedIn] = chatMessages[userLoggedOut]
-			delete chatMessages[userLoggedOut];
-		}
-		else {
-			chatMessages[userLoggedIn] += chatMessages[userLoggedOut];
-		}
-	}
-
 	var dropdown = document.getElementById('private-messages-dropdown');
 	$(dropdown).empty();
 
@@ -104,7 +94,6 @@ function updateUsers(userLoggedOut, userLoggedIn, updatedUserList) {
 		listItem.appendChild(a);
 		dropdown.appendChild(listItem);
 	}
-
 	$('.unread-svg').append(makeUnreadMessagesCircle());
 
 	for (i = 0; i < unreadPrivateMessages.length; i++) {
@@ -124,7 +113,43 @@ function updateUsers(userLoggedOut, userLoggedIn, updatedUserList) {
 		return;
 	}
 
-	if (userLoggedOut) {
+	if (userLoggedIn === primaryAccountUserName)
+		return;
+
+	if (userLoggedOut && userLoggedIn) {
+		if (!chatMessages[userLoggedIn]) {
+			chatMessages[userLoggedIn] = chatMessages[userLoggedOut]
+			delete chatMessages[userLoggedOut];
+		}
+		else {
+			chatMessages[userLoggedIn] += chatMessages[userLoggedOut];
+		}
+
+		var chatMsg = ("<strong>" + userLoggedOut + " signed in as " + userLoggedIn + " </strong><br>");
+
+		if (messageRecipient === userLoggedOut) {
+			messageRecipient = userLoggedIn;
+			document.getElementById('private-button-text').innerHTML = userLoggedIn;
+			document.getElementById('chat-box').innerHTML += chatMsg;
+		}
+
+		if (!messageRecipient)
+			document.getElementById('chat-box').innerHTML += chatMsg;
+		chatMessages['public'] += chatMsg;
+
+		// If the user has unread messages from the temp account
+		if (jQuery.inArray(userLoggedOut, unreadPrivateMessages) > -1) {
+			var index = jQuery.inArray(userLoggedOut, unreadPrivateMessages);
+			unreadPrivateMessages.splice(index, 1);
+			unreadPrivateMessages.push(userLoggedIn);
+
+			if (messageRecipient !== userLoggedIn) {
+				$('#private-messages-button svg').show();
+				$('#private-messages-dropdown a[username=' + userLoggedIn + ']>svg').show();
+				chatMessages[userLoggedIn] += chatMsg;
+			} 
+		}
+	} else if (userLoggedOut) {
 		var chatMsg = ("<strong>" + userLoggedOut + " left</strong><br>");
 		if (!messageRecipient)
 			document.getElementById('chat-box').innerHTML += chatMsg;
@@ -142,12 +167,7 @@ function updateUsers(userLoggedOut, userLoggedIn, updatedUserList) {
 			if (unreadPrivateMessages.length === 0)
 				$('#private-messages-button svg').hide();
 		}
-	}
-
-	if (userLoggedIn === primaryAccountUserName)
-		return;
-
-	if (userLoggedIn) {
+	} else {	// userLoggedIn
 		var chatMsg = ("<strong>" + userLoggedIn + " signed in</strong><br>");
 		if (!messageRecipient)
 			document.getElementById('chat-box').innerHTML += chatMsg;
