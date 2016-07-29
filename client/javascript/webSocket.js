@@ -400,6 +400,7 @@ socket.on('publicMsg', function(data){
 	} else {
 		$('#public-messages-button svg').show();
 	}
+	scrollDownTheChatBoxToTheBottom();
 });
 
 socket.on('privateMsg', function(data){
@@ -419,6 +420,7 @@ socket.on('privateMsg', function(data){
 			$('#private-messages-dropdown a[username=' + data.sender + ']>svg').show();
 		}
 	}
+	scrollDownTheChatBoxToTheBottom();
 });
 
 var connectionLoose = false;

@@ -5,6 +5,11 @@ var chatMessages = { "public" : "" };
 var unreadPrivateMessages = [];
 var usersPrinted = false;
 
+function scrollDownTheChatBoxToTheBottom() {
+	var chatBox = document.getElementById("chat-box");
+	chatBox.scrollTop = chatBox.scrollHeight;
+}
+
 function sendMessage() {
 	var msg = $('#chat-input').val(); console.log("msg = " + msg);
 	if(msg == '\n'){
@@ -24,6 +29,7 @@ function sendMessage() {
 	$('#chat-input').val('');	// clear message input
 
 	document.getElementById('chat-box').innerHTML += ("<strong>Me</strong>: " + msg + "<br>");
+	scrollDownTheChatBoxToTheBottom();
 }
 
 function clickPublic() {
@@ -33,6 +39,7 @@ function clickPublic() {
 	$('#public-messages-button').addClass('active');
 	$('#public-messages-button svg').hide();
 	$('#private-messages-button').removeClass('active');
+	scrollDownTheChatBoxToTheBottom();
 }
 
 function clickPrivateUser(event) {
@@ -60,6 +67,8 @@ function clickPrivateUser(event) {
 		$('#private-messages-button svg').hide();
 	}
 	$('#public-messages-button').removeClass('active');
+	var chatBox = document.getElementById("chat-box");
+	chatBox.scrollTop = chatBox.scrollHeight;
 }
 
 function updateUsers(userLoggedOut, userLoggedIn, updatedUserList) {
