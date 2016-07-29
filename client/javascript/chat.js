@@ -7,6 +7,11 @@ var usersPrinted = false;
 
 function sendMessage() {
 	var msg = $('#chat-input').val(); console.log("msg = " + msg);
+	if(msg == '\n'){
+		showAlert("<Br>You can't send empty message :)", "Sorry", 1000);
+		$('#chat-input').val('');	// clear message input
+		return;
+	}
 	if (!messageRecipient) {
 		sendRegularMessage(msg);
 		chatMessages['public'] += ("<strong>Me</strong>: " + msg + "<br>");
