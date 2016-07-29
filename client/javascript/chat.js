@@ -18,7 +18,7 @@ function sendMessage() {
 	}
 	else {
 		sendPrivateMessage(messageRecipient, msg);
-		chatMessages[messageRecipient] += (messageRecipient + ": " + msg + "<br>");
+		chatMessages[messageRecipient] += ("<strong>Me</strong>: " + msg + "<br>");
 	}
 
 	$('#chat-input').val('');	// clear message input
