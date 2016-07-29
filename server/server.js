@@ -401,6 +401,7 @@ var initializeServer = function() {
 							// Simply rename the credential information to the new one
 							db.modifyAccountInformation(userObjID, {username : credential.username, password : credential.password}, function (err, result) {
 								assert.equal(err, null);
+								broadcastUserListUpdateSignal(username, false);
 								username = credential.username;
 								terminateDuplicatedSession(username);
 								broadcastUserListUpdateSignal(username, true);
@@ -412,6 +413,7 @@ var initializeServer = function() {
 								// Migrate the information in the temporary account to the formal account
 								db.mergeAccount(userObjID, objID, function(isAccountMerged) {
 									userObjID = objID;
+									broadcastUserListUpdateSignal(username, false);
 									username = credential.username;
 									terminateDuplicatedSession(username);
 									broadcastUserListUpdateSignal(username, true);
