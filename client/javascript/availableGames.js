@@ -1,8 +1,5 @@
 var availableGames = null;
 
-var replay;
-
-
 function loadAvailableGames() {
 	getAvailableMatchList(function (data) {
 		$('#online-game-table').empty();

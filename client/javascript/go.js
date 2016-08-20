@@ -9,75 +9,43 @@ TOKEN_IMGS = {
 
 // Variables
 
-var primary = 1;	// player who is the primary account holder
-
-player1 = {
-	username: null,
-	capturedTokens: 0,
-	passsed: false
-}
-
-player2 = {
-	username: null,
-	capturedTokens: 0,
-	passed: false,
-}
-
-var board = {
-	size: 0,
-	sqSize: 0,		// in percent
-	hotseat: true,	// TODO: get from game options
-	online: false,
-	state: [],		// board as 2D array
-	setSize: function(sizeValue){
-		this.size = sizeValue;
-		this.sqSize = 100 / (this.size + 1);
-	}
-}
-
-var currPlayer;
-var playerNewToken; // which player is changing their token
+var playerNewToken; // which user is changing their token
 
 var isLoading = false;
 
 // Load each players' names onto game page
 function updatePlayerNames() {
-	var names = getScreenNames();
+	var userNames = getScreenNames(user1.username, user2.username, board.gameMode, true);
+	var playerNames = getScreenNames(player1.username, player2.username, board.gameMode, defaultOrder);
 
-	document.getElementById('p1-name').innerHTML = names.player1;
-	document.getElementById('p2-name').innerHTML = names.player2;
+	// Game page player names
+	document.getElementById('p1-name').innerHTML = playerNames.player1;
+	document.getElementById('p2-name').innerHTML = playerNames.player2;
 
+	// Game options player names
+	document.getElementById('options-p1-name').innerHTML = userNames.player1;
+	document.getElementById('options-p2-name').innerHTML = userNames.player2;
 
-	if (accountHolderTokenType === 1) {
-		document.getElementById('options-p1-name').innerHTML = names.player1;
-		document.getElementById('options-p2-name').innerHTML = names.player2;
-
-		document.getElementById('order-p1-name').innerHTML = names.player1;
-		document.getElementById('order-p2-name').innerHTML = names.player2;
-	} else {
-		document.getElementById('options-p1-name').innerHTML = names.player2;
-		document.getElementById('options-p2-name').innerHTML = names.player1;
-
-		document.getElementById('order-p1-name').innerHTML = names.player2;
-		document.getElementById('order-p2-name').innerHTML = names.player1;
-	}
+	document.getElementById('order-p1-name').innerHTML = userNames.player1;
+	document.getElementById('order-p2-name').innerHTML = userNames.player2;
 }
 
 // Load players' tokens onto game options page and game page
 function updatePlayerTokens() {
-	if (accountHolderTokenType === 2) {
-		document.getElementById('p1-token').src = TOKEN_IMGS[player2TokenID];
-		document.getElementById('p2-token').src = TOKEN_IMGS[player1TokenID];
-	} else {
-		document.getElementById('p1-token').src = TOKEN_IMGS[player1TokenID];
-		document.getElementById('p2-token').src = TOKEN_IMGS[player2TokenID];
+	// Game page tokens
+	if (player1.token) {
+		document.getElementById('p1-token').src = TOKEN_IMGS[player1.token];
+		document.getElementById('p2-token').src = TOKEN_IMGS[player2.token];
 	}
 
-	document.getElementById('options-p1-token').src = TOKEN_IMGS[player1TokenID];
-	document.getElementById('options-p2-token').src = TOKEN_IMGS[player2TokenID];
+	// Game options page tokens
+	document.getElementById('options-p1-token').src = TOKEN_IMGS[user1.token];
+	document.getElementById('options-p2-token').src = TOKEN_IMGS[user2.token];
 
-	document.getElementById('p1-taunt').innerHTML = getTokenTaunt(player1TokenID);
-	document.getElementById('p2-taunt').innerHTML = getTokenTaunt(player2TokenID);
+	document.getElementById('p1-taunt').innerHTML = getTokenTaunt(user1.token);
+	document.getElementById('p2-taunt').innerHTML = getTokenTaunt(user2.token);
+
+	loadTokenSelectionModal();
 }
 
 function getTokenTaunt(token) {
@@ -104,9 +72,9 @@ function updatePlayerInfo() {
 	document.getElementById('p1-captured-tokens').innerHTML = player1.capturedTokens;
 
 	// PASSED
-
+	// using css visibility instead of hide/show so that it still takes up space when hidden
 	if (player1.passed) {
-		$('#p1-passed').css('visibility','visible');
+		$('#p1-passed').css('visibility','visible'); 
 	} else {
 		$('#p1-passed').css('visibility','hidden');
 	}
@@ -119,7 +87,7 @@ function updatePlayerInfo() {
 	
 	// HIGHLIGHT CURRENT PLAYER
 
-	if (currPlayer == 1) {	// if player 1 is current player
+	if (currentPlayer == 1) {	// if player 1 is current player
 		$('#player-1').addClass("curr-player");
 		$('#player-2').removeClass("curr-player");
 	} else {
@@ -135,11 +103,11 @@ function clickUndo() {
 function clickPass(event) {
 	if (isLoading)
 		return;
-	makeMove(0, 0, currPlayer, true, function(result) {
+	makeMove(0, 0, currentPlayer, true, function(result) {
 		if (result < 0) {
 			//showAlert("result = " + result);
 			if (result === -4) {
-				if(board.online){
+				if(board.gameMode === 2){
 					showAlert('Opps! This is not your turn...', null, 2000);
 				}else{
 					showAlert("Our hamsters are taking a break.", "Try again in a moment", 2000);
@@ -163,7 +131,7 @@ function loadTokenSelectionModal() {
 		a.onclick = onClickNewToken;
 
 		// token is already being used
-		if (key === player1TokenID || key === player2TokenID ) {
+		if (key === user1.token || key === user2.token ) {
 			img.className = "choose-token-image taken";
 		} else {
 			img.className = "choose-token-image";
@@ -183,12 +151,10 @@ function onTokenModalOpened(event) {
 		// empty space are added before and after the image... so get second child
 		clickedButton = event.relatedTarget.childNodes[1].id;
 
-	if ((accountHolderTokenType === 1 && clickedButton === "p1-token")
-			|| (accountHolderTokenType === 2 && clickedButton === "p2-token")
-			|| (clickedButton === "options-p1-token"))
-		playerNewToken = 1;
+	if (clickedButton === "p1-token" || clickedButton === "options-p1-token")
+		userNewToken = 1;
 	else
-		playerNewToken = 2;
+		userNewToken = 2;
 }
 
 // Clicked a new token image in the Token Selection modal
@@ -197,23 +163,27 @@ function onClickNewToken(event) {
 		return;
 	}
 
-	if (playerNewToken === 1) {
-		player1TokenID = event.target.getAttribute("token");
-		if (playerNewToken === currPlayer)
-			updateUnplacedTokens();
-		swapPlacedTokens(1, TOKEN_IMGS[player1TokenID]);
-	} else {
-		player2TokenID = event.target.getAttribute("token");
-		if (playerNewToken === currPlayer)
-			updateUnplacedTokens();
-		swapPlacedTokens(2, TOKEN_IMGS[player2TokenID]);
-	}
+	var token1 = (userNewToken === 1 ? event.target.getAttribute("token") : user1.token);
+	var token2 = (userNewToken === 2 ? event.target.getAttribute("token") : user2.token);
 
 	$('#choose-token-modal').modal('hide');
 
+	changeTokenImgs([token1, token2]);	// save tokens to server
+}
+
+function onTokenImgsChanged() {
+	// if on game page
+	if ($('#game-page').css('visibility') !== 'none') {
+		if ((defaultOrder && currentPlayer === userNewToken) || (!defaultOrder && currentPlayer !== userNewToken))
+			updateUnplacedTokens();
+
+		if ((defaultOrder && userNewToken === 1) || (!defaultOrder && userNewToken !== 1))
+			swapPlacedTokens(1, TOKEN_IMGS[user1.token]);
+		else
+			swapPlacedTokens(2, TOKEN_IMGS[user2.token]);
+	}
+
 	updatePlayerTokens();
-	loadTokenSelectionModal();
-	changeTokenImgs([player1TokenID, player2TokenID]);	// save tokens to server
 }
 
 function renderNewGameBoard() {
@@ -234,37 +204,20 @@ function renderUnfinishedGameBoard() {
 	var boardState = board.state;
 	$('#gameboard').remove();
 	var svg = makeGameBoard();
-	console.log("account token = " + accountHolderTokenType);
-	console.log('token 1 = ' + player1TokenID);
-	if (accountHolderTokenType === 1) {
-		var unplacedToken = (currPlayer == 1 ? TOKEN_IMGS[player1TokenID] : TOKEN_IMGS[player2TokenID]);
-		
-		// tokens
-	    for (var row = 0; row < (board.size); row++) {
-	    	for (var col = 0; col < (board.size); col++) {
-	    		if (boardState[row][col] == 1)
-	    			svg.append(makeToken(col, row, board.sqSize, TOKEN_IMGS[player1TokenID], "token-image placed 1"));
-	    		else if (boardState[row][col] == 2)
-	    			svg.append(makeToken(col, row, board.sqSize, TOKEN_IMGS[player2TokenID], "token-image placed 2"));
-	    		else
-	    			svg.append(makeToken(col, row, board.sqSize, unplacedToken, "token-image unplaced", onClickToken));
-	    	}
-	    }
-	} else {
-		var unplacedToken = (currPlayer == 1 ? TOKEN_IMGS[player2TokenID] : TOKEN_IMGS[player1TokenID]);
-		
-		// tokens
-	    for (var row = 0; row < (board.size); row++) {
-	    	for (var col = 0; col < (board.size); col++) {
-	    		if (boardState[row][col] == 1)
-	    			svg.append(makeToken(col, row, board.sqSize, TOKEN_IMGS[player2TokenID], "token-image placed 2"));
-	    		else if (boardState[row][col] == 2)
-	    			svg.append(makeToken(col, row, board.sqSize, TOKEN_IMGS[player1TokenID], "token-image placed 1"));
-	    		else
-	    			svg.append(makeToken(col, row, board.sqSize, unplacedToken, "token-image unplaced", onClickToken));
-	    	}
-	    }
-	}
+
+	var unplacedToken = (currentPlayer == 1 ? TOKEN_IMGS[player1.token] : TOKEN_IMGS[player2.token]);
+	
+	// tokens
+    for (var row = 0; row < (board.size); row++) {
+    	for (var col = 0; col < (board.size); col++) {
+    		if (boardState[row][col] == 1)
+    			svg.append(makeToken(col, row, board.sqSize, TOKEN_IMGS[player1.token], "token-image placed 1"));
+    		else if (boardState[row][col] == 2)
+    			svg.append(makeToken(col, row, board.sqSize, TOKEN_IMGS[player2.token], "token-image placed 2"));
+    		else
+    			svg.append(makeToken(col, row, board.sqSize, unplacedToken, "token-image unplaced", onClickToken));
+    	}
+    }
 
 	$('#gameboard-container').append(svg);
 
@@ -306,7 +259,7 @@ function onClickToken(event) {
 
 	isLoading = true;
 
-	makeMove(parseInt(token.getAttribute("X")), parseInt(token.getAttribute("Y")), currPlayer, false, function(result) {
+	makeMove(parseInt(token.getAttribute("X")), parseInt(token.getAttribute("Y")), currentPlayer, false, function(result) {
 		switch(result) {
 			case -2:
 				showAlert("If you want to reverse the gameboad, use \"Undo\".", "Ko Move", 2000);
@@ -341,7 +294,7 @@ function swapPlacedTokens(player, newImage) {
 }
 
 function updateUnplacedTokens() {
-	var imgPath = (currPlayer == 1 ? TOKEN_IMGS[player1TokenID] : TOKEN_IMGS[player2TokenID]);
+	var imgPath = (currentPlayer == 1 ? TOKEN_IMGS[player1.token] : TOKEN_IMGS[player2.token]);
 	var unplacedTokens = document.getElementsByClassName('token-image unplaced');
 	for (var i = 0; i < unplacedTokens.length; i++)
 		unplacedTokens[i].setAttributeNS('http://www.w3.org/1999/xlink','href', imgPath);
@@ -350,28 +303,32 @@ function updateUnplacedTokens() {
 function onFinishedGame(score1, score2) {
 	$('#finished-game-buttons').show();
 
-	var names = getScreenNames();
+	var names = getScreenNames(player1.username, player2.username, board.gameMode, defaultOrder);
 
-	if (board.hotseat && !board.online) {
-		var str = "Congratulations <strong>"
-		if (score1.totalScore > score2.totalScore)
-			str += names.player1;
-		else
-			str += names.player2;
-		str += "</strong>, you won!"
-		$('#score-text').html(str);
-	} else if(!board.online){
-		if (primary == 1? score1.totalScore > score2.totalScore: score2.totalScore > score1.totalScore) 
-			$('#score-text').html("Nice going, you won!");
-		else
-			$('#score-text').html("There will be a time when we are all bested by robots. It's starting.");
-	} else{
-		if (primary == 1? score1.totalScore > score2.totalScore: score2.totalScore > score1.totalScore){
-			$('#score-text').html("Nice going, you won!");
-		}else{
-			$('#score-text').html("Try harder next time.");
-		}
+	switch (board.gameMode) {
+		case 0:	// if hotseat
+			var str = "Congratulations <strong>"
+			if (score1.totalScore > score2.totalScore)
+				str += names.player1;
+			else
+				str += names.player2;
+			str += "</strong>, you won!"
+			$('#score-text').html(str);
+			break;
+		case 1:	// if vs AI
+			if (defaultOrder ? score1.totalScore > score2.totalScore : score2.totalScore > score1.totalScore) 
+				$('#score-text').html("Nice going, you won!");
+			else
+				$('#score-text').html("There will be a time when we are all bested by robots. It's starting.");
+			break;
+		case 2:
+			if (defaultOrder ? score1.totalScore > score2.totalScore: score2.totalScore > score1.totalScore)
+				$('#score-text').html("Nice going, you won!");
+			else
+				$('#score-text').html("Try harder next time.");
+			
 	}
+	
 
 	populateScoreTable(score1, score2);
 
@@ -379,7 +336,7 @@ function onFinishedGame(score1, score2) {
 }
 
 function populateScoreTable(score1, score2) {
-	var names = getScreenNames();
+	var names = getScreenNames(player1.username, player2.username, board.gameMode, defaultOrder);
 
 	var winnerImg = "<img src='assets/icon_crown.svg' class='winner-icon'></img>   "
 
@@ -435,22 +392,24 @@ function boardListToArray(size, boardList) {
 	return boardArr;
 }
 
-function getScreenNames() {
+function getScreenNames(player1, player2, gameMode, defaultOrder) {
 	var p1;
 	var p2;
 
-	if (accountHolderTokenType == 1){
-		p1 = primaryAccountUserName;
-	 	if (!player2.username || player2.username === "anonymous")
-	        p2 = (!board.hotseat && !board.online)? "CPU": "Guest";
-	    else
-	        p2 = player2.username;
-	}else{
-		p2 = primaryAccountUserName;
-		if (!player1.username || player1.username === "anonymous")
-	        p1 = (!board.hotseat && !board.online)? "CPU": "Guest";
-	    else
-	        p1 = player1.username;
+	//console.log("player1 = " + player1 + " player2 = " + player2 + " gameMode = " + gameMode + " defaultOrder = " + defaultOrder);
+
+	switch (gameMode) {
+		case 0:
+			p1 = ((!player1 || player1 === 'anonymous') ? 'Guest' : player1);
+			p2 = ((!player2 || player2 === 'anonymous') ? 'Guest' : player2);
+			break;
+		case 1:
+			p1 = (defaultOrder ? (!player1 || player1 === 'anonymous' ? 'Guest' : player1) : 'CPU');
+			p2 = (defaultOrder ? 'CPU' : (!player2 || player2 === 'anonymous' ? 'Guest' : player2));
+			break;
+		case 2:
+			p1 = player1;
+			p2 = player2;
 	}
 
 	return { player1: p1, player2: p2 };

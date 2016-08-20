@@ -13,23 +13,13 @@ function loadGameHistory() {
 		var table = document.getElementById('game-history-table');
 		for (var i = data.length-1; i >= 0; i--) {
 
-			var names = {
-				player1: null,
-				player2: null
-			};
+			var names;
 
-			if (data[i].gameMode == 0){
-				names.player1 = (data[i].player1 == "anonymous")? 'Guest': data[i].player1;
-				names.player2 = (data[i].player2 == "anonymous")? 'Guest': data[i].player2;
-			}
-			if (data[i].gameMode == 1){
-				names.player1 = (data[i].player1 == "anonymous")? 'CPU': data[i].player1;
-				names.player2 = (data[i].player2 == "anonymous")? 'CPU': data[i].player2;
-			}
 			if (data[i].gameMode == 2){
 				names.player1 = (data[i].player1 == "anonymous")? 'Open Position [Online]': data[i].player1;
 				names.player2 = (data[i].player2 == "anonymous")? 'Open Position [Online]': data[i].player2;
-			}
+			} else
+				names = getScreenNames(data[i].player1, data[i].player2, data[i].gameMode, data[i].accountHolderTokenType === 1);
 
 			var winnerImg = "<img src='assets/icon_crown.svg' class='winner-icon'></img>   "
 
@@ -94,17 +84,10 @@ function clickReplayGame(event) {
 		history.currHistoryIndex = 0;
 		history.playStarted = false;
 
-		// if (primary === 1 && data.player2 === primaryAccountUserName) {
-		// 	swapPlayerTokens();
-		// } else if (primary === 2 && data.player1 === primaryAccountUserName) {
-		// 	swapPlayerTokens();
-		// }
-
 		player1.username = data.player1;
 		player2.username = data.player2;
-		accountHolderTokenType = data.player1 == primaryAccountUserName? 1: 2;
-		board.hotseat = data.gameMode == 0;
-		board.online = data.gameMode == 2;
+		defaultOrder = (data.player1 === user1.username);
+		board.gameMode = data.gameMode;
 
 		$('#finished-game-buttons').hide();
 		$('#score-text').html("");
@@ -112,6 +95,7 @@ function clickReplayGame(event) {
 
 		renderHistoryGameBoard();
 		updateHistoryInfo();
+		updatePlayerTokens();
 		showGamePage();
 
 		// has to be after showGamePage()
@@ -129,6 +113,7 @@ function clickReplayGame(event) {
 function clickPrevBoard(event) {
 	if (history.currHistoryIndex === 0)
 		return;
+
 	history.currHistoryIndex -= 1;
 	clearInterval(history.intervalID);
 	$('#play-history-button').html('&#9658;');
@@ -201,9 +186,9 @@ function renderHistoryGameBoard() {
     for (var row = 0; row < (board.size); row++) {
     	for (var col = 0; col < (board.size); col++) {
     		if (boardArr[row][col] == 1)
-    			svg.append(makeToken(col, row, board.sqSize, TOKEN_IMGS[player1TokenID], "token-image placed 1"));
+    			svg.append(makeToken(col, row, board.sqSize, TOKEN_IMGS[player1.token], "token-image placed 1"));
     		else if (boardArr[row][col] == 2)
-    			svg.append(makeToken(col, row, board.sqSize, TOKEN_IMGS[player2TokenID], "token-image placed 2"));
+    			svg.append(makeToken(col, row, board.sqSize, TOKEN_IMGS[player2.token], "token-image placed 2"));
     	}
     }
 
@@ -211,7 +196,7 @@ function renderHistoryGameBoard() {
 }
 
 function updateHistoryInfo() {
-	currPlayer = (history.currHistoryIndex%2 == 0 ? 1 : 2);
+	currentPlayer = (history.currHistoryIndex%2 == 0 ? 1 : 2);
 	var state = history.list[history.currHistoryIndex];
 
 	player1.capturedTokens = state.capturedTokens1;

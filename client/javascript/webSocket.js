@@ -1,17 +1,45 @@
 var socket = io.connect('http://127.0.0.1:10086');
 var accountInfo = null;
-var currentGameMode = null;
 var currentPlayer = null;
-var currentBoard = null;
-var player1Passed = false;
-var player2Passed = false;
-var accountHolderTokenType = 1;
-var player1UserName = null;
-var player2UserName = null;
-var primaryAccountUserName = null;
-var player1TokenID = null;
-var player2TokenID = null;
+
 var userList = [];
+var defaultOrder = true;	// true if user 1 plays first
+
+// primary account holder
+var user1 = {
+	username: null,
+	token: null
+}
+
+var user2 = {
+	username: null,
+	token: null
+}
+
+var player1 = {
+	username: null,
+	token: null,
+	passed: false,
+	capturedTokens: 0
+}
+
+var player2 = {
+	username: null,
+	token: null,
+	passed: false,
+	capturedTokens: 0
+}
+
+var board = {
+	size: 0,
+	sqSize: 0,		// in percent
+	gameMode: 0,	// 0 = hotseat, 1 = vs AI, 2 = online
+	state: [],		// board as 2D array
+	setSize: function(sizeValue){
+		this.size = sizeValue;
+		this.sqSize = 100 / (this.size + 1);
+	}
+}
 
 // Authentication function
 function auth(username, password, callback){
@@ -53,12 +81,7 @@ function auth(username, password, callback){
 		if(saveCredentialToCookie){
 			setCookie('username', username, 365);
 			setCookie('password', password, 365);
-			primaryAccountUserName = username;
-			if(username.substring(0,5) != "temp_"){
-				$('#online-multiplayer-radio').show();
-			}else{
-				$('#online-multiplayer-radio').hide();
-			}
+			user1.username = username;
 			callback(true, result);
 		}else{
 			callback(false, result);
@@ -69,35 +92,24 @@ function auth(username, password, callback){
 function _continueGame(gameInfo, callback){
 	console.log('Resuming game');
 	console.log(gameInfo);
-	currentGameMode = gameInfo.gameMode;
-	player1UserName = gameInfo.player1;
-	player2UserName = gameInfo.player2;
-	accountHolderTokenType = gameInfo.accountHolderTokenType;
+	board.gameMode = gameInfo.gameMode;
+	defaultOrder = (gameInfo.accountHolderTokenType === 1);
+	player1.username = gameInfo.player1;
+	player1.token = defaultOrder ? user1.token : user2.token;
+	player2.username = gameInfo.player2;
+	player2.token = defaultOrder ? user2.token : user1.token;
 
 	if(callback)
 		callback(gameInfo);
 
 	board.setSize(gameInfo.boardSize);
-    board.hotseat = (gameInfo.gameMode === 0);
-    board.online = gameInfo.gameMode == 2;
+    board.gameMode = gameInfo.gameMode;
 
-    if (board.hotseat)
+    // if hotseat, show undo
+    if (board.gameMode === 0)
 		$('#undo-button').show();
 	else
 		$('#undo-button').hide();
-
- //    if (primary === 1 && gameInfo.player2 === primaryAccountUserName) {
-	// 	primary = 2;
-	// 	// if(gameInfo.gameMode != 2)
-	// 		swapPlayerTokens();
-	// } else if (primary === 2 && gameInfo.player1 === primaryAccountUserName) {
-	// 	primary = 1;
-	// 	// if(gameInfo.gameMode != 2)
-	// 		swapPlayerTokens();
-	// }
-
-	player1.username = gameInfo.player1;
-	player2.username = gameInfo.player2;
 
 	updatePlayerNames();
 	updatePlayerTokens();
@@ -167,7 +179,6 @@ function getCredentialCookie(){
 function delCredentialCookie(){
 	delCookie('username');
 	delCookie('password');
-	$('#online-multiplayer-radio').hide();
 }
 
 // boardSize: size of the board
@@ -182,7 +193,6 @@ function onNewGameButtonClick(boardSize, playMode, tokenType, allowedPlayer, cal
 	};
 	continueGame(null, gameParameters, function(result){
 		console.log('callback - onNewGameButtonClick');
-		accountHolderTokenType = tokenType;
 		if(callback){
 			console.log('New game created.');
 		}	
@@ -192,25 +202,24 @@ function onNewGameButtonClick(boardSize, playMode, tokenType, allowedPlayer, cal
 function updateGameStatus(callback){
 	socket.emit('update', null, function(data){
 		console.log(data);
-		currentBoard = data.board;
-		currentPlayer = data.currentTurn;
-		console.log(currentBoard);
-		if(callback){
-			callback(data);
-		}
-
 		board.state = data.board;
-        currPlayer = data.currentTurn;
+		currentPlayer = data.currentTurn;
+
         player1.passed = data.player1Passed;
         player1.capturedTokens = data.player1CapturedTokens;
-        player2.passed = data.player2Passed || data.lastMove.c == 2? data.lastMove.pass: false;
+        player2.passed = data.player2Passed || (data.lastMove.c == 2 ? data.lastMove.pass : false);
         player2.capturedTokens = data.player2CapturedTokens;
+
         updatePlayerInfo();
         renderUnfinishedGameBoard();
 
         isLoading = false;
         if (!onGamePage)
 			showGamePage();
+
+		if(callback){
+			callback(data);
+		}
 
 	});
 }
@@ -227,9 +236,11 @@ function makeMove(x, y, c, pass, callback) {
 
 function changeTokenImgs(tokenIds) {
 	socket.emit('changePrimaryTokenImage', tokenIds, function(isOk){
-		player1TokenID = tokenIds[0];
-		player2TokenID = tokenIds[1];
-		updatePlayerTokens();
+		user1.token = tokenIds[0];
+		user2.token = tokenIds[1];
+		player1.token = (defaultOrder ? user1.token : user2.token);
+		player2.token = (defaultOrder ? user2.token : user1.token);
+		onTokenImgsChanged();
 	})
 }
 
@@ -331,7 +342,7 @@ socket.on('actionRequired', function(action){
 			// When the game is finished, following code will be executed
 			//alert('Game finished :)');
 			onFinishedGame(action.data.score1, action.data.score2);
-			if(currentGameMode == 2){
+			if(board.gameMode == 2){
 				suspendCurrentOnlineMultiplaySession(true);
 			}
 			break;
@@ -383,39 +394,15 @@ socket.on('actionRequired', function(action){
 
 socket.on('publicMsg', function(data){
 	console.log('>> ' + data.sender + ': '+ data.msg);
-	if (data.sender === primaryAccountUserName) 
-		return;
-
-	chatMessages['public'] += (data.sender + ": " + data.msg + "<br>");
-	if (!messageRecipient) {	// on public tab
-		document.getElementById('chat-box').innerHTML += (data.sender + ": " + data.msg + "<br>");
-	} else {
-		$('#public-messages-button svg').show();
-	}
-	scrollDownTheChatBoxToTheBottom();
+	onPublicMessage(data.sender, data.msg);
 });
 
 socket.on('privateMsg', function(data){
-	console.log('User: ' + data.sender + ' says: ' + data.msg);
-	if (data.sender === primaryAccountUserName)
-		return;
-
-	if (!chatMessages[data.sender])
-		chatMessages[data.sender] = "";
-	chatMessages[data.sender] += (data.sender + ": " + data.msg + "<br>");
-	if (messageRecipient === data.sender)	// private tab with user
-		document.getElementById('chat-box').innerHTML += (data.sender + ": " + data.msg + "<br>");
-	else {
-		$('#private-messages-button svg').show();
-		if (jQuery.inArray(data.sender, unreadPrivateMessages) === -1) {	// user doesn't have unread messages from this person
-			unreadPrivateMessages.push(data.sender);
-			$('#private-messages-dropdown a[username=' + data.sender + ']>svg').show();
-		}
-	}
-	scrollDownTheChatBoxToTheBottom();
+	console.log('>> (private) ' + data.sender + ': ' + data.msg);
+	onPrivateMessage(data.sender, data.msg);
 });
 
-var connectionLoose = false;
+var connectionLost = false;
 
 socket.on('connect', function(){
 	var credential = getCredentialCookie();
@@ -423,15 +410,15 @@ socket.on('connect', function(){
 		console.log(statusNo);
 		initialize(credential.username, credential.password, isSucceed);
 	});
-	if(connectionLoose){
+	if(connectionLost){
 		showAlert('Connection resumed', 'Info', 1000);
-		connectionLoose = false;
+		connectionLost = false;
 	}
 });
 
 socket.on('disconnect', function(){
 	showAlert('Connection lost.<br>Please check your network connection.', 'Warning');
-	connectionLoose = true;
+	connectionLost = true;
 });
 
 function initialize(username, password, isSucceed) {
@@ -439,6 +426,11 @@ function initialize(username, password, isSucceed) {
 		console.log('Inside init. function');
 		getAccountInfo(function(accountInfoObj) {
 			console.log(accountInfoObj);
+
+			user1.token = accountInfoObj.tokenId[0];
+			user2.token = accountInfoObj.tokenId[1];
+			console.log('Set token images to: P1: ' + user1.token + ', P2: ' + user2.token);
+
 			if(!loggingInBeforeOnline && accountInfoObj.currentGame){
 				// There's an unfinished game, continue automatically
 				continueGame(accountInfoObj.currentGame, null, function(gameInfo){
@@ -446,22 +438,18 @@ function initialize(username, password, isSucceed) {
 					console.log('Unfinished game detected, automatically resume.');
 				});
 			}
-			player1TokenID = accountInfoObj.tokenId[0];
-			player2TokenID = accountInfoObj.tokenId[1];
-			// Set token images here;
-			console.log('Set token images to: P1: ' + player1TokenID + ', P2: ' + player2TokenID);
 			
 			updatePlayerTokens();
-			loadTokenSelectionModal();
 
-			player1.username = username;
-
+			user1.username = username;
+			
 			if (username.substring(0,5) !== "temp_") {
 				login();
 			} else {
 				$('#login-button').parent().show();
 				$('#username-button').parent().hide();
 			}
+
 
 		});
 	}

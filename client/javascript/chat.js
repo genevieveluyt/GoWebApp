@@ -11,13 +11,13 @@ function scrollDownTheChatBoxToTheBottom() {
 }
 
 function sendMessage() {
-	var msg = $('#chat-input').val(); console.log("msg = " + msg);
+	var msg = $('#chat-input').val();
 	if(msg == '\n'){
-		showAlert("<Br>You can't send empty message :)", "Sorry", 1000);
 		$('#chat-input').val('');	// clear message input
 		return;
 	}
-	if (!messageRecipient) {
+
+	if (!messageRecipient){
 		sendRegularMessage(msg);
 		chatMessages['public'] += ("<strong>Me</strong>: " + msg + "<br>");
 	}
@@ -26,9 +26,37 @@ function sendMessage() {
 		chatMessages[messageRecipient] += ("<strong>Me</strong>: " + msg + "<br>");
 	}
 
-	$('#chat-input').val('');	// clear message input
-
 	document.getElementById('chat-box').innerHTML += ("<strong>Me</strong>: " + msg + "<br>");
+	$('#chat-input').val('');	// clear message input
+}
+
+function onPublicMessage(sender, msg) {
+	if (sender === user1.username) {
+		return;
+	}
+
+	chatMessages['public'] += (sender + ": " + msg + "<br>");
+	if (!messageRecipient) {	// on public tab
+		document.getElementById('chat-box').innerHTML += (sender + ": " + msg + "<br>");
+	} else {
+		$('#public-messages-button svg').show();
+	}
+	scrollDownTheChatBoxToTheBottom();
+}
+
+function onPrivateMessage(sender, msg) {
+	if (!chatMessages[sender])
+		chatMessages[sender] = "";
+	chatMessages[sender] += (sender + ": " + msg + "<br>");
+	if (messageRecipient === sender)	// private tab with user
+		document.getElementById('chat-box').innerHTML += (sender + ": " + msg + "<br>");
+	else {
+		$('#private-messages-button svg').show();
+		if (jQuery.inArray(sender, unreadPrivateMessages) === -1) {	// user doesn't have unread messages from this person
+			unreadPrivateMessages.push(sender);
+			$('#private-messages-dropdown a[username=' + sender + ']>svg').show();
+		}
+	}
 	scrollDownTheChatBoxToTheBottom();
 }
 
@@ -66,9 +94,11 @@ function clickPrivateUser(event) {
 	if (unreadPrivateMessages.length === 0) {
 		$('#private-messages-button svg').hide();
 	}
+
 	$('#public-messages-button').removeClass('active');
 	var chatBox = document.getElementById("chat-box");
-	chatBox.scrollTop = chatBox.scrollHeight;
+	
+	scrollDownTheChatBoxToTheBottom();
 }
 
 function updateUsers(userLoggedOut, userLoggedIn, updatedUserList) {
@@ -79,7 +109,7 @@ function updateUsers(userLoggedOut, userLoggedIn, updatedUserList) {
 	$(dropdown).empty();
 
 	for (var i = 0; i < updatedUserList.length; i++) {
-		if (updatedUserList[i] === primaryAccountUserName)
+		if (updatedUserList[i] === user1.username)
 			continue;
 
 		var listItem = document.createElement('li');
@@ -113,7 +143,7 @@ function updateUsers(userLoggedOut, userLoggedIn, updatedUserList) {
 		return;
 	}
 
-	if (userLoggedIn === primaryAccountUserName)
+	if (userLoggedIn === user1.username)
 		return;
 
 	if (userLoggedOut && userLoggedIn) {

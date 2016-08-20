@@ -27,7 +27,7 @@ npm start
 ```
 Open browser (works best with Chrome) and go to `localhost:30094` or `127.0.0.1`
 
-#### File Tree
+### File Tree
 
 ```
 ├── /client

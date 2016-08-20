@@ -38,14 +38,13 @@ window.onload = function() {
 
 	// Game Mode Page
 	$('#game-mode-hotseat-button').click(function() {
-		board.hotseat = true;
-		board.online = false;
+		board.gameMode = 0;
 		updatePlayerNames();
 		showGameOptionsPage();
 	});
 	$('#game-mode-online-button').click(function() {
 		// if not logged in, prompt login
-		if (primaryAccountUserName.substring(0,5) === "temp_") {
+		if (user1.username.substring(0,5) === "temp_") {
 			loggingInBeforeOnline = true;
 			$('#login-modal').modal('show');
 		} else {
@@ -53,8 +52,7 @@ window.onload = function() {
 		}
 	});
 	$('#game-mode-single-button').click(function() {
-		board.hotseat = false;
-		board.online = false;
+		board.gameMode = 1;
 		updatePlayerNames();
 		showGameOptionsPage();
 	});
@@ -208,7 +206,6 @@ function submitHostForm() {
 		board.online = true;
 		$('#host-modal').modal('hide');
 		startGame();
-		// loadAvailableGames();
 	} else {
 		$('#host-error-message').html("Couldn't find user <strong>" + $('#host-private-username').val() + "</strong>");
 		$('#host-error-message').show();
@@ -216,19 +213,17 @@ function submitHostForm() {
 }
 
 function startGame() {
-	var gameMode = 0;
 	var privateUsername = null;
 	
-	if (board.hotseat){
+	if (board.gameMode == 0) {	// hotseat
 		$('#undo-button').show();
 	}
 	else{
 		$('#undo-button').hide();
-		gameMode = 1;
+		board.gameMode = 1;
 	}
 
-	if (board.online){
-		gameMode = 2;
+	if (board.gameMode === 2){	// online
 		board.setSize(parseInt($('#host-options-form input[name="board-size-radio"]:checked').val()));
 		var tokenType = ($('#host-options-form input[name="token-type-radio"]:checked').val() === "black")? 1: 2;
 		if (!$('#host-public-button').hasClass('active')) {
@@ -240,9 +235,9 @@ function startGame() {
 		var tokenType = ($('#game-options-form input[name="token-type-radio"]:checked').val() === "black")? 1: 2;
 	}
 
-	currPlayer = 1;
+	currentPlayer = 1;
 
-	onNewGameButtonClick(board.size, gameMode, tokenType, privateUsername);
+	onNewGameButtonClick(board.size, board.gameMode, tokenType, privateUsername);
 }
 
 function submitLogin() {
