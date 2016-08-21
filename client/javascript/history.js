@@ -210,11 +210,33 @@ function updateHistoryInfo() {
 
 /*
  * @param date: Date object
- * @return date in format h:s:ms
+ * @return date in format Aug 20, 16:29
 */
 function formatDate(date) {
-	return months[date.getMonth()] + " " + date.getDate() + "    " + (date.getHours()<10 ? "0" : "") + 
-			date.getHours() + ":" + (date.getMinutes()<10 ? "0" : "") + date.getMinutes();
+	// month
+	var str = months[date.getMonth()] + " ";
+
+	// day
+	str += date.getDate() + "    ";
+
+	// hour (24-hour)
+	if (date.getHours() === 0)
+		str += "00";
+	else if (date.getHours() < 10)
+		str += "0" + date.getHours();
+	else
+		str += date.getHours();
+	str += ":";
+
+	// minutes
+	if (date.getMinutes() === 0)
+		str += "00";
+	else if (date.getMinutes() < 10)
+		str += "0" + date.getMinutes();
+	else
+		str += date.getHours();
+
+	return  str;
 }
 
 var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
