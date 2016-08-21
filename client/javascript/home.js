@@ -272,7 +272,7 @@ function submitLogin() {
 
 function login() {
 	$('#login-button').parent().hide();
-	$('#username-button').html(player1.username + '<b class="caret"></b>');
+	$('#username-button').html(user1.username + '<b class="caret"></b>');
 	$('#username-button').parent().show();
 
 	if (loggingInBeforeOnline) {
