@@ -18,12 +18,22 @@ function loadGameHistory() {
 				player2: null
 			};
 
-			if (data[i].gameMode == 2){
-				names.player1 = (data[i].player1 == "anonymous")? 'Open Position [Online]': data[i].player1;
-				names.player2 = (data[i].player2 == "anonymous")? 'Open Position [Online]': data[i].player2;
-			} else
-				names = getScreenNames(data[i].player1, data[i].player2, data[i].gameMode, data[i].accountHolderTokenType === 1);
+			console.log("data = ", data[i]);
 
+			switch (data[i].gameMode){
+				case 2:
+					names.player1 = (data[i].player1 == "anonymous")? 'Open Position [Online]': data[i].player1;
+					names.player2 = (data[i].player2 == "anonymous")? 'Open Position [Online]': data[i].player2;
+					break;
+				case 1:
+					names.player1 = data[i].player1 === "anonymous" ? "CPU" : data[i].player1;
+					names.player2 = data[i].player2 === "anonymous" ? "CPU" : data[i].player2;
+					break;
+				default:
+					names.player1 = data[i].player1 === "anonymous" ? "Guest" : data[i].player1;
+					names.player2 = data[i].player2 === "anonymous" ? "Guest" : data[i].player2;
+			}
+			
 			var winnerImg = "<img src='assets/icon_crown.svg' class='winner-icon'></img>   "
 
 			// Table
