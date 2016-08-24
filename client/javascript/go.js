@@ -206,8 +206,6 @@ function renderUnfinishedGameBoard() {
 	var svg = makeGameBoard();
 
 	var unplacedToken = (currentPlayer == 1 ? TOKEN_IMGS[player1.token] : TOKEN_IMGS[player2.token]);
-
-	console.log("gameMode = " + board.gameMode);
 	
 	// tokens
     for (var row = 0; row < (board.size); row++) {

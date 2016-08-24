@@ -22,8 +22,8 @@ function loadGameHistory() {
 
 			switch (data[i].gameMode){
 				case 2:
-					names.player1 = (data[i].player1 == "anonymous")? 'Open Position [Online]': data[i].player1;
-					names.player2 = (data[i].player2 == "anonymous")? 'Open Position [Online]': data[i].player2;
+					names.player1 = (data[i].player1 === "anonymous")? 'Open Position [Online]': data[i].player1;
+					names.player2 = (data[i].player2 === "anonymous")? 'Open Position [Online]': data[i].player2;
 					break;
 				case 1:
 					names.player1 = data[i].player1 === "anonymous" ? "CPU" : data[i].player1;

@@ -214,7 +214,7 @@ function updateGameStatus(callback){
         renderUnfinishedGameBoard();
 
         isLoading = false;
-        if (!onGamePage)
+        if ($('#game-page').css('display') === 'none')
 			showGamePage();
 
 		if(callback){

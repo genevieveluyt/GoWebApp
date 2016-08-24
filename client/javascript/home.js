@@ -1,5 +1,4 @@
 var userSigningIn; //which player is signing in
-var onGamePage = false;
 var loggingInBeforeOnline = false;
 var alertIntervalID = null;
 var musicInitialized = false;
@@ -174,7 +173,6 @@ function showGamePage() {
 	$('#logo').show();
 	pageSwitched();
 	replay = false;
-	onGamePage = true;
 	updatePlayerNames();
 }
 
@@ -197,7 +195,6 @@ function showOnlineGamePage() {
 
 // gets called whenever pages are switched
 function pageSwitched() {
-	onGamePage = false;
 	$('#alert').hide();
 }
 
