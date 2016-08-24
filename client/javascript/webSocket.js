@@ -358,7 +358,7 @@ socket.on('actionRequired', function(action){
 			break;
 		case 5:
 			// Remote player connected, notify the server
-			if(accountHolderTokenType == 1){
+			if(user1.token == 1){
 				player2.username = action.data.onlineOpponentUserName;
 			}else{
 				player1.username = action.data.onlineOpponentUserName;

@@ -203,7 +203,7 @@ function pageSwitched() {
 
 function submitHostForm() {
 	if (($('#host-options-form input[name="public-private-radio"]:checked').val() === "public") || (jQuery.inArray($('#host-private-username').val(), userList)) > -1) {
-		board.online = true;
+		board.gameMode = 2;
 		$('#host-modal').modal('hide');
 		startGame();
 	} else {
@@ -215,12 +215,11 @@ function submitHostForm() {
 function startGame() {
 	var privateUsername = null;
 	
-	if (board.gameMode == 0) {	// hotseat
+	if (board.gameMode === 0) {	// hotseat
 		$('#undo-button').show();
 	}
 	else{
 		$('#undo-button').hide();
-		board.gameMode = 1;
 	}
 
 	if (board.gameMode === 2){	// online

@@ -13,7 +13,10 @@ function loadGameHistory() {
 		var table = document.getElementById('game-history-table');
 		for (var i = data.length-1; i >= 0; i--) {
 
-			var names;
+			var names = {
+				player1: null,
+				player2: null
+			};
 
 			if (data[i].gameMode == 2){
 				names.player1 = (data[i].player1 == "anonymous")? 'Open Position [Online]': data[i].player1;
@@ -57,7 +60,7 @@ function loadGameHistory() {
 				button.innerHTML = "Continue";
 				button.onclick = clickContinueGame;
 			}
-			cell.className = "center-horizontal";
+			cell.className = "center-contents-horizontal";
 			cell.appendChild(button);
 		}
 	});	

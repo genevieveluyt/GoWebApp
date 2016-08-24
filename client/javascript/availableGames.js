@@ -28,7 +28,7 @@ function loadAvailableGames() {
 
 			// Cell: Join
 			cell = row.insertCell();
-			if ((data[i].status == 0) && ((data[i].allowedPlayer == 'anonymous' || data[i].allowedPlayer == primaryAccountUserName) && (data[i].hostUser != primaryAccountUserName))) {
+			if ((data[i].status == 0) && ((data[i].allowedPlayer == 'anonymous' || data[i].allowedPlayer == user1.username) && (data[i].hostUser != user1.username))) {
 				var button = document.createElement('button');
 				button.setAttribute('gameId', data[i].gameID);
 				button.className = "btn btn-primary";

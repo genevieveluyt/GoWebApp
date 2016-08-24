@@ -206,6 +206,8 @@ function renderUnfinishedGameBoard() {
 	var svg = makeGameBoard();
 
 	var unplacedToken = (currentPlayer == 1 ? TOKEN_IMGS[player1.token] : TOKEN_IMGS[player2.token]);
+
+	console.log("gameMode = " + board.gameMode);
 	
 	// tokens
     for (var row = 0; row < (board.size); row++) {
@@ -214,7 +216,7 @@ function renderUnfinishedGameBoard() {
     			svg.append(makeToken(col, row, board.sqSize, TOKEN_IMGS[player1.token], "token-image placed 1"));
     		else if (boardState[row][col] == 2)
     			svg.append(makeToken(col, row, board.sqSize, TOKEN_IMGS[player2.token], "token-image placed 2"));
-    		else
+    		else if (board.gameMode === 0 || (defaultOrder ? currentPlayer === 1 : currentPlayer === 2))
     			svg.append(makeToken(col, row, board.sqSize, unplacedToken, "token-image unplaced", onClickToken));
     	}
     }
@@ -404,8 +406,8 @@ function getScreenNames(player1, player2, gameMode, defaultOrder) {
 			p2 = ((!player2 || player2 === 'anonymous') ? 'Guest' : player2);
 			break;
 		case 1:
-			p1 = (defaultOrder ? (!player1 || player1 === 'anonymous' ? 'Guest' : player1) : 'CPU');
-			p2 = (defaultOrder ? 'CPU' : (!player2 || player2 === 'anonymous' ? 'Guest' : player2));
+			p1 = (defaultOrder ? ((!player1 || player1 === 'anonymous') ? 'Guest' : player1) : 'CPU');
+			p2 = (defaultOrder ? 'CPU' : ((!player2 || player2 === 'anonymous') ? 'Guest' : player2));
 			break;
 		case 2:
 			p1 = player1;
