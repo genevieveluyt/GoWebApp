@@ -286,6 +286,8 @@
 				
 				<div class="col-md-3">
 
+					<!--========================= CHAT ==============================-->
+
 					<div id="game-chat-container" class="panel panel-primary">
 						<div id="chat-box" class="panel-body">
 						</div>
@@ -301,7 +303,7 @@
 								</div>
 								<div class="btn-group dropup" role="group">
 								    <button id="private-messages-button" type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-								    	<span id="private-button-text">Private</span><span class="caret"></span>
+								    	<span id="private-button-text">Private</span> <span class="caret"></span>
 								    	<svg class="unread-svg initially-hidden" height="8" width="8">
 											<circle class="unread-circle" cx="4" cy="4" r="3"/>
 										</svg>
@@ -310,11 +312,12 @@
 								    </ul>
 								</div>
 							</div>
-							<br>
+							<h5 id="chat-username" style="margin-top:8px"></h5>
 							<textarea id="chat-input" class="form-control" rows="3" style="resize:none;" placeholder="Type your message here..." ></textarea>
 							<p align="right">Press enter to send</p>
 						</div>
 					</div>
+
 				</div>
             </div>
 	    </div>

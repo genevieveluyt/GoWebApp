@@ -130,10 +130,8 @@ var initializeServer = function() {
 				if(connectionList[socketID].username == null){
 					continue;
 				}
-				if(socketID != socket.id){
-					userList.push(connectionList[socketID].username);
-					replyMessage += (socketID + ': ' + connectionList[socketID].username + '<br>');
-				}
+				userList.push(connectionList[socketID].username);
+				replyMessage += (socketID + ': ' + connectionList[socketID].username + '<br>');
 			}
 			return {userList : userList, replyMessage : replyMessage};
 		};

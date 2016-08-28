@@ -103,6 +103,11 @@
 
 /**************** CHAT ****************/
 
+p.chat-text {
+  line-height: 1.4;
+  margin-bottom: 5px;
+}
+
 .unread-svg {
   height: 8px;
   width: 8px;

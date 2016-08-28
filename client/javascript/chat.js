@@ -17,16 +17,18 @@ function sendMessage() {
 		return;
 	}
 
+	var chatMsg = ("<p class='chat-text text-danger'>" + user1.username + ": " + msg + "</p>");
+
 	if (!messageRecipient){
 		sendRegularMessage(msg);
-		chatMessages['public'] += ("<strong>Me</strong>: " + msg + "<br>");
+		chatMessages['public'] += chatMsg;
 	}
 	else {
 		sendPrivateMessage(messageRecipient, msg);
-		chatMessages[messageRecipient] += ("<strong>Me</strong>: " + msg + "<br>");
+		chatMessages[messageRecipient] += chatMsg;
 	}
 
-	document.getElementById('chat-box').innerHTML += ("<strong>Me</strong>: " + msg + "<br>");
+	document.getElementById('chat-box').innerHTML += chatMsg;
 	$('#chat-input').val('');	// clear message input
 }
 
@@ -35,9 +37,11 @@ function onPublicMessage(sender, msg) {
 		return;
 	}
 
-	chatMessages['public'] += (sender + ": " + msg + "<br>");
+	var chatMsg = ("<p class='chat-text'>" + sender + ": " + msg + "</p>");
+
+	chatMessages['public'] += chatMsg;
 	if (!messageRecipient) {	// on public tab
-		document.getElementById('chat-box').innerHTML += (sender + ": " + msg + "<br>");
+		document.getElementById('chat-box').innerHTML += chatMsg;
 	} else {
 		$('#public-messages-button svg').show();
 	}
@@ -47,9 +51,12 @@ function onPublicMessage(sender, msg) {
 function onPrivateMessage(sender, msg) {
 	if (!chatMessages[sender])
 		chatMessages[sender] = "";
-	chatMessages[sender] += (sender + ": " + msg + "<br>");
+
+	var chatMsg = ("<p class='chat-text'>" + sender + ": " + msg + "</p>");
+
+	chatMessages[sender] += chatMsg;
 	if (messageRecipient === sender)	// private tab with user
-		document.getElementById('chat-box').innerHTML += (sender + ": " + msg + "<br>");
+		document.getElementById('chat-box').innerHTML += chatMsg;
 	else {
 		$('#private-messages-button svg').show();
 		if (jQuery.inArray(sender, unreadPrivateMessages) === -1) {	// user doesn't have unread messages from this person
@@ -105,9 +112,13 @@ function updateUsers(userLoggedOut, userLoggedIn, updatedUserList) {
 	if (!updatedUserList)
 		return;
 
+	//console.log("userLoggedOut = " + userLoggedOut + ", userLoggedIn = " + userLoggedIn + ", updatedUserList = ", updatedUserList);
+
+	// clear username list in chat
 	var dropdown = document.getElementById('private-messages-dropdown');
 	$(dropdown).empty();
 
+	// populate username list in chat with updated list
 	for (var i = 0; i < updatedUserList.length; i++) {
 		if (updatedUserList[i] === user1.username)
 			continue;
@@ -126,15 +137,16 @@ function updateUsers(userLoggedOut, userLoggedIn, updatedUserList) {
 	}
 	$('.unread-svg').append(makeUnreadMessagesCircle());
 
+	// show unread messages circle next to usernames with unread messages
 	for (i = 0; i < unreadPrivateMessages.length; i++) {
-		// show unread messages circle on username
 		$('#private-messages-dropdown a[username=' + unreadPrivateMessages[i] + ']>svg').show();
 	}
 
+	
 	// if first time opening chat, show already signed in users
 	if (!usersPrinted) {
 		for (var i = 0; i < updatedUserList.length; i++) {
-			var chatMsg = ("<strong>" + updatedUserList[i] + " signed in</strong><br>");
+			var chatMsg = ("<p class='chat-text text-info'><strong>" + updatedUserList[i] + " signed in</strong></p>");
 			if (!messageRecipient)
 				document.getElementById('chat-box').innerHTML += chatMsg;
 			chatMessages['public'] += chatMsg;
@@ -155,7 +167,7 @@ function updateUsers(userLoggedOut, userLoggedIn, updatedUserList) {
 			chatMessages[userLoggedIn] += chatMessages[userLoggedOut];
 		}
 
-		var chatMsg = ("<strong>" + userLoggedOut + " signed in as " + userLoggedIn + " </strong><br>");
+		var chatMsg = ("<p class='chat-text text-info'><strong>" + userLoggedOut + " signed in as " + userLoggedIn + " </strong></p>");
 
 		if (messageRecipient === userLoggedOut) {
 			messageRecipient = userLoggedIn;
@@ -167,7 +179,7 @@ function updateUsers(userLoggedOut, userLoggedIn, updatedUserList) {
 			document.getElementById('chat-box').innerHTML += chatMsg;
 		chatMessages['public'] += chatMsg;
 
-		// If the user has unread messages from the temp account
+		// If the user has unread messages from the temp account, migrate them to the logged in name
 		if (jQuery.inArray(userLoggedOut, unreadPrivateMessages) > -1) {
 			var index = jQuery.inArray(userLoggedOut, unreadPrivateMessages);
 			unreadPrivateMessages.splice(index, 1);
@@ -180,7 +192,8 @@ function updateUsers(userLoggedOut, userLoggedIn, updatedUserList) {
 			} 
 		}
 	} else if (userLoggedOut) {
-		var chatMsg = ("<strong>" + userLoggedOut + " left</strong><br>");
+		var chatMsg = ("<p class='chat-text text-info'><strong>" + userLoggedOut + " left</strong></p>");
+
 		if (!messageRecipient)
 			document.getElementById('chat-box').innerHTML += chatMsg;
 		chatMessages['public'] += chatMsg;
@@ -198,7 +211,7 @@ function updateUsers(userLoggedOut, userLoggedIn, updatedUserList) {
 				$('#private-messages-button svg').hide();
 		}
 	} else {	// userLoggedIn
-		var chatMsg = ("<strong>" + userLoggedIn + " signed in</strong><br>");
+		var chatMsg = ("<p class='chat-text text-info'><strong>" + userLoggedIn + " signed in</strong></p>");
 		if (!messageRecipient)
 			document.getElementById('chat-box').innerHTML += chatMsg;
 		chatMessages['public'] += chatMsg;

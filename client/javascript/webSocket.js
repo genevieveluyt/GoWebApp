@@ -320,7 +320,7 @@ function join(onlineGameID){
 
 function getAvailableMatchList(callback){
 	socket.emit('getAvailableMatchList', null, function(result){
-		console.log(result);
+		console.log("Available match list: ", result);
 		callback(result);
 	});
 }
@@ -407,7 +407,7 @@ var connectionLost = false;
 socket.on('connect', function(){
 	var credential = getCredentialCookie();
 	auth(credential.username, credential.password, function(isSucceed, statusNo){
-		console.log(statusNo);
+		console.log("Connection status number: " + statusNo);
 		initialize(credential.username, credential.password, isSucceed);
 	});
 	if(connectionLost){
@@ -442,6 +442,7 @@ function initialize(username, password, isSucceed) {
 			updatePlayerTokens();
 
 			user1.username = username;
+			document.getElementById('chat-username').innerHTML = user1.username;
 			
 			if (username.substring(0,5) !== "temp_") {
 				login();
