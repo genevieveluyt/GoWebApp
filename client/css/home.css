@@ -7,9 +7,25 @@
   color: #7b7b7b;
 }
 
-.home-page-token {
-  width: 11%;
+.winner-icon {
+  height: 20px;
 }
+
+.center-contents-horizontal {
+  text-align: center;
+}
+
+.table > tbody > tr > td.center-cell-contents  {
+  vertical-align: middle;
+  text-align: center;
+}
+
+.center-on-page {
+  margin-top: 12%;
+}
+
+
+/***************** ALERT ********************/
 
 #alert {
   width: 300px;
@@ -20,9 +36,34 @@
   z-index: 9999999;
 }
 
+/*************** HOME PAGE ******************/
+
+.home-page-token {
+  width: 11%;
+}
+
+/*************** GAME PAGE ******************/
+
+/* need this to make the gameboard dynamic */
+#gameboard-container::before {
+	content:"";
+	display:block;
+	padding-bottom:100%;
+}
+
+#gameboard {
+	position: absolute;
+ 	top: 0;
+ 	right: 0;
+ 	left: 0;
+ 	bottom: 0;
+}
+
 .curr-player{
   background-color: LightCyan;
 }
+
+/*************** TOKENS ******************/
 
 .token-image {
   position: absolute;
@@ -46,7 +87,6 @@
 }
 
 .choose-token-image {
-  /*height: ;*/
   width: 33%;
   padding: 10px;
 }
@@ -61,47 +101,7 @@
   -webkit-filter: brightness(40%);
 }
 
-.winner-icon {
-  height: 20px;
-}
-
-.center-contents-horizontal {
-  text-align: center;
-}
-
-.table > tbody > tr > td.center-cell-contents  {
-  vertical-align: middle;
-  text-align: center;
-}
-
-.center-on-page {
-  margin-top: 12%;
-}
-
-/* need this to make the gameboard dynamic */
-#gameboard-container::before {
-	content:"";
-	display:block;
-	padding-bottom:100%;
-}
-
-#gameboard {
-	position: absolute;
- 	top: 0;
- 	right: 0;
- 	left: 0;
- 	bottom: 0;
-}
-
-.board-white {
-  fill: #f5e3d6;
-  stroke: #eac8ae;
-}
-
-.board-nonwhite {
-  fill: #DEB887;
-  stroke: #786449;
-}
+/**************** CHAT ****************/
 
 .unread-svg {
   height: 8px;
@@ -115,6 +115,8 @@
   stroke-width: 1;
 }
 
+/*************** MUSIC ****************/
+
 #music-control-panel {
   position: fixed;
   bottom: 0;
@@ -122,10 +124,7 @@
   width: 15%;
 }
 
-#multiplayer-username-container {
-  width: 30%;
-  margin: 0 auto;
-}
+/************** THEMES ***************/
 
 .button{
   position: relative;
@@ -143,13 +142,14 @@
   background-color: #8080ff;
 }
 
-
 .button:active{
   background-color: #8080ff;
   box-shadow: 0 5px #666;
   transform: translateY(4px);
 }
+
 /*-----------------------------------------*/
+
 .button2{
   background-color: #cceeff;  /*light blue*/
   border-radius: 15px;
@@ -159,13 +159,14 @@
   background-color: #00aaff;
 }
 
-
 .button2:active{
   background-color: #00aaff;
   box-shadow: 0 5px #666;
   transform: translateY(4px);
 }
+
 /*-----------------------------------------*/
+
 .button3{
   background-color: #ffe6f2;  /*light pink*/
   border-radius: 15px;
@@ -182,6 +183,7 @@
 }
 
 /*-----------------------------------------*/
+
 .button4{
   background-color: #ffffff;  /* White */
   border-radius: 15px;
